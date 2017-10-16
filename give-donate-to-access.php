@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name: Give Addon - Donate To Accesss
- * Plugin URI: https://givewp.com/addons/
+ * Plugin URI: https://github.com/contriveitup/give-add-on-donate-to-access
  * Description: This Give plugin Add-on ask users to donate in order to access certain material, whether downloads, or a membership form, or specific content.
  * Version: 1.0
- * Author: WordImpress
- * Author URI: https://wordimpress.com
+ * Author: ContriveItUp
+ * Author URI: https://github.com/contriveitup
  * Text Domain: give-dta
  * Domain Path: /languages
- * GitHub Plugin URI: https://github.com/WordImpress/Give
+ * GitHub Plugin URI: https://github.com/contriveitup/give-add-on-donate-to-access
  * License: GPL2
  */
 
