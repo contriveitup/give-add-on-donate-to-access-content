@@ -11,6 +11,7 @@ This is a add-on to Give Donation plugin. With this add-on site admiminstrators 
 ```
 ### Shortcode Parameters
 **form_id** - is the id of the Give donation form which you wish to display to collect the donation. This is required.
+
 **show** - what to show instead of the restrcited content. A Donation form or a message with the link to donation form. By default it's **form**
 
 ## Redirection - In the admin settings of this add-on you can specify the post, page and categories id's and based upon that the whole page, post or category page will be restrcited and the user will be redirect to a donation form. 
