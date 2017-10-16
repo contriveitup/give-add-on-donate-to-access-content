@@ -20,7 +20,7 @@ global $give_dta_functions;
  * 
  * This shortcode will restrict access to the content until a donation is made.
  * 
- * Usage : [give_donate_to_access_func form_id=1 show='form|message'] Content to be restricted goes here [/give_donate_to_access_func]
+ * Usage : [give_donate_to_access form_id=1 show='form|message'] Content to be restricted goes here [/give_donate_to_access_func]
  * 
  * Form ID is necessary and it will show a donation form by default when the content is restricted
  * 
