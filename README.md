@@ -22,3 +22,8 @@ The donation to which a user will be redirected can be set in the admin settings
 
 ### Note
 This is right now a very basic version of the plugin with only one shortcode and the ability to restrict only posts, pages & category pages.
+
+## Changelog
+
+#### Version 1.0 - 16th Oct 2017
+Initial Commit
