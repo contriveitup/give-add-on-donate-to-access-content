@@ -12,8 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-global $give_dta_functions;
-
 
 /**
  * Restrict Access Shortcode
@@ -32,7 +30,7 @@ global $give_dta_functions;
  * @return viod|output HTML
  */
 function give_donate_to_access_func( $atts, $content = null ) {
-	global $give_dta_functions, $wp_query;
+	global $wp_query;
 
     $a = 	shortcode_atts( 
 	    		array(
@@ -47,9 +45,6 @@ function give_donate_to_access_func( $atts, $content = null ) {
     	return;
     }
 
-    //Core Give class object
-    $give = Give();
-
     $current_page_id = $wp_query->post->ID;
 
     //If show type is a form
@@ -57,7 +52,7 @@ function give_donate_to_access_func( $atts, $content = null ) {
 
     	$restrict_content = do_shortcode( '[give_form id="'.$a['form_id'].'"]' );
 
-    	$content = $give_dta_functions->give_dta_check_access( $give, $content, $restrict_content );
+    	$content = GIVE_DTAC()->frontend_functions->give_dta_check_access( $content, $restrict_content );
 
     endif;
 
@@ -65,19 +60,13 @@ function give_donate_to_access_func( $atts, $content = null ) {
     //If show type is a message
     if( $a['show'] == 'message' ) : 
 
-    	$message = $give_dta_functions->give_dta_get_settings( 'give_dta_restrict_message' );
+    	$message = GIVE_DTAC()->frontend_functions->give_dta_get_settings( 'give_dta_restrict_message' );
 
-    	$give_form_link = get_permalink( $a['form_id'] );
-
-    	$donation_link = 	esc_url( 
-                                add_query_arg( array(
-    							    'give_dta_content' => $current_page_id,
-    							), $give_form_link ) 
-                            );
+        $donation_link = give_dtac_donation_form_url( $a['form_id'], $current_page_id );
 
     	$message = str_replace( '%%donation_link%%', $donation_link, $message );
 
-    	$content = $give_dta_functions->give_dta_check_access( $give, $content, $message );
+    	$content = GIVE_DTAC()->frontend_functions->give_dta_check_access( $content, $message );
     	
 
     endif;

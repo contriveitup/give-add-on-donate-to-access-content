@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if( ! class_exists( 'Give_Donate_To_Access_Admin_Settings' ) ) :
+if( ! class_exists( 'Give_Donate_To_Access_Content_Admin_Settings' ) ) :
 
-	class Give_Donate_To_Access_Admin_Settings {
+	class Give_Donate_To_Access_Content_Admin_Settings {
 
 		/**
 		 * Core Give settings page ID
@@ -29,7 +29,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Admin_Settings' ) ) :
 		 * @since 1.0
 		 * @access public
 		 */
-		public $give_dta_settings_page_id;
+		public $give_dtac_settings_page_id;
 
 
 		/**
@@ -38,15 +38,15 @@ if( ! class_exists( 'Give_Donate_To_Access_Admin_Settings' ) ) :
 		public function __construct() {
 
 			$this->give_settings_page_id 		= 'give-settings';
-			$this->give_dta_settings_page_id 	= 'donateaccess';
+			$this->give_dtac_settings_page_id 	= 'donateaccess';
  
 			/**
 			 * Add Tabs/Sections to Give settings page
 			 */
-			add_filter( "{$this->give_settings_page_id}_tabs_array", array( $this, 'give_dta_add_settings_tab' ), 20 );
-			add_action( "{$this->give_settings_page_id}_sections_{$this->give_dta_settings_page_id}_page", array( $this, 'give_dta_output_sections' ) );
-			add_action( "{$this->give_settings_page_id}_settings_{$this->give_dta_settings_page_id}_page", array( $this, 'give_dta_output' ) );
-			add_action( "{$this->give_settings_page_id}_save_{$this->give_dta_settings_page_id}", array( $this, 'give_dta_save' ) );
+			add_filter( "{$this->give_settings_page_id}_tabs_array", array( $this, 'give_dtac_add_settings_tab' ), 20 );
+			add_action( "{$this->give_settings_page_id}_sections_{$this->give_dtac_settings_page_id}_page", array( $this, 'give_dtac_output_sections' ) );
+			add_action( "{$this->give_settings_page_id}_settings_{$this->give_dtac_settings_page_id}_page", array( $this, 'give_dtac_output' ) );
+			add_action( "{$this->give_settings_page_id}_save_{$this->give_dtac_settings_page_id}", array( $this, 'give_dtac_save' ) );
 			
 		}
 		
@@ -59,9 +59,9 @@ if( ! class_exists( 'Give_Donate_To_Access_Admin_Settings' ) ) :
 		 * 
 		 * @return array $pages
 		 */
-		public function give_dta_add_settings_tab( $pages ) {
+		public function give_dtac_add_settings_tab( $pages ) {
 
-			$pages[ $this->give_dta_settings_page_id ] = __( 'Donate To Access', 'give-dta' );
+			$pages[ $this->give_dtac_settings_page_id ] = __( 'Donate To Access', 'give-dta' );
 
 			return $pages;
 		}
@@ -74,11 +74,11 @@ if( ! class_exists( 'Give_Donate_To_Access_Admin_Settings' ) ) :
 		 * 
 		 * @return void HTML
 		 */
-		public function give_dta_output_sections() {
+		public function give_dtac_output_sections() {
 
-			$current_section = $this->give_dta_current_section();
+			$current_section = $this->give_dtac_current_section();
 
-			$sections = $this->give_dta_get_sections();
+			$sections = $this->give_dtac_get_sections();
 
 			echo '<ul class="subsubsub">';
 
@@ -86,7 +86,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Admin_Settings' ) ) :
 			$array_keys = array_keys( $sections );
 
 			foreach ( $sections as $id => $label ) {
-				echo '<li><a href="' . admin_url( 'edit.php?post_type=give_forms&page=' . $this->give_settings_page_id . '&tab=' . $this->give_dta_settings_page_id . '&section=' . sanitize_title( $id ) ) . '" class="' . ( $current_section == $id ? 'current' : '' ) . '">' . $label . '</a> ' . ( end( $array_keys ) == $id ? '' : '|' ) . ' </li>';
+				echo '<li><a href="' . admin_url( 'edit.php?post_type=give_forms&page=' . $this->give_settings_page_id . '&tab=' . $this->give_dtac_settings_page_id . '&section=' . sanitize_title( $id ) ) . '" class="' . ( $current_section == $id ? 'current' : '' ) . '">' . $label . '</a> ' . ( end( $array_keys ) == $id ? '' : '|' ) . ' </li>';
 			}
 
 			echo '</ul><br class="clear" /><hr>';
@@ -102,13 +102,13 @@ if( ! class_exists( 'Give_Donate_To_Access_Admin_Settings' ) ) :
 		 * 
 		 * @return array Section's ID and Label
 		 */
-		public function give_dta_get_sections() {
+		public function give_dtac_get_sections() {
 
-			$give_dta_sections = array(
+			$give_dtac_sections = array(
 				'access-control' => __( 'Access Control', 'give-dta' )
 			);
 
-			return apply_filters( 'give_get_sections_donateaccess', $give_dta_sections );
+			return apply_filters( 'give_get_sections_donateaccess', $give_dtac_sections );
 		}
 
 
@@ -119,7 +119,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Admin_Settings' ) ) :
 		 * 
 		 * @return string Current Section or Default 
 		 */
-		public function give_dta_current_section() {
+		public function give_dtac_current_section() {
 
 			$default_current_section = 'access-control';
 
@@ -134,13 +134,13 @@ if( ! class_exists( 'Give_Donate_To_Access_Admin_Settings' ) ) :
 		/**
 		 * Restrict Content Default Message
 		 * 
-		 * Used in give_dta_settings function
+		 * Used in give_dtac_settings function
 		 * 
 		 * @since 1.0
 		 * 
 		 * @return string Message
 		 */
-		public function give_dta_restrict_message_content() {
+		public function give_dtac_restrict_message_content() {
 
 			$message = '';
 
@@ -151,7 +151,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Admin_Settings' ) ) :
 		}
 
 
-		public function give_dta_settings_array( $key ) {
+		public function give_dtac_settings_array( $key ) {
 
 			$setting_options = array(
 
@@ -176,55 +176,55 @@ if( ! class_exists( 'Give_Donate_To_Access_Admin_Settings' ) ) :
 		 * 
 		 * @return array Settings
 		 */
-		public function give_dta_settings() {
+		public function give_dtac_settings() {
 
 			$settings = array();
 
 			$settings = array(
 							array(
-								'id'   => 'give_dta_section_1',
+								'id'   => 'give_dtac_section_1',
 								'type' => 'title'
 							),
 							array(
 								'name'    => __( 'Restrict Content Message', 'give-dta' ),
 								'desc'    => __( 'This message will appear instead of restrcited content, if you choose to display a message instead of Donation form in the shortcode<br/>Please use %%donation_link%% to display the link which will take you to the donation form.<br/>The Donation form link will go to the form whose ID will be given in the shortcode', 'give-dta' ),
-								'id'      => 'give_dta_restrict_message',
+								'id'      => 'give_dtac_restrict_message',
 								'type'    => 'wysiwyg',
-								'default' => $this->give_dta_restrict_message_content(),
+								'default' => $this->give_dtac_restrict_message_content(),
 							),
 							array(
 								'name'    => __( 'Restrict Access To?', 'give' ),
 								'desc'    => __( 'Restrict Access to complete page, post, category, etc..', 'give-dta' ),
-								'id'      => 'give_dta_restrict_access_to',
+								'id'      => 'give_dtac_restrict_access_to',
 								'type'    => 'multicheck',
 								'default' => 'none',
-								'options' => $this->give_dta_settings_array( 'restrict_access_to' )
+								'options' => $this->give_dtac_settings_array( 'restrict_access_to' )
 							),
 							array(
 								'name'    => __( 'Give Donation Form ID', 'give-dta' ),
 								'desc'    => __( 'Please enter a Give Donation Form ID. <br/>This form will be the form that a user will be redirected to in order to make the donation and access the pages,posts,etc... selected here to restrict.', 'give-dta' ),
-								'id'      => 'give_dta_restrict_access_give_form_id',
+								'id'      => 'give_dtac_restrict_access_give_form_id',
 								'type'    => 'text',
 								'default' => '1'
 							),
 							array(
 								'name'    => __( 'Restrict Pages', 'give-dta' ),
 								'desc'    => __( "Enter the page ID's of the pages you wish to restrict access to in comma seperated values.<br/>For example: 1,2,3...", 'give-dta' ),
-								'id'      => 'give_dta_restrict_access_to_pages',
+								'id'      => 'give_dtac_restrict_access_to_pages',
 								'type'    => 'text',
 								'default' => ''
 							),
 							array(
 								'name'    => __( 'Restrict Posts', 'give-dta' ),
 								'desc'    => __( "Enter the post ID's of the posts you wish to restrict access to in comma seperated values.<br/>For example: 1,2,3...", 'give-dta' ),
-								'id'      => 'give_dta_restrict_access_to_posts',
+								'id'      => 'give_dtac_restrict_access_to_posts',
 								'type'    => 'text',
 								'default' => ''
 							),
 							array(
 								'name'    => __( 'Restrict Categories', 'give-dta' ),
 								'desc'    => __( "Enter the category/tax ID's you wish to restrict access to in comma seperated values.<br/>For example: 1,2,3...", 'give-dta' ),
-								'id'      => 'give_dta_restrict_access_to_cats',
+								'id'      => 'give_dtac_restrict_access_to_cats',
 								'type'    => 'text',
 								'default' => ''
 							),
@@ -239,13 +239,13 @@ if( ! class_exists( 'Give_Donate_To_Access_Admin_Settings' ) ) :
 	                            'type'  => 'give_docs_link',
 	                        ),
 							array(
-								'id'   => 'give_dta_control',
+								'id'   => 'give_dtac_control',
 								'type' => 'sectionend'
 							)
 							/************************************************/
 						);
 
-			$settings = apply_filters( 'give_dta_admin_settings', $settings );
+			$settings = apply_filters( 'give_dtac_admin_settings', $settings );
 
 			return $settings;
 		}
@@ -258,11 +258,11 @@ if( ! class_exists( 'Give_Donate_To_Access_Admin_Settings' ) ) :
 		 * 
 		 * @return void
 		 */
-		public function give_dta_output() {
+		public function give_dtac_output() {
 
-			$settings = $this->give_dta_settings();
+			$settings = $this->give_dtac_settings();
 
-			Give_Admin_Settings::output_fields( $settings, 'give_dta_settings' );
+			Give_Admin_Settings::output_fields( $settings, 'give_dtac_settings' );
 		}
 
 
@@ -273,22 +273,22 @@ if( ! class_exists( 'Give_Donate_To_Access_Admin_Settings' ) ) :
 		 * 
 		 * @return void
 		 */
-		public function give_dta_save() {
-			$settings        = $this->give_dta_settings();
-			$current_section = $this->give_dta_current_section();
+		public function give_dtac_save() {
+			$settings        = $this->give_dtac_settings();
+			$current_section = $this->give_dtac_current_section();
 
-			Give_Admin_Settings::save_fields( $settings, 'give_dta_settings' );
+			Give_Admin_Settings::save_fields( $settings, 'give_dtac_settings' );
 
 			/**
 			 * Trigger Action
 			 *
 			 * @since 1.0
 			 */
-			do_action( 'give_update_options_' . $this->give_dta_settings_page_id . '_' . $current_section );
+			do_action( 'give_update_options_' . $this->give_dtac_settings_page_id . '_' . $current_section );
 		}
 
-	} // End class Give_Donate_To_Access_Admin_Settings
+	} // End class Give_Donate_To_Access_Content_Admin_Settings
 
 endif; //end if class_exists check
 
-return new Give_Donate_To_Access_Admin_Settings();
+new Give_Donate_To_Access_Content_Admin_Settings();
