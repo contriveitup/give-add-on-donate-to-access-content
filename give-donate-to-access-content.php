@@ -99,7 +99,7 @@ final class Give_Donate_To_Access_Content {
 
 		if( function_exists( 'Give' ) ) {
 			$this->give = Give();	
-			$this->load_textdomain()
+			$this->load_textdomain();
 			$this->give_dtac_includes();
 			$this->give_dtac_setup();
 		}
