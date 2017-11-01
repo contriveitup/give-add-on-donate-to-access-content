@@ -6,10 +6,10 @@
  * Version: 1.0
  * Author: ContriveItUp
  * Author URI: https://github.com/contriveitup
- * Text Domain: give-dta
+ * Text Domain: give-dtac
  * Domain Path: /languages
  * GitHub Plugin URI: https://github.com/contriveitup/give-add-on-donate-to-access-content
- * License: GPL2
+ * License: GPL3
  */
 
  
@@ -60,6 +60,16 @@ final class Give_Donate_To_Access_Content {
 
 
 	/**
+	 * Notices (array).
+	 *
+	 * @since 1.0
+	 *
+	 * @var [array]
+	 */
+	public $admin_notices = array();
+
+
+	/**
 	 * Singleton Method
 	 * 
 	 * Makes sure only one instance of the class is returned
@@ -84,11 +94,16 @@ final class Give_Donate_To_Access_Content {
 	 */
 	public function __construct() {
 
-		$this->give = Give();
 		$this->give_dtac_hooks();
 		$this->give_dtac_constants();
-		$this->give_dtac_includes();
-		$this->give_dtac_setup();
+
+		if( function_exists( 'Give' ) ) {
+			$this->give = Give();	
+			$this->load_textdomain()
+			$this->give_dtac_includes();
+			$this->give_dtac_setup();
+		}
+		
 	}
 
 
@@ -120,7 +135,8 @@ final class Give_Donate_To_Access_Content {
 	 */
 	public function give_dtac_hooks() {
 		//Registration hook
-		register_activation_hook( __FILE__, array( $this, 'give_dtac_install' ) );
+		add_action( 'admin_notices', array( $this, 'give_dtca_admin_notices' ) );
+		add_action( 'admin_init', array( $this, 'give_dtac_install' ) );
 		add_filter( "plugin_action_links_" . plugin_basename(__FILE__), array( $this, 'give_dtac_plugin_add_settings_link' ) );
 	}
 
@@ -152,12 +168,14 @@ final class Give_Donate_To_Access_Content {
         
         //Check if Main Give plugin is activated 
         if( ! function_exists( 'Give' ) ) {
-        	deactivate_plugins( basename( __FILE__ ) );
-        	$message = __( '<p>This Add-On requires <strong>Give</strong> core plugin to be installed and activated.</p>', 'give-dta' );
-        	wp_die(
-        		$message,
-        		'Plugin Activation Error',  
-        		array( 'response' => 200, 'back_link' => TRUE ) );
+
+        	$this->add_admin_notice( 'prompt_connect', 'error', sprintf( __( '<strong>Activation Error:</strong> You must have the <a href="%s" target="_blank">Give</a> core plugin installed and activated for Give Donate to Access Content Add-On to Work.', 'give-dtca' ), 'https://givewp.com' ) );
+
+        	deactivate_plugins( GIVE_DTAC_PLUGIN_BASENAME );
+
+        	if ( isset( $_GET['activate'] ) ) {
+				unset( $_GET['activate'] );
+			}
         }
  	}
 
@@ -201,6 +219,94 @@ final class Give_Donate_To_Access_Content {
 
 
  	/**
+ 	 * [add_admin_notice]
+ 	 * 
+ 	 * Capture Admin Notices in an array
+ 	 * 
+ 	 * @since  1.0
+ 	 * 
+ 	 * @param [string] 	$slug    [message slug]
+ 	 * @param [string] 	$class   [message class like error, etc..]
+ 	 * @param [string] 	$message [the error or notice message]
+ 	 * 
+ 	 * @return  array 
+ 	 */
+ 	public function add_admin_notice( $slug, $class, $message ) {
+		$this->admin_notices[ $slug ] = array(
+			'class'   => $class,
+			'message' => $message
+		);
+	}
+
+
+	/**
+	 * [give_dtca_admin_notices]
+	 * 
+	 * Add notices to admin_notices WP hook
+	 * 
+	 * @since  1.0
+	 * 
+	 * @return [HTML] 
+	 */
+ 	public function give_dtca_admin_notices(){
+
+ 		$allowed_tags = array(
+			'a'      => array(
+				'href'  => array(),
+				'title' => array()
+			),
+			'br'     => array(),
+			'em'     => array(),
+			'strong' => array(),
+		);
+
+		foreach ( (array) $this->admin_notices as $key => $admin_notice ) {
+			echo "<div class='" . esc_attr( $admin_notice['class'] ) . "'><p>";
+			echo wp_kses( $admin_notice['message'], $allowed_tags );
+			echo "</p></div>";
+		}
+ 	}
+
+
+ 	/**
+	 * Loads the plugin language files.
+	 *
+	 * @since  v1.0
+	 * @access private
+	 * @uses   dirname()
+	 * @uses   plugin_basename()
+	 * @uses   apply_filters()
+	 * @uses   load_textdomain()
+	 * @uses   get_locale()
+	 * @uses   load_plugin_textdomain()
+	 */
+	private function load_textdomain() {
+
+		// Set filter for plugin's languages directory.
+		$give_lang_dir = apply_filters( 'give_languages_directory', dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+
+		// Traditional WordPress plugin locale filter.
+		$locale = apply_filters( 'plugin_locale', get_locale(), 'give-donate-to-access-content' );
+		$mofile = sprintf( '%1$s-%2$s.mo', 'give-donate-to-access-content', $locale );
+
+		// Setup paths to current locale file.
+		$mofile_local  = $give_lang_dir . $mofile;
+		$mofile_global = WP_LANG_DIR . '/give-donate-to-access-content/' . $mofile;
+
+		if ( file_exists( $mofile_global ) ) {
+			// Look in global /wp-content/languages/give-donate-to-access-content folder.
+			load_textdomain( 'give-donate-to-access-content', $mofile_global );
+		} elseif ( file_exists( $mofile_local ) ) {
+			// Look in local /wp-content/plugins/give-donate-to-access-content/languages/ folder.
+			load_textdomain( 'give-donate-to-access-content', $mofile_local );
+		} else {
+			// Load the default language files
+			load_plugin_textdomain( 'give-donate-to-access-content', false, $give_lang_dir );
+		}
+	}
+
+
+ 	/**
  	 * Plugin Files
  	 * 
  	 * Include plugin files to run different plugin functionality
@@ -210,7 +316,6 @@ final class Give_Donate_To_Access_Content {
  	 * @return void 
  	 */
  	public function give_dtac_includes() {
-
 
  		//General
  		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/functions.php';
