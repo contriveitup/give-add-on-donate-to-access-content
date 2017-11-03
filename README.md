@@ -1,13 +1,15 @@
 # give-add-on-donate-to-access
 
-A [Give](https://wordpress.org/plugins/give/) plugin add-on.
+An Unoffcial [Give](https://wordpress.org/plugins/give/) plugin add-on.
 
-Requires at least: 4.2
-Tested up to: 4.8
-Requires PHP: 5.3
-Stable tag: 1.0
-License: GPLv3
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
+## Requirements & Other info
+
+* Requires at least: 4.2
+* Tested up to: 4.8
+* Requires PHP: 5.3
+* Stable tag: 1.0
+* License: GPLv3
+* License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 ## Description
 This is a add-on to Give Donation plugin. With this add-on site admiminstrators can restrict the content of a post, page, etc.. using a shortcode or they can also restrict the entie page and redirect them to a Give donation form to make a donation on order to view the restricted content.
