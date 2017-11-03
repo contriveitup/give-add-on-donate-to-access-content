@@ -57,6 +57,7 @@ function give_dtac_get_settings( $key = '' ) {
 if( ! function_exists( 'give_dtac_get_donor' ) ):
 
 	function give_dtac_get_donor() {
+		
 		global $give;
 
 		$donor = array(); $result = array(); $id = ''; $value = '';
@@ -126,4 +127,28 @@ function give_dtac_donation_form_url( $form_id, $current_page_id ) {
 	$form_url = esc_url( add_query_arg( $query_args, $form_url ) );
 
 	return $form_url;
+}
+
+
+/**
+ * [is_dtac_plugin_settings_page]
+ * 
+ * Check if current admin page viewed is the settings page of this plugin.
+ * 
+ * @since  1.0
+ * 
+ * @return boolean
+ */
+function is_dtac_plugin_settings_page() {
+
+	$is_admin_settings_page = false;
+
+	$page 	= ( isset( $_GET['page'] ) && $_GET['page'] == 'give-settings' ? true : false );
+	$tab 	= ( isset( $_GET['tab'] ) && $_GET['tab'] == 'donateaccess' ? true : false );
+
+	if( $page && $tab ) {
+		$is_admin_settings_page = true;
+	}
+
+	return $is_admin_settings_page;
 }

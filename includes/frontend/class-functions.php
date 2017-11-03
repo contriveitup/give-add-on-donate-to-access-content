@@ -120,7 +120,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 
 			$pages = give_dtac_get_settings( 'give_dtac_restrict_access_to_pages' );
 
-			$pages = ( '' != $pages ? explode( ',', $pages ) : array() );
+			$pages = ( ! empty( $pages ) ? $pages : array() );
 
 			$current_page = $wp_query->post->ID;
 
@@ -154,7 +154,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 
 			$posts = give_dtac_get_settings( 'give_dtac_restrict_access_to_posts' );
 
-			$posts = ( '' != $posts ? explode( ',', $posts ) : array() );
+			$posts = ( ! empty( $posts ) ? $posts : array() );
 
 			$current_post = $wp_query->post->ID;
 
@@ -178,8 +178,12 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 		/**
 		 * Restrict Categories
 		 * 
+		 * Restrict categories archive page or if a single post is being displayed and 
+		 * the post are in any of the categories selected from the settings
+		 * 
 		 * @since 1.0
-		 * @param $form_id int
+		 * 
+		 * @param $form_id int Donation Form ID
 		 * 
 		 * @return void
 		 */
@@ -188,13 +192,14 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 
 			$cats = give_dtac_get_settings( 'give_dtac_restrict_access_to_cats' );
 
-			$cats = ( '' != $cats ? explode( ',', $cats ) : array() );
+			$cats = ( ! empty ( $cats ) ? $cats: array() );
 
-			$current_cat = $wp_query->post->ID;
+			$category 		= get_queried_object();
+			$current_cat 	= $category->term_id;
 
 			if( ! empty( $cats ) ) {
 
-				if( is_category( $cats ) ) {
+				if( is_category( $cats ) || ( is_single() && in_category( $cats ) ) ) {
 
 					$donor = give_dtac_get_donor();
 
@@ -202,6 +207,82 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 
 					if( $is_restricted ) {
 						wp_safe_redirect( give_dtac_donation_form_url( $form_id, $current_cat ) );
+						exit;	
+					}
+				}// End if is_page check
+			}// End if empty check
+		}
+
+
+		/**
+		 * [give_dtac_restrict_cpt]
+		 * 
+		 * Restrict a custom post types
+		 * 
+		 * @since  1.0
+		 * 
+		 * @param  [int] $form_id [Donation Form ID for redirection]
+		 * 
+		 * @return [void]          
+		 */
+		public function give_dtac_restrict_cpt( $form_id ) {
+			global $wp_query;
+
+			$cpts = give_dtac_get_settings( 'give_dtac_restrict_access_to_cpt' );
+
+			$cpts = ( ! empty( $cpts ) ? $cpts : array() );
+
+			$current_cpt = get_post_type();
+
+			if( ! empty( $cpts ) ) {
+
+				if( is_singular( $cpts ) ) {
+
+					$donor = give_dtac_get_donor();
+
+					$is_restricted = $this->give_dtac_is_donor_restricted( $donor, $current_cpt );
+
+					if( $is_restricted ) {
+						wp_safe_redirect( give_dtac_donation_form_url( $form_id, $current_cpt ) );
+						exit;	
+					}
+				}// End if is_page check
+			}// End if empty check
+		}
+
+
+
+		/**
+		 * [give_dtac_restrict_ctax]
+		 * 
+		 * Restrict a custom taxonomy archive page
+		 * 
+		 * @since  1.0
+		 * 
+		 * @param  [int] $form_id [Donation Form ID for redirection]
+		 * 
+		 * @return [void]          
+		 */
+		public function give_dtac_restrict_ctax( $form_id ) {
+			global $wp_query;
+
+			$ctaxs = give_dtac_get_settings( 'give_dtac_restrict_access_to_custom_tax' );
+
+			$ctaxs = ( ! empty( $ctaxs ) ? $ctaxs : array() );
+
+			$queried_object = get_queried_object();
+			$current_ctax 	= $queried_object->term_id;
+
+			if( ! empty( $ctaxs ) ) {
+
+				if( is_tax( $ctaxs ) ) {
+
+					$donor = give_dtac_get_donor();
+
+					$is_restricted = $this->give_dtac_is_donor_restricted( $donor, $current_ctax );
+
+					if( $is_restricted ) {
+						wp_safe_redirect( give_dtac_donation_form_url( $form_id, $current_ctax ) );
 						exit;	
 					}
 				}// End if is_page check

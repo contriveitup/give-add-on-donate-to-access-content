@@ -64,7 +64,7 @@ function give_donate_to_access_func( $atts, $content = null ) {
 
         $donation_link = give_dtac_donation_form_url( $a['form_id'], $current_page_id );
 
-    	$message = str_replace( '%%donation_link%%', $donation_link, $message );
+    	$message = str_replace( '%%donation_form_url%%', $donation_link, $message );
 
     	$content = GIVE_DTAC()->frontend_functions->give_dta_check_access( $content, $message );
     	

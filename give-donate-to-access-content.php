@@ -319,13 +319,16 @@ final class Give_Donate_To_Access_Content {
 
  		//General
  		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/functions.php';
+ 		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/scripts.php';
 
  		//Frontend
 	 	require_once GIVE_DTAC_PLUGIN_DIR . 'includes/frontend/class-functions.php';
  		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/frontend/class-hooks.php';
+ 		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/frontend/class-restrict-content.php';
  		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/frontend/shortcodes.php';
 
  		//Admin
+ 		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/admin/class-functions.php';
  		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/admin/class-give-donate-to-access-settings.php';
  		
  	}
