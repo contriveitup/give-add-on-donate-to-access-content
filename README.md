@@ -2,6 +2,9 @@
 
 An Unoffcial [Give](https://wordpress.org/plugins/give/) plugin add-on.
 
+## Description
+This is a add-on to Give Donation plugin. With this add-on site admiminstrators can restrict the content of a post, page, etc.. using a shortcode or they can also restrict the entie page and redirect them to a Give donation form to make a donation on order to view the restricted content.
+
 ## Requirements & Other info
 
 1. WordPress
@@ -19,8 +22,7 @@ An Unoffcial [Give](https://wordpress.org/plugins/give/) plugin add-on.
 	* License: GPLv3
 	* License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-## Description
-This is a add-on to Give Donation plugin. With this add-on site admiminstrators can restrict the content of a post, page, etc.. using a shortcode or they can also restrict the entie page and redirect them to a Give donation form to make a donation on order to view the restricted content.
+
 
 ## Features
 
