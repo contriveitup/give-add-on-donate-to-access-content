@@ -6,6 +6,10 @@
  * @since  1.0 
  */
  
+if ( ! defined( 'ABSPATH' ) ) {
+ 	exit; // Exit if accessed directly
+}
+
 global $give;
 /**
  * [$give]
@@ -44,18 +48,19 @@ function give_dtac_get_settings( $key = '' ) {
 }
 
 
-/**
- * Get the donor by id or email
- * 
- * Retrive a donor by id or email and according by it's login state
- * 
- * @since 1.0
- * @param $give Give class object
- * 
- * @return array
- */
+
 if( ! function_exists( 'give_dtac_get_donor' ) ):
 
+	/**
+	 * Get the donor by id or email
+	 * 
+	 * Retrive a donor by id or email and according by it's login state
+	 * 
+	 * @since 1.0
+	 * @param $give Give class object
+	 * 
+	 * @return array
+	 */
 	function give_dtac_get_donor() {
 		
 		global $give;
@@ -76,10 +81,11 @@ if( ! function_exists( 'give_dtac_get_donor' ) ):
 			$id = $give->session->get( 'give_email' );
 		}
 
-		$field = ( is_int( $id ) ? 'id' : 'email' );
+		$field = ( is_int( $id ) ? 'user_id' : 'email' );
 
 		$field = apply_filters( 'give_dtac_donor_field', $field );
 		$value = apply_filters( 'give_dtac_donor_value', $id );
+
 
 		/**
 		 * [$donor]
@@ -91,7 +97,6 @@ if( ! function_exists( 'give_dtac_get_donor' ) ):
 		 * @var [array]
 		 */
 		$donor = $give->donors->get_donor_by( $field, $value );
-
 
 		//If donor exists
 		if( ! empty( $donor ) || ! is_null( $donor ) ) {
@@ -119,7 +124,7 @@ function give_dtac_donation_form_url( $form_id, $current_page_id ) {
 	$form_url = get_permalink( $form_id );
 
 	$query_args = array(
-					'give_dta_content' => $current_page_id,
+					'give_dtac_content' => $current_page_id,
 				);
 
 	$query_args = apply_filters( 'give_dtac_redirection_query_string_array', $query_args, $query_args );
@@ -152,3 +157,85 @@ function is_dtac_plugin_settings_page() {
 
 	return $is_admin_settings_page;
 }
+
+
+/**
+ * [give_dtac_get_custom_taxs]
+ * 
+ * Get all registered custom taxonomies
+ * 
+ * @since  1.0
+ * 
+ * @return [array] 
+ */
+function give_dtac_get_custom_taxs() {
+
+	$taxomonies = array();
+
+	$args = array(); //Only get public tax and ignore built-in taxomonies
+	$args = apply_filters( 'give_dtac_custom_tax_args', $args, $args );
+
+	$output = apply_filters( 'give_dtac_custom_tax_output_value', 'objects' ); // or names
+
+	$taxonomies = get_taxonomies( $args, $output ); 
+
+	return $taxonomies;
+}
+
+
+/**
+ * [give_dtac_get_custom_taxs_names]
+ * 
+ * Get names of all registered taxonomies and return it in an array
+ * 
+ * @since  1.0
+ * 
+ * @return [array] 
+ */
+function give_dtac_get_custom_taxs_names() {
+
+	$result = array();
+
+	$taxonomies = give_dtac_get_custom_taxs(); //Get custom taxonomies object array
+
+	if  ( $taxonomies ){
+
+		foreach ( $taxonomies  as $taxonomy ) {
+
+			$result[] = $taxonomy->name; 
+		}
+
+	}
+
+	return $result;
+}
+
+
+if( ! function_exists( 'give_dtac_get_donor_by_payment_id' ) ){
+
+	/**
+	 * [give_dtac_get_donor_by_payment_id]
+	 * 
+	 * Get donor by payment id. Useful when using hooks and filters which have only
+	 * payment id as parameter
+	 * 
+	 * @since  1.0
+	 * 
+	 * @param  [int] $payment_id [ID of the payment]
+	 * 
+	 * @return [int]             
+	 */
+	function give_dtac_get_donor_by_payment_id( $payment_id ){
+
+		$result = '';
+
+		$donor_id = get_post_meta( $payment_id, '_give_payment_customer_id', true );
+
+		if( '' != $donor_id ) {
+			$result = $donor_id;
+		}
+
+		return $result;
+	}
+
+}//End if function_exists check

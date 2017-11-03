@@ -75,7 +75,22 @@ class Give_Donate_To_Access_Content_Hooks extends Give_Donate_To_Access_Content_
 
 		$access_content = $_POST['give_dtac_content'];
 
-		update_post_meta( $payment_id, '_give_dtac_access_to_content', $access_content );
+		//If access to complete website is requested
+		if( 'site' == $access_content ) {
+
+			//Get donor's id from payment id
+			$donor_id = give_dtac_get_donor_by_payment_id( $payment_id );
+
+			//Add website access rights to donor meta table
+			GIVE_DTAC()->give->donor_meta->add_meta( $donor_id, 'give_dtca_access_website', 'yes' );
+
+			//update the access rights in the payments meta table as well
+			update_post_meta( $payment_id, '_give_dtac_access_to_content', $access_content );
+
+		} else {
+
+			update_post_meta( $payment_id, '_give_dtac_access_to_content', $access_content );	
+		}
 	}
 
 } //End class Give_Donate_To_Access_Content_Hooks

@@ -61,7 +61,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Content_Admin_Settings' ) ) :
 		 */
 		public function give_dtac_add_settings_tab( $pages ) {
 
-			$pages[ $this->give_dtac_settings_page_id ] = __( 'Donate To Access', 'give-dta' );
+			$pages[ $this->give_dtac_settings_page_id ] = __( 'Donate To Access', 'give-dtac' );
 
 			return $pages;
 		}
@@ -105,7 +105,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Content_Admin_Settings' ) ) :
 		public function give_dtac_get_sections() {
 
 			$give_dtac_sections = array(
-				'access-control' => __( 'Access Control', 'give-dta' )
+				'access-control' => __( 'Access Control', 'give-dtac' )
 			);
 
 			return apply_filters( 'give_get_sections_donateaccess', $give_dtac_sections );
@@ -170,15 +170,39 @@ if( ! class_exists( 'Give_Donate_To_Access_Content_Admin_Settings' ) ) :
 								'type' => 'title'
 							),
 							array(
-								'name'    => __( 'Restrict Content Message', 'give-dta' ),
-								'desc'    => __( 'This message will appear instead of restrcited content, if you choose to display a message instead of Donation form in the shortcode<br/>Please use %%donation_form_url%% to display the URL to donation form.<br/>The Donation form link will go to the form whose ID will be given in the shortcode', 'give-dta' ),
+								'name'    => __( 'Restrict Whole Website', 'give-dtac' ),
+								'desc'    => __( "Selecting 'Yes' to this option will restrcit the complete website expect for the Donation Form page.<br><strong>To get this to work properly please provide a Give Donation Form ID below</strong>", 'give-dtac' ),
+								'id'      => 'give_dtac_restrict_website',
+								'type'    => 'select',
+								'default' => 'no',
+								'options' => $this->give_dtac_settings_array( 'yes_no' )
+							),
+							array(
+								'name'    => __( 'Allow Pages', 'give-dtac' ),
+								'desc'    => __( "Please select pages you wish to give access to when you are restricting the whole website.<br/><strong>By Default: The Donation Form page whose ID has been mentioned below will always be given access to</strong>", 'give-dtac' ),
+								'id'      => 'give_dtac_access_to_pages',
+								'type'    => 'multiselect',
+								'class'	  => 'give-dtac-select2',
+								'default' => '',
+								'options' => $this->give_dtac_get_pages_posts()
+							),
+							array(
+								'name'    => __( 'Give Donation Form ID', 'give-dtac' ),
+								'desc'    => __( 'Please enter a Give Donation Form ID. <br/>This form will be the form that a user will be redirected to in order to make the donation and access the pages,posts,etc... selected here to restrict.', 'give-dtac' ),
+								'id'      => 'give_dtac_restrict_access_give_form_id',
+								'type'    => 'text',
+								'default' => '1'
+							),
+							array(
+								'name'    => __( 'Restrict Content Message', 'give-dtac' ),
+								'desc'    => __( 'This message will appear instead of restrcited content, if you choose to display a message instead of Donation form in the shortcode<br/>Please use %%donation_form_url%% to display the URL to donation form.<br/>The Donation form link will go to the form whose ID will be given in the shortcode', 'give-dtac' ),
 								'id'      => 'give_dtac_restrict_message',
 								'type'    => 'wysiwyg',
 								'default' => $this->give_dtac_restrict_message_content(),
 							),
 							array(
 								'name'    => __( 'Restrict Access To?', 'give' ),
-								'desc'    => __( 'Restrict Access to complete page, post, category, etc..', 'give-dta' ),
+								'desc'    => __( 'Restrict Access to complete page, post, category, etc..', 'give-dtac' ),
 								'id'      => 'give_dtac_restrict_access_to',
 								'type'    => 'multiselect',
 								'class'	  => 'give-dtac-select2',
@@ -186,15 +210,8 @@ if( ! class_exists( 'Give_Donate_To_Access_Content_Admin_Settings' ) ) :
 								'options' => $this->give_dtac_settings_array( 'restrict_access_to' )
 							),
 							array(
-								'name'    => __( 'Give Donation Form ID', 'give-dta' ),
-								'desc'    => __( 'Please enter a Give Donation Form ID. <br/>This form will be the form that a user will be redirected to in order to make the donation and access the pages,posts,etc... selected here to restrict.', 'give-dta' ),
-								'id'      => 'give_dtac_restrict_access_give_form_id',
-								'type'    => 'text',
-								'default' => '1'
-							),
-							array(
-								'name'    => __( 'Restrict Pages', 'give-dta' ),
-								'desc'    => __( "Please select the pages you wish to restrict", 'give-dta' ),
+								'name'    => __( 'Restrict Pages', 'give-dtac' ),
+								'desc'    => __( "Please select the pages you wish to restrict", 'give-dtac' ),
 								'id'      => 'give_dtac_restrict_access_to_pages',
 								'type'    => 'multiselect',
 								'class'	  => 'give-dtac-select2',
@@ -202,8 +219,8 @@ if( ! class_exists( 'Give_Donate_To_Access_Content_Admin_Settings' ) ) :
 								'options' => $this->give_dtac_get_pages_posts()
 							),
 							array(
-								'name'    => __( 'Restrict Posts', 'give-dta' ),
-								'desc'    => __( "Please select the posts you wish to restrict", 'give-dta' ),
+								'name'    => __( 'Restrict Posts', 'give-dtac' ),
+								'desc'    => __( "Please select the posts you wish to restrict", 'give-dtac' ),
 								'id'      => 'give_dtac_restrict_access_to_posts',
 								'type'    => 'multiselect',
 								'class'	  => 'give-dtac-select2',
@@ -211,8 +228,8 @@ if( ! class_exists( 'Give_Donate_To_Access_Content_Admin_Settings' ) ) :
 								'options' => $this->give_dtac_get_pages_posts( 'posts' )
 							),
 							array(
-								'name'    => __( 'Restrict Custom Post Types', 'give-dta' ),
-								'desc'    => __( "Please select the custom posts types you wish to restrict", 'give-dta' ),
+								'name'    => __( 'Restrict Custom Post Types', 'give-dtac' ),
+								'desc'    => __( "Please select the custom posts types you wish to restrict", 'give-dtac' ),
 								'id'      => 'give_dtac_restrict_access_to_cpt',
 								'type'    => 'multiselect',
 								'class'	  => 'give-dtac-select2',
@@ -220,8 +237,8 @@ if( ! class_exists( 'Give_Donate_To_Access_Content_Admin_Settings' ) ) :
 								'options' => $this->give_dtac_get_custom_post_types()
 							),
 							array(
-								'name'    => __( 'Restrict Categories', 'give-dta' ),
-								'desc'    => __( "Please select the categories you wish to restrict", 'give-dta' ),
+								'name'    => __( 'Restrict Categories', 'give-dtac' ),
+								'desc'    => __( "Please select the categories you wish to restrict", 'give-dtac' ),
 								'id'      => 'give_dtac_restrict_access_to_cats',
 								'type'    => 'multiselect',
 								'class'	  => 'give-dtac-select2',
@@ -229,8 +246,8 @@ if( ! class_exists( 'Give_Donate_To_Access_Content_Admin_Settings' ) ) :
 								'options' => $this->give_dtac_get_categories()
 							),
 							array(
-								'name'    => __( 'Restrict Custom Taxonomies', 'give-dta' ),
-								'desc'    => __( "Please select custom Taxonomies you wish to restrict", 'give-dta' ),
+								'name'    => __( 'Restrict Custom Taxonomies', 'give-dtac' ),
+								'desc'    => __( "Please select custom Taxonomies you wish to restrict", 'give-dtac' ),
 								'id'      => 'give_dtac_restrict_access_to_custom_tax',
 								'type'    => 'multiselect',
 								'class'	  => 'give-dtac-select2',
@@ -241,10 +258,10 @@ if( ! class_exists( 'Give_Donate_To_Access_Content_Admin_Settings' ) ) :
 							
 							/******* DO not remove the following lines *******/
 	                        array(
-	                            'name'  => __( 'Advanced Settings Docs Link', 'give-dta' ),
+	                            'name'  => __( 'Advanced Settings Docs Link', 'give-dtac' ),
 	                            'id'    => 'advanced_settings_docs_link',
 	                            'url'   => esc_url( 'http://docs.givewp.com/settings-advanced' ),
-	                            'title' => __( 'Advanced Settings', 'give-dta' ),
+	                            'title' => __( 'Advanced Settings', 'give-dtac' ),
 	                            'type'  => 'give_docs_link',
 	                        ),
 							array(
@@ -293,7 +310,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Content_Admin_Settings' ) ) :
 			 *
 			 * @since 1.0
 			 */
-			do_action( 'give_update_options_' . $this->give_dtac_settings_page_id . '_' . $current_section );
+			do_action( 'give_dtac_update_options_' . $this->give_dtac_settings_page_id . '_' . $current_section );
 		}
 
 	} // End class Give_Donate_To_Access_Content_Admin_Settings

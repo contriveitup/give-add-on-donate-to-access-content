@@ -47,6 +47,10 @@ class Give_Donate_To_Access_Content_Admin_Functions {
 										'cpt' 	=> 'Post Types',
 										'ctax'	=> 'Custom Taxonomies'
 									),
+			'yes_no' 			=> array(
+										'yes' 	=> 'Yes',
+										'no' 	=> 'No',
+									),
 
 		);
 
@@ -154,12 +158,7 @@ class Give_Donate_To_Access_Content_Admin_Functions {
 
 		$result = array();
 
-		$args = array(); //Only get public tax and ignore built-in taxomonies
-		$args = apply_filters( 'give_dtac_custom_tax_args', $args, $args );
-
-		$output = apply_filters( 'give_dtac_custom_tax_output_value', 'objects' ); // or names
-
-		$taxonomies = get_taxonomies( $args, $output ); 
+		$taxonomies = give_dtac_get_custom_taxs();
 
 		if  ( $taxonomies ):
 

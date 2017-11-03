@@ -68,6 +68,8 @@ final class Give_Donate_To_Access_Content {
 	 */
 	public $admin_notices = array();
 
+	public $test = 'ok';
+
 
 	/**
 	 * Singleton Method
@@ -120,7 +122,7 @@ final class Give_Donate_To_Access_Content {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'give' ), '1.0' );
+		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'give-dtac' ), '1.0' );
 	}
 
 
@@ -169,7 +171,7 @@ final class Give_Donate_To_Access_Content {
         //Check if Main Give plugin is activated 
         if( ! function_exists( 'Give' ) ) {
 
-        	$this->add_admin_notice( 'prompt_connect', 'error', sprintf( __( '<strong>Activation Error:</strong> You must have the <a href="%s" target="_blank">Give</a> core plugin installed and activated for Give Donate to Access Content Add-On to Work.', 'give-dtca' ), 'https://givewp.com' ) );
+        	$this->add_admin_notice( 'prompt_connect', 'error', sprintf( __( '<strong>Activation Error:</strong> You must have the <a href="%s" target="_blank">Give</a> core plugin installed and activated for Give Donate to Access Content Add-On to Work.', 'give-dtac' ), 'https://givewp.com' ) );
 
         	deactivate_plugins( GIVE_DTAC_PLUGIN_BASENAME );
 
@@ -358,7 +360,9 @@ final class Give_Donate_To_Access_Content {
 
 
 /**
- * [GIVE_DTAC description]
+ * [GIVE_DTAC]
+ * 
+ * Instance of final class of this plugin
  */
 function GIVE_DTAC(){
 	return Give_Donate_To_Access_Content::give_dtac_instance();
