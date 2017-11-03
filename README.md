@@ -8,7 +8,8 @@ An Unoffcial [Give](https://wordpress.org/plugins/give/) plugin add-on.
 	* Requires at least: 4.2
 	* Tested up to: 4.8
 2. PHP	
-	* Requires PHP: 5.3
+	* Requires Minimum: 5.3
+	* Tested up to: 7.0.8
 3. Give
 	* Requires at least: 1.8
 	* Tested up to: 1.8.16
