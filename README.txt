@@ -51,5 +51,5 @@ Q. What if I am on a single post page and a category in that post is restricted.
 A. Yes, for now on the Category Archive page can be restricted. If a post is in that category a user can view that post without donation unless you restrict that entire post altogether.
 
 == Changelog ==
-= 1.0: November 6, 2017 =
+= 1.0: November 8, 2017 =
 * Initial Release. JMJK!!
