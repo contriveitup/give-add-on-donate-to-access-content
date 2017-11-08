@@ -13,9 +13,9 @@ An Unoffcial [Give](https://wordpress.org/plugins/give/) plugin add-on to restri
 == Description ==
 This is a Free add-on to Give donation plugin which allows admin to restrict the content of their website until a user has made a donation. 
 
-Once a user has made the donation they can access the content. 
+Once a user has made the donation they can access the content. Admin can choose to restrict the content of the site via shortcode or they restrict the entire website or a particular page, post, category, post type, etc... with the help of plugin settings.
 
-Admin can choose to restrict the content of the site via shortcode or they restrict the entire website or a particular page, post, category, post type, etc... with the help of plugin settings.
+You can also track the development at : https://github.com/contriveitup/give-add-on-donate-to-access-content
 
 == Installation ==
 == Automatic Plugin Installation ==
