@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * 
  * This shortcode will restrict access to the content until a donation is made.
  * 
- * Usage : [give_donate_to_access form_id=1 show='form|message'] Content to be restricted goes here [/give_donate_to_access_func]
+ * Usage : [cip_donate_to_access_content form_id=1 show='form|message'] Content to be restricted goes here [/cip_donate_to_access_content]
  * 
  * Form ID is necessary and it will show a donation form by default when the content is restricted
  * 
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * 
  * @return viod|output HTML
  */
-function give_donate_to_access_func( $atts, $content = null ) {
+function donate_to_access_give_shortcode_func( $atts, $content = null ) {
 	global $wp_query;
 
     $a = 	shortcode_atts( 
@@ -52,7 +52,7 @@ function give_donate_to_access_func( $atts, $content = null ) {
 
     	$restrict_content = do_shortcode( '[give_form id="'.$a['form_id'].'"]' );
 
-    	$content = GIVE_DTAC()->frontend_functions->give_dta_check_access( $content, $restrict_content );
+    	$content = DTAC_GIVE()->frontend_functions->dtac_give_check_access( $content, $restrict_content );
 
     endif;
 
@@ -60,17 +60,17 @@ function give_donate_to_access_func( $atts, $content = null ) {
     //If show type is a message
     if( $a['show'] == 'message' ) : 
 
-    	$message = GIVE_DTAC()->frontend_functions->give_dta_get_settings( 'give_dta_restrict_message' );
+    	$message = dtac_give_get_settings( 'dtac_give_restrict_message' );
 
-        $donation_link = give_dtac_donation_form_url( $a['form_id'], $current_page_id );
+        $donation_link = dtac_give_donation_form_url( $a['form_id'], $current_page_id );
 
     	$message = str_replace( '%%donation_form_url%%', $donation_link, $message );
 
-    	$content = GIVE_DTAC()->frontend_functions->give_dta_check_access( $content, $message );
+    	$content = DTAC_GIVE()->frontend_functions->dtac_give_check_access( $content, $message );
     	
 
     endif;
 
     return $content;
 }
-add_shortcode( 'give_donate_to_access', 'give_donate_to_access_func' );
+add_shortcode( 'cip_donate_to_access_content', 'donate_to_access_give_shortcode_func' );

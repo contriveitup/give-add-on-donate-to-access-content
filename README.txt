@@ -1,6 +1,6 @@
 === Donate to Access Content ===
-Contributors: @contriveitup @rupakdhiman
-Tags: donate, donate to access, donate to access content, give add-on, wordpress plugin, free wordpress plugin, free give plugin add-on, contriveitup,
+Contributors: @contriveitup, @rupakdhiman
+Tags: donate, donate to access, donate to access content, give add-on, wordpress plugin, free wordpress plugin, free give plugin add-on, contriveitup
 Requires at least: 4.3
 Tested up to: 4.8.x
 Requires PHP: 5.3
@@ -43,7 +43,7 @@ A. With this plugin, you can restrict the content on a page or post by using plu
 Q. What shortcode is used to restrict the content?
 A. The shortcode which is used to restrict the content is:
 
-[give_donate_to_access form_id=1 show="form|message"]
+[cip_donate_to_access_content form_id=1 show="form|message"]
 
 It has 2 options, the first one is required which is the ID of the donation form which would appear instead of the restricted content. The second option is to either show a Donation form or a Message in place of the restricted content.
 

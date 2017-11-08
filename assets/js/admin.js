@@ -8,5 +8,5 @@
 jQuery( 'document' ).ready( function( $ ){
 
 	//Convert select boxes to select2
-	$('.give-dtac-select2').select2();
+	$('.dtac-give-select2').select2();
 });

@@ -2,11 +2,11 @@
 /**
  * Plugin Name: Give Addon - Donate To Accesss Content
  * Plugin URI: https://github.com/contriveitup/give-add-on-donate-to-access-content
- * Description: This Give plugin Add-on ask users to donate in order to access content of a post or page. It can also restrict compelete website to chosen post, page, category page, post types and much more...
+ * Description: Give plugin Add-on ask users to donate in order to access content of a post or page. It can also restrict compelete website to chosen post, page, category page, post types and much more...
  * Version: 1.0
  * Author: ContriveItUp
  * Author URI: https://github.com/contriveitup
- * Text Domain: give-dtac
+ * Text Domain: dtac-give
  * Domain Path: /languages
  * GitHub Plugin URI: https://github.com/contriveitup/give-add-on-donate-to-access-content
  * License: GPL3
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * 
  * @since 1.0
  */
-final class Give_Donate_To_Access_Content {
+final class CIP_Give_Donate_To_Access_Content {
 
 	/**
 	 * Main Class Instance
@@ -32,7 +32,7 @@ final class Give_Donate_To_Access_Content {
 	 * @since 1.0
 	 * @access private
 	 * 
-	 * @var Main class instanace Give_Donate_To_Access_Content()
+	 * @var Main class instanace CIP_Give_Donate_To_Access_Content()
 	 */ 
 	private static $instance;
 
@@ -68,8 +68,6 @@ final class Give_Donate_To_Access_Content {
 	 */
 	public $admin_notices = array();
 
-	public $test = 'ok';
-
 
 	/**
 	 * Singleton Method
@@ -81,7 +79,7 @@ final class Give_Donate_To_Access_Content {
 	 * 
 	 * @return Class Instance 
 	 */
-	public static function give_dtac_instance() {
+	public static function dtac_give_instance() {
 
         if ( ! isset( self::$instance ) ) {
             self::$instance = new self();
@@ -96,14 +94,14 @@ final class Give_Donate_To_Access_Content {
 	 */
 	public function __construct() {
 
-		$this->give_dtac_hooks();
-		$this->give_dtac_constants();
+		$this->dtac_give_hooks();
+		$this->dtac_give_constants();
 
 		if( function_exists( 'Give' ) ) {
 			$this->give = Give();	
 			$this->load_textdomain();
-			$this->give_dtac_includes();
-			$this->give_dtac_setup();
+			$this->dtac_give_includes();
+			$this->dtac_give_setup();
 		}
 		
 	}
@@ -122,7 +120,7 @@ final class Give_Donate_To_Access_Content {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'give-dtac' ), '1.0' );
+		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'dtac-give' ), '1.0' );
 	}
 
 
@@ -135,11 +133,11 @@ final class Give_Donate_To_Access_Content {
 	 * 
 	 * @return viod
 	 */
-	public function give_dtac_hooks() {
+	public function dtac_give_hooks() {
 		//Registration hook
 		add_action( 'admin_notices', array( $this, 'give_dtca_admin_notices' ) );
-		add_action( 'admin_init', array( $this, 'give_dtac_install' ) );
-		add_filter( "plugin_action_links_" . plugin_basename(__FILE__), array( $this, 'give_dtac_plugin_add_settings_link' ) );
+		add_action( 'admin_init', array( $this, 'dtac_give_install' ) );
+		add_filter( "plugin_action_links_" . plugin_basename(__FILE__), array( $this, 'dtac_give_plugin_add_settings_link' ) );
 	}
 
 
@@ -151,7 +149,7 @@ final class Give_Donate_To_Access_Content {
 	 * 
 	 * @return array
 	 */
-	public function give_dtac_plugin_add_settings_link( $links ) {
+	public function dtac_give_plugin_add_settings_link( $links ) {
 		 $mylinks = array(
 		 '<a href="' . admin_url( 'edit.php?post_type=give_forms&page=give-settings&tab=donateaccess' ) . '">Settings</a>',
 		 );
@@ -166,14 +164,14 @@ final class Give_Donate_To_Access_Content {
 	 * @since 1.0
 	 * @static
 	 */
-	public function give_dtac_install() {
+	public function dtac_give_install() {
         
         //Check if Main Give plugin is activated 
         if( ! function_exists( 'Give' ) ) {
 
-        	$this->add_admin_notice( 'prompt_connect', 'error', sprintf( __( '<strong>Activation Error:</strong> You must have the <a href="%s" target="_blank">Give</a> core plugin installed and activated for Give Donate to Access Content Add-On to Work.', 'give-dtac' ), 'https://givewp.com' ) );
+        	$this->add_admin_notice( 'prompt_connect', 'error', sprintf( __( '<strong>Activation Error:</strong> You must have the <a href="%s" target="_blank">Give</a> core plugin installed and activated for Give Donate to Access Content Add-On to Work.', 'dtac-give' ), 'https://givewp.com' ) );
 
-        	deactivate_plugins( GIVE_DTAC_PLUGIN_BASENAME );
+        	deactivate_plugins( DTAC_GIVE_PLUGIN_BASENAME );
 
         	if ( isset( $_GET['activate'] ) ) {
 				unset( $_GET['activate'] );
@@ -191,31 +189,31 @@ final class Give_Donate_To_Access_Content {
  	 * 
  	 * @return string
  	 */
- 	private function give_dtac_constants() {
+ 	private function dtac_give_constants() {
 
  		// Plugin Folder Path
-		if ( ! defined( 'GIVE_DTAC_PLUGIN_DIR' ) ) {
-			define( 'GIVE_DTAC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+		if ( ! defined( 'DTAC_GIVE_PLUGIN_DIR' ) ) {
+			define( 'DTAC_GIVE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 		}
 
 		// Plugin Folder URL
-		if ( ! defined( 'GIVE_DTAC_PLUGIN_URL' ) ) {
-			define( 'GIVE_DTAC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+		if ( ! defined( 'DTAC_GIVE_PLUGIN_URL' ) ) {
+			define( 'DTAC_GIVE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 		}
 
 		// Plugin Basename aka: "give-donate-to-access/give-donate-to-access.php"
-		if ( ! defined( 'GIVE_DTAC_PLUGIN_BASENAME' ) ) {
-			define( 'GIVE_DTAC_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+		if ( ! defined( 'DTAC_GIVE_PLUGIN_BASENAME' ) ) {
+			define( 'DTAC_GIVE_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 		}
 
 		// Plugin Root File
-		if ( ! defined( 'GIVE_DTAC_PLUGIN_FILE' ) ) {
-			define( 'GIVE_DTAC_PLUGIN_FILE', __FILE__ );
+		if ( ! defined( 'DTAC_GIVE_PLUGIN_FILE' ) ) {
+			define( 'DTAC_GIVE_PLUGIN_FILE', __FILE__ );
 		}
 
 		// Plugin Root File
-		if ( ! defined( 'GIVE_DTAC_PLUGIN_VERSION' ) ) {
-			define( 'GIVE_DTAC_PLUGIN_VERSION', 1.0 );
+		if ( ! defined( 'DTAC_GIVE_PLUGIN_VERSION' ) ) {
+			define( 'DTAC_GIVE_PLUGIN_VERSION', 1.0 );
 		}
  	}
 
@@ -317,33 +315,33 @@ final class Give_Donate_To_Access_Content {
  	 * 
  	 * @return void 
  	 */
- 	public function give_dtac_includes() {
+ 	public function dtac_give_includes() {
 
  		//General
- 		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/functions.php';
- 		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/scripts.php';
+ 		require_once DTAC_GIVE_PLUGIN_DIR . 'includes/functions.php';
+ 		require_once DTAC_GIVE_PLUGIN_DIR . 'includes/scripts.php';
 
  		//Frontend
-	 	require_once GIVE_DTAC_PLUGIN_DIR . 'includes/frontend/class-functions.php';
- 		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/frontend/class-hooks.php';
- 		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/frontend/class-restrict-content.php';
- 		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/frontend/shortcodes.php';
+	 	require_once DTAC_GIVE_PLUGIN_DIR . 'includes/frontend/class-functions.php';
+ 		require_once DTAC_GIVE_PLUGIN_DIR . 'includes/frontend/class-hooks.php';
+ 		require_once DTAC_GIVE_PLUGIN_DIR . 'includes/frontend/class-restrict-content.php';
+ 		require_once DTAC_GIVE_PLUGIN_DIR . 'includes/frontend/shortcodes.php';
 
  		//Admin
- 		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/admin/class-functions.php';
- 		require_once GIVE_DTAC_PLUGIN_DIR . 'includes/admin/class-give-donate-to-access-settings.php';
+ 		require_once DTAC_GIVE_PLUGIN_DIR . 'includes/admin/class-functions.php';
+ 		require_once DTAC_GIVE_PLUGIN_DIR . 'includes/admin/class-give-donate-to-access-settings.php';
  		
  	}
 
 
- 	public function give_dtac_setup() {
+ 	public function dtac_give_setup() {
 
  		/**
  		 * Fires before plugin setup
  		 * 
  		 * @since  1.0
  		 */
- 		do_action( 'give_dtac_before_plugin_setup' );
+ 		do_action( 'dtac_give_before_plugin_setup' );
 
  		//Frontend
  		$this->frontend_functions = new Give_Donate_To_Access_Content_Functions();
@@ -353,10 +351,10 @@ final class Give_Donate_To_Access_Content {
  		 * 
  		 * @since  1.0
  		 */
- 		do_action( 'give_dtac_after_plugin_setup' );
+ 		do_action( 'dtac_give_after_plugin_setup' );
  	}
 
-} // End class Give_Donate_To_Access_Content
+} // End class CIP_Give_Donate_To_Access_Content
 
 
 /**
@@ -364,7 +362,7 @@ final class Give_Donate_To_Access_Content {
  * 
  * Instance of final class of this plugin
  */
-function GIVE_DTAC(){
-	return Give_Donate_To_Access_Content::give_dtac_instance();
+function DTAC_GIVE(){
+	return CIP_Give_Donate_To_Access_Content::dtac_give_instance();
 }
-add_action( 'plugins_loaded', 'GIVE_DTAC' );
+add_action( 'plugins_loaded', 'DTAC_GIVE' );

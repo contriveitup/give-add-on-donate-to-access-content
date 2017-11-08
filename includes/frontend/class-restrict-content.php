@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * 
  * @access public
  */
-class Give_Donate_To_Access_Content_Restrict_Cotent extends Give_Donate_To_Access_Content_Functions {
+class Donate_To_Access_Content_Give_Restrict_Cotent extends Donate_To_Access_Content_Give_Functions {
 
 	/**
 	 * [__construct]
@@ -21,7 +21,7 @@ class Give_Donate_To_Access_Content_Restrict_Cotent extends Give_Donate_To_Acces
 	 */
 	public function __construct() {
 
-		add_action( 'wp', array( $this, 'give_dtac_restrict_full' ) );
+		add_action( 'wp', array( $this, 'dtac_give_restrict_full' ) );
 	}
 
 	/**
@@ -34,12 +34,12 @@ class Give_Donate_To_Access_Content_Restrict_Cotent extends Give_Donate_To_Acces
 	 * 
 	 * @return void redirection
 	 */
-	public function give_dtac_restrict_full() {
+	public function dtac_give_restrict_full() {
 		global $wp_query;
 
-		$form_id 			= (int) give_dtac_get_settings( 'give_dtac_restrict_access_give_form_id' );
-		$restrict_website 	= give_dtac_get_settings( 'give_dtac_restrict_website' );
-		$to_restrcit 		= give_dtac_get_settings( 'give_dtac_restrict_access_to' );
+		$form_id 			= (int) dtac_give_get_settings( 'dtac_give_restrict_access_give_form_id' );
+		$restrict_website 	= dtac_give_get_settings( 'dtac_give_restrict_website' );
+		$to_restrcit 		= dtac_give_get_settings( 'dtac_give_restrict_access_to' );
 
 		if( ! $form_id || 0 == $form_id ) {
 			return;
@@ -48,7 +48,7 @@ class Give_Donate_To_Access_Content_Restrict_Cotent extends Give_Donate_To_Acces
 		//If whole website is restricted
 		if( 'yes' == $restrict_website && ! is_admin() ) {
 
-			$this->give_dtac_restrict_whole_site( $form_id );
+			$this->dtac_give_restrict_whole_site( $form_id );
 
 		} else {
 
@@ -56,33 +56,33 @@ class Give_Donate_To_Access_Content_Restrict_Cotent extends Give_Donate_To_Acces
 
 				//If pages 
 				if( in_array( 'pages', $to_restrcit ) && is_page() ) {
-					$this->give_dtac_restrict_pages( $form_id );
+					$this->dtac_give_restrict_pages( $form_id );
 				}
 
 				//If posts 
 				if( in_array( 'posts', $to_restrcit ) && is_single() ) {
-					$this->give_dtac_restrict_posts( $form_id );
+					$this->dtac_give_restrict_posts( $form_id );
 				}
 
 				//If categories 
 				if( in_array( 'cats', $to_restrcit ) && ( is_archive() || is_single() ) ) {
-					$this->give_dtac_restrict_cats( $form_id );
+					$this->dtac_give_restrict_cats( $form_id );
 				}
 
 				//If custom post types
 				if( in_array( 'cpt', $to_restrcit ) && is_singular() ) {
-					$this->give_dtac_restrict_cpt( $form_id );
+					$this->dtac_give_restrict_cpt( $form_id );
 				}
 
 				//If custom tax 
 				if( in_array( 'ctax', $to_restrcit ) && is_tax() ) {
-					$this->give_dtac_restrict_ctax( $form_id );
+					$this->dtac_give_restrict_ctax( $form_id );
 				}
 
 			endif; //End if array check
 		}
 	}
 
-}// End class Give_Donate_To_Access_Content_Restrict_Cotent
+}// End class Donate_To_Access_Content_Give_Restrict_Cotent
 
-new Give_Donate_To_Access_Content_Restrict_Cotent();
+new Donate_To_Access_Content_Give_Restrict_Cotent();

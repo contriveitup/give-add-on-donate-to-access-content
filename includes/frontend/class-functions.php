@@ -11,9 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
+if( ! class_exists( 'Donate_To_Access_Content_Give_Functions' ) ):
 
-	class Give_Donate_To_Access_Content_Functions {
+	class Donate_To_Access_Content_Give_Functions {
 
 
 		/**
@@ -39,7 +39,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 		 * 
 		 * @return string Result
 		 */
-		public function give_dtac_check_access( $content, $restrict_content = '' ) {
+		public function dtac_give_check_access( $content, $restrict_content = '' ) {
 
 			global $wp_query;
 
@@ -50,7 +50,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 
 			$current_page_id = $wp_query->post->ID;
 
-			$is_restricted = $this->give_dtac_is_donor_restricted( $current_page_id );
+			$is_restricted = $this->dtac_give_is_donor_restricted( $current_page_id );
 
 			if( $is_restricted ) {
 				$result = $restrict_content;
@@ -72,11 +72,11 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 		 * 
 		 * @return bool
 		 */
-		public static function give_dtac_is_donor_restricted( $content ) {
+		public static function dtac_give_is_donor_restricted( $content ) {
 
 			$is_restricted = true;
 
-			$donor = give_dtac_get_donor();
+			$donor = dtac_give_get_donor();
 
 			//If donor exists
 			if( ! empty( $donor ) ) {
@@ -90,7 +90,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 
 					foreach ( $payment_ids as $payment_id ) {
 						//Get content ID's to acess
-						$access_content[] = get_post_meta( $payment_id, '_give_dtac_access_to_content', true );
+						$access_content[] = get_post_meta( $payment_id, '_dtac_give_access_to_content', true );
 					}
 
 					if( in_array( $content, $access_content ) ) {
@@ -106,7 +106,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 
 
 		/**
-		 * [give_dtac_restrict_whole_site]
+		 * [dtac_give_restrict_whole_site]
 		 * 
 		 * Restrict Access to complete website unless a donor has made a donation
 		 * 
@@ -116,25 +116,25 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 		 * 
 		 * @return [type]          
 		 */
-		public function give_dtac_restrict_whole_site( $form_id ) {
+		public function dtac_give_restrict_whole_site( $form_id ) {
 			global $wp_query;
 
 			$donated = '';
 
-			$donor = give_dtac_get_donor();
+			$donor = dtac_give_get_donor();
 
 			if( $donor ) {
-				$donated = GIVE_DTAC()->give->donor_meta->get_meta( $donor->id, 'give_dtca_access_website', true );	
+				$donated = DTAC_GIVE()->give->donor_meta->get_meta( $donor->id, 'give_dtca_access_website', true );	
 			}
 
 			if( ! $donated || $donated != 'yes' ) {
 
 				$current_cpt 	= get_post_type();
 				$current_cpt_id = $wp_query->post->ID;
-				$access_to 		= give_dtac_get_settings( 'give_dtac_access_to_pages' );
+				$access_to 		= dtac_give_get_settings( 'dtac_give_access_to_pages' );
 
 				if( ! is_page( $access_to ) && ! is_singular( 'give_forms' ) && $current_cpt_id != $form_id ) {
-					wp_safe_redirect( give_dtac_donation_form_url( $form_id, 'site' ) );
+					wp_safe_redirect( dtac_give_donation_form_url( $form_id, 'site' ) );
 					exit;
 				}
 			}
@@ -149,10 +149,10 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 		 * 
 		 * @return void
 		 */
-		public function give_dtac_restrict_pages( $form_id ) {
+		public function dtac_give_restrict_pages( $form_id ) {
 			global $wp_query;
 
-			$pages = give_dtac_get_settings( 'give_dtac_restrict_access_to_pages' );
+			$pages = dtac_give_get_settings( 'dtac_give_restrict_access_to_pages' );
 
 			$pages = ( ! empty( $pages ) ? $pages : array() );
 
@@ -162,10 +162,10 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 
 				if( is_page( $pages ) ) {
 
-					$is_restricted = $this->give_dtac_is_donor_restricted( $current_page );
+					$is_restricted = $this->dtac_give_is_donor_restricted( $current_page );
 
 					if( $is_restricted ) {
-						wp_safe_redirect( give_dtac_donation_form_url( $form_id, $current_page ) );
+						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_page ) );
 						exit;	
 					}
 				}// End if is_page check
@@ -181,10 +181,10 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 		 * 
 		 * @return void
 		 */
-		public function give_dtac_restrict_posts( $form_id ) {
+		public function dtac_give_restrict_posts( $form_id ) {
 			global $wp_query;
 
-			$posts = give_dtac_get_settings( 'give_dtac_restrict_access_to_posts' );
+			$posts = dtac_give_get_settings( 'dtac_give_restrict_access_to_posts' );
 
 			$posts = ( ! empty( $posts ) ? $posts : array() );
 
@@ -194,10 +194,10 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 
 				if( is_single( $posts ) ) {
 
-					$is_restricted = $this->give_dtac_is_donor_restricted( $current_post );
+					$is_restricted = $this->dtac_give_is_donor_restricted( $current_post );
 
 					if( $is_restricted ) {
-						wp_safe_redirect( give_dtac_donation_form_url( $form_id, $current_post ) );
+						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_post ) );
 						exit;	
 					}
 				}// End if is_page check
@@ -217,10 +217,10 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 		 * 
 		 * @return void
 		 */
-		public function give_dtac_restrict_cats( $form_id ) {
+		public function dtac_give_restrict_cats( $form_id ) {
 			global $wp_query;
 
-			$cats = give_dtac_get_settings( 'give_dtac_restrict_access_to_cats' );
+			$cats = dtac_give_get_settings( 'dtac_give_restrict_access_to_cats' );
 
 			$cats = ( ! empty ( $cats ) ? $cats: array() );
 
@@ -231,10 +231,10 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 
 				if( is_category( $cats ) ) {
 
-					$is_restricted = $this->give_dtac_is_donor_restricted( $current_cat );
+					$is_restricted = $this->dtac_give_is_donor_restricted( $current_cat );
 
 					if( $is_restricted ) {
-						wp_safe_redirect( give_dtac_donation_form_url( $form_id, $current_cat ) );
+						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_cat ) );
 						exit;	
 					}
 				}// End if is_page check
@@ -243,7 +243,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 
 
 		/**
-		 * [give_dtac_restrict_cpt]
+		 * [dtac_give_restrict_cpt]
 		 * 
 		 * Restrict a custom post types
 		 * 
@@ -253,10 +253,10 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 		 * 
 		 * @return [void]          
 		 */
-		public function give_dtac_restrict_cpt( $form_id ) {
+		public function dtac_give_restrict_cpt( $form_id ) {
 			global $wp_query;
 
-			$cpts = give_dtac_get_settings( 'give_dtac_restrict_access_to_cpt' );
+			$cpts = dtac_give_get_settings( 'dtac_give_restrict_access_to_cpt' );
 
 			$cpts = ( ! empty( $cpts ) ? $cpts : array() );
 
@@ -266,10 +266,10 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 
 				if( is_singular( $cpts ) ) {
 
-					$is_restricted = $this->give_dtac_is_donor_restricted( $current_cpt );
+					$is_restricted = $this->dtac_give_is_donor_restricted( $current_cpt );
 
 					if( $is_restricted ) {
-						wp_safe_redirect( give_dtac_donation_form_url( $form_id, $current_cpt ) );
+						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_cpt ) );
 						exit;	
 					}
 				}// End if is_page check
@@ -279,7 +279,7 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 
 
 		/**
-		 * [give_dtac_restrict_ctax]
+		 * [dtac_give_restrict_ctax]
 		 * 
 		 * Restrict a custom taxonomy archive page
 		 * 
@@ -289,14 +289,14 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 		 * 
 		 * @return [void]          
 		 */
-		public function give_dtac_restrict_ctax( $form_id ) {
+		public function dtac_give_restrict_ctax( $form_id ) {
 			global $wp_query;
 
-			$ctaxs = give_dtac_get_settings( 'give_dtac_restrict_access_to_custom_tax' );
+			$ctaxs = dtac_give_get_settings( 'dtac_give_restrict_access_to_custom_tax' );
 
 			$ctaxs = ( ! empty( $ctaxs ) ? $ctaxs : array() );
 
-			$taxonomies 	= give_dtac_get_custom_taxs_names(); //Get names of all registered taxonomies
+			$taxonomies 	= dtac_give_get_custom_taxs_names(); //Get names of all registered taxonomies
 			$queried_object = get_queried_object(); 
 			$current_ctax 	= 'c'.$queried_object->term_id; //Currently displayed tax ID
 
@@ -304,16 +304,16 @@ if( ! class_exists( 'Give_Donate_To_Access_Functions' ) ):
 
 				if( is_tax( $taxonomies, $ctaxs ) ) {
 
-					$is_restricted = $this->give_dtac_is_donor_restricted( $current_ctax );
+					$is_restricted = $this->dtac_give_is_donor_restricted( $current_ctax );
 
 					if( $is_restricted ) {
-						wp_safe_redirect( give_dtac_donation_form_url( $form_id, $current_ctax ) );
+						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_ctax ) );
 						exit;	
 					}
 				}// End if is_page check
 			}// End if empty check
 		}
 
-	} //End class Give_Donate_To_Access_Functions
+	} //End class Donate_To_Access_Content_Give_Functions
 
 endif; //End if class_exists check

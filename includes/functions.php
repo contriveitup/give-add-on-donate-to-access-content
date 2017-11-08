@@ -29,18 +29,18 @@ $give = Give();
  * 
  * @return array|mix Settings 
  */
-function give_dtac_get_settings( $key = '' ) {
+function dtac_give_get_settings( $key = '' ) {
 
 	$settings = array();
 
-	$settings = get_option( 'give_dtac_settings' );
+	$settings = get_option( 'dtac_give_settings' );
 
 	if( ! empty( $settings ) ) {
 
 		if( '' != $key ) {
 			$settings = $settings[ $key ];
 		} else {
-			$settings = (array) apply_filters( 'give_dtac_get_settings', $settings );
+			$settings = (array) apply_filters( 'dtac_give_get_settings', $settings );
 		}
 	}
 
@@ -49,7 +49,7 @@ function give_dtac_get_settings( $key = '' ) {
 
 
 
-if( ! function_exists( 'give_dtac_get_donor' ) ):
+if( ! function_exists( 'dtac_give_get_donor' ) ):
 
 	/**
 	 * Get the donor by id or email
@@ -61,7 +61,7 @@ if( ! function_exists( 'give_dtac_get_donor' ) ):
 	 * 
 	 * @return array
 	 */
-	function give_dtac_get_donor() {
+	function dtac_give_get_donor() {
 		
 		global $give;
 
@@ -83,8 +83,8 @@ if( ! function_exists( 'give_dtac_get_donor' ) ):
 
 		$field = ( is_int( $id ) ? 'user_id' : 'email' );
 
-		$field = apply_filters( 'give_dtac_donor_field', $field );
-		$value = apply_filters( 'give_dtac_donor_value', $id );
+		$field = apply_filters( 'dtac_give_donor_field', $field );
+		$value = apply_filters( 'dtac_give_donor_value', $id );
 
 
 		/**
@@ -119,15 +119,15 @@ endif; //End if function_exists check
  * 
  * @return string  
  */
-function give_dtac_donation_form_url( $form_id, $current_page_id ) {
+function dtac_give_donation_form_url( $form_id, $current_page_id ) {
 
 	$form_url = get_permalink( $form_id );
 
 	$query_args = array(
-					'give_dtac_content' => $current_page_id,
+					'dtac_give_content' => $current_page_id,
 				);
 
-	$query_args = apply_filters( 'give_dtac_redirection_query_string_array', $query_args, $query_args );
+	$query_args = apply_filters( 'dtac_give_redirection_query_string_array', $query_args, $query_args );
 
 	$form_url = esc_url( add_query_arg( $query_args, $form_url ) );
 
@@ -160,7 +160,7 @@ function is_dtac_plugin_settings_page() {
 
 
 /**
- * [give_dtac_get_custom_taxs]
+ * [dtac_give_get_custom_taxs]
  * 
  * Get all registered custom taxonomies
  * 
@@ -168,14 +168,14 @@ function is_dtac_plugin_settings_page() {
  * 
  * @return [array] 
  */
-function give_dtac_get_custom_taxs() {
+function dtac_give_get_custom_taxs() {
 
 	$taxomonies = array();
 
 	$args = array(); //Only get public tax and ignore built-in taxomonies
-	$args = apply_filters( 'give_dtac_custom_tax_args', $args, $args );
+	$args = apply_filters( 'dtac_give_custom_tax_args', $args, $args );
 
-	$output = apply_filters( 'give_dtac_custom_tax_output_value', 'objects' ); // or names
+	$output = apply_filters( 'dtac_give_custom_tax_output_value', 'objects' ); // or names
 
 	$taxonomies = get_taxonomies( $args, $output ); 
 
@@ -184,7 +184,7 @@ function give_dtac_get_custom_taxs() {
 
 
 /**
- * [give_dtac_get_custom_taxs_names]
+ * [dtac_give_get_custom_taxs_names]
  * 
  * Get names of all registered taxonomies and return it in an array
  * 
@@ -192,11 +192,11 @@ function give_dtac_get_custom_taxs() {
  * 
  * @return [array] 
  */
-function give_dtac_get_custom_taxs_names() {
+function dtac_give_get_custom_taxs_names() {
 
 	$result = array();
 
-	$taxonomies = give_dtac_get_custom_taxs(); //Get custom taxonomies object array
+	$taxonomies = dtac_give_get_custom_taxs(); //Get custom taxonomies object array
 
 	if  ( $taxonomies ){
 
@@ -211,10 +211,10 @@ function give_dtac_get_custom_taxs_names() {
 }
 
 
-if( ! function_exists( 'give_dtac_get_donor_by_payment_id' ) ){
+if( ! function_exists( 'dtac_give_get_donor_by_payment_id' ) ){
 
 	/**
-	 * [give_dtac_get_donor_by_payment_id]
+	 * [dtac_give_get_donor_by_payment_id]
 	 * 
 	 * Get donor by payment id. Useful when using hooks and filters which have only
 	 * payment id as parameter
@@ -225,7 +225,7 @@ if( ! function_exists( 'give_dtac_get_donor_by_payment_id' ) ){
 	 * 
 	 * @return [int]             
 	 */
-	function give_dtac_get_donor_by_payment_id( $payment_id ){
+	function dtac_give_get_donor_by_payment_id( $payment_id ){
 
 		$result = '';
 

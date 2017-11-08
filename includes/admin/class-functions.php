@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
-* Class Give_Donate_To_Access_Content_Admin_Functions
+* Class Donate_To_Access_Content_Give_Admin_Functions
 */
-class Give_Donate_To_Access_Content_Admin_Functions {
+class Donate_To_Access_Content_Give_Admin_Functions {
 		
 	/**
 	 * [__construct]
@@ -25,7 +25,7 @@ class Give_Donate_To_Access_Content_Admin_Functions {
 
 
 	/**
-	 * [give_dtac_settings_array]
+	 * [dtac_give_settings_array]
 	 * 
 	 * Return an array of required items to be used in different places
 	 * in Admin
@@ -36,7 +36,7 @@ class Give_Donate_To_Access_Content_Admin_Functions {
 	 * 
 	 * @return [array]
 	 */
-	protected function give_dtac_settings_array( $key ) {
+	protected function dtac_give_settings_array( $key ) {
 
 		$setting_options = array(
 
@@ -54,14 +54,14 @@ class Give_Donate_To_Access_Content_Admin_Functions {
 
 		);
 
-		$setting_options = apply_filters( 'give_dtac_admin_array', $setting_options, $setting_options );
+		$setting_options = apply_filters( 'dtac_give_admin_array', $setting_options, $setting_options );
 
 		return $setting_options[ $key ];
 	}
 
 
 	/**
-	 * [give_dtac_get_pages_posts]
+	 * [dtac_give_get_pages_posts]
 	 * 
 	 * Get all pages & posts that have a published status
 	 * 
@@ -71,7 +71,7 @@ class Give_Donate_To_Access_Content_Admin_Functions {
 	 * 
 	 * @return [array]
 	 */
-	protected function give_dtac_get_pages_posts( $get = 'pages' ) {
+	protected function dtac_give_get_pages_posts( $get = 'pages' ) {
 
 		$result = array();
 
@@ -89,7 +89,7 @@ class Give_Donate_To_Access_Content_Admin_Functions {
 
 
 	/**
-	 * [give_dtac_get_custom_post_types]
+	 * [dtac_give_get_custom_post_types]
 	 * 
 	 * Get all public custom post types
 	 * 
@@ -97,7 +97,7 @@ class Give_Donate_To_Access_Content_Admin_Functions {
 	 * 
 	 * @return [array]
 	 */
-	protected function give_dtac_get_custom_post_types() {
+	protected function dtac_give_get_custom_post_types() {
 
 		$result = array();
 
@@ -105,10 +105,10 @@ class Give_Donate_To_Access_Content_Admin_Functions {
 		   'public'   => true,
 		   '_builtin' => false
 		);
-		$args = apply_filters( 'give_dtac_cpt_args', $args, $args );
+		$args = apply_filters( 'dtac_give_cpt_args', $args, $args );
 
-		$output 	= apply_filters( 'give_dtac_cpt_output_parameter', 'names' ); // names or objects, note names is the default
-		$operator 	= apply_filters( 'give_dtac_cpt_operator', 'and' ); // 'and' or 'or'
+		$output 	= apply_filters( 'dtac_give_cpt_output_parameter', 'names' ); // names or objects, note names is the default
+		$operator 	= apply_filters( 'dtac_give_cpt_operator', 'and' ); // 'and' or 'or'
 
 		$post_types = get_post_types( $args, $output, $operator ); 
 
@@ -122,7 +122,7 @@ class Give_Donate_To_Access_Content_Admin_Functions {
 
 
 	/**
-	 * [give_dtac_get_categories]
+	 * [dtac_give_get_categories]
 	 * 
 	 * Get all WordPress categories
 	 * 
@@ -130,7 +130,7 @@ class Give_Donate_To_Access_Content_Admin_Functions {
 	 * 
 	 * @return [array]
 	 */
-	protected function give_dtac_get_categories() {
+	protected function dtac_give_get_categories() {
 
 		$result = array();
 
@@ -146,7 +146,7 @@ class Give_Donate_To_Access_Content_Admin_Functions {
 
 
 	/**
-	 * [give_dtac_get_custom_tax]
+	 * [dtac_give_get_custom_tax]
 	 * 
 	 * Get all registered and public custom taxonomies
 	 * 
@@ -154,11 +154,11 @@ class Give_Donate_To_Access_Content_Admin_Functions {
 	 * 
 	 * @return [array]
 	 */
-	protected function give_dtac_get_custom_tax() {
+	protected function dtac_give_get_custom_tax() {
 
 		$result = array();
 
-		$taxonomies = give_dtac_get_custom_taxs();
+		$taxonomies = dtac_give_get_custom_taxs();
 
 		if  ( $taxonomies ):
 
@@ -179,4 +179,4 @@ class Give_Donate_To_Access_Content_Admin_Functions {
 		return $result;
 	}
 
-}// End class Give_Donate_To_Access_Content_Admin_Functions
+}// End class Donate_To_Access_Content_Give_Admin_Functions
