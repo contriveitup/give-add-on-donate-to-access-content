@@ -37,19 +37,23 @@ Note: Installation of a WordPress Plugin manually requires FTP familiarity and t
 5. Click Activate to activate it.
 
 == Frequently Asked Questions ==
-Q. What type of content can I restrict with this plugin?
-A. With this plugin, you can restrict the content on a page or post by using plugin\'s shortcode or you can restrict an entire page, post, category archive page, custom post type, custom taxonomy archive page.
 
-Q. What shortcode is used to restrict the content?
-A. The shortcode which is used to restrict the content is:
+= What type of content can I restrict with this plugin? =
+
+With this plugin, you can restrict the content on a page or post by using plugin\'s shortcode or you can restrict an entire page, post, category archive page, custom post type, custom taxonomy archive page.
+
+= What shortcode is used to restrict the content? =
+
+The shortcode which is used to restrict the content is:
 
 [cip_donate_to_access_content form_id=1 show="form|message"]
 
 It has 2 options, the first one is required which is the ID of the donation form which would appear instead of the restricted content. The second option is to either show a Donation form or a Message in place of the restricted content.
 
-Q. What if I am on a single post page and a category in that post is restricted. Would a user will still be able to view that post?
-A. Yes, for now on the Category Archive page can be restricted. If a post is in that category a user can view that post without donation unless you restrict that entire post altogether.
+= What if I am on a single post page and a category in that post is restricted. Would a user will still be able to view that post? =
+
+Yes, for now on the Category Archive page can be restricted. If a post is in that category a user can view that post without donation unless you restrict that entire post altogether.
 
 == Changelog ==
-= 1.0: November 8, 2017 =
+= 1.0: November 9, 2017 =
 * Initial Release. JMJK!!
