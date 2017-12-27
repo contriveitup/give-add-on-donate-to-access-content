@@ -1,10 +1,11 @@
 === Donate to Access Content ===
-Contributors: @contriveitup, @rupakdhiman
+Contributors: contriveitup, rupakdhiman
 Tags: donate, donate to access, donate to access content, give add-on, wordpress plugin, free wordpress plugin, free give plugin add-on, contriveitup
+Donate link: paypal.me/contriveitup
 Requires at least: 4.3
-Tested up to: 4.8.x
+Tested up to: 4.9.x
 Requires PHP: 5.3
-Stable tag: 1.0
+Stable tag: 1.0.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -57,3 +58,6 @@ Yes, for now on the Category Archive page can be restricted. If a post is in tha
 == Changelog ==
 = 1.0: November 9, 2017 =
 * Initial Release. JMJK!!
+
+= 1.0.1: December 20, 2017 =
+* Fixed: Fatal Error - Class not found.

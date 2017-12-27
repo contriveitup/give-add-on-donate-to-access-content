@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * 
  * @since  1.0
  */
-class Donate_To_Access_Content_Give_Hooks extends Give_Donate_To_Access_Content_Functions {
+class Donate_To_Access_Content_Give_Hooks extends Donate_To_Access_Content_Give_Functions {
 
 	public function __construct() {
 
