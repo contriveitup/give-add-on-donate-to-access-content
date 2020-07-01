@@ -3,7 +3,7 @@
  * Plugin Name: Give Addon - Donate To Accesss Content
  * Plugin URI: https://github.com/contriveitup/give-add-on-donate-to-access-content
  * Description: Give plugin Add-on ask users to donate in order to access content of a post or page. It can also restrict compelete website to chosen post, page, category page, post types and much more...
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: ContriveItUp
  * Author URI: https://github.com/contriveitup
  * Text Domain: dtac-give

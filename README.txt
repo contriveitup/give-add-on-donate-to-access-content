@@ -61,3 +61,6 @@ Yes, for now on the Category Archive page can be restricted. If a post is in tha
 
 = 1.0.1: December 20, 2017 =
 * Fixed: Fatal Error - Class not found.
+
+= 1.0.2: July 1, 2020 =
+* Tested: WordPress 5.4.x.
