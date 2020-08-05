@@ -12,46 +12,46 @@
  * License: GPL3
  */
 
- 
+
 // Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {	exit; }
+defined( 'ABSPATH' ) || exit;
 
 
 /**
  * Main Add-On class
- * 
+ *
  * @since 1.0
  */
 final class CIP_Give_Donate_To_Access_Content {
 
 	/**
 	 * Main Class Instance
-	 * 
+	 *
 	 * @since 1.0
 	 * @access private
-	 * 
+	 *
 	 * @var Main class instanace CIP_Give_Donate_To_Access_Content()
-	 */ 
+	 */
 	private static $instance;
 
 
 	/**
 	 * [$frontend_functions]
-	 * 
+	 *
 	 * Save instance of Give_Donate_To_Access_Functions class
-	 * 
+	 *
 	 * @since  1.0
 	 * @access public
-	 * 
+	 *
 	 * @var [object]
 	 */
 	public $frontend_functions;
 
 	/**
 	 * [$give]
-	 * 
+	 *
 	 * Save core Give plugin class instance
-	 * 
+	 *
 	 * @var [public]
 	 */
 	public $give;
@@ -69,39 +69,39 @@ final class CIP_Give_Donate_To_Access_Content {
 
 	/**
 	 * Singleton Method
-	 * 
+	 *
 	 * Makes sure only one instance of the class is returned
-	 * 
+	 *
 	 * @since 1.0
 	 * @access public
-	 * 
-	 * @return Class Instance 
+	 *
+	 * @return Class Instance
 	 */
 	public static function dtac_give_instance() {
 
-        if ( ! isset( self::$instance ) ) {
-            self::$instance = new self();
-        }
+		if ( ! isset( self::$instance ) ) {
+			self::$instance = new self();
+		}
 
-        return self::$instance;
-    }
+		return self::$instance;
+	}
 
 
 	/**
 	 * Class Constructor
 	 */
-	public function __construct() {
+	private function __construct() {
 
 		$this->dtac_give_hooks();
 		$this->dtac_give_constants();
 
 		if( function_exists( 'Give' ) ) {
-			$this->give = Give();	
+			$this->give = Give();
 			$this->load_textdomain();
 			$this->dtac_give_includes();
 			$this->dtac_give_setup();
 		}
-		
+
 	}
 
 
@@ -116,7 +116,24 @@ final class CIP_Give_Donate_To_Access_Content {
 	 *
 	 * @return void
 	 */
-	public function __clone() {
+	private function __clone() {
+		// Cloning instances of the class is forbidden.
+		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'dtac-give' ), '1.0' );
+	}
+
+
+	/**
+	 * Throw error on object wakeup
+	 *
+	 * The whole idea of the singleton design pattern is that there is a single
+	 * object, therefore we don't want the object to be cloned.
+	 *
+	 * @since  1.0
+	 * @access protected
+	 *
+	 * @return void
+	 */
+	private function __wakeup() {
 		// Cloning instances of the class is forbidden.
 		_doing_it_wrong( __FUNCTION__, __( 'Cheatin&#8217; huh?', 'dtac-give' ), '1.0' );
 	}
@@ -124,15 +141,15 @@ final class CIP_Give_Donate_To_Access_Content {
 
 	/**
 	 * WordPress Hooks
-	 * 
+	 *
 	 * This contains plugin specific WordPress Hooks/Actions
-	 * 
+	 *
 	 * @since 1.0
-	 * 
+	 *
 	 * @return viod
 	 */
 	public function dtac_give_hooks() {
-		//Registration hook
+		// Registration hook.
 		add_action( 'admin_notices', array( $this, 'give_dtca_admin_notices' ) );
 		add_action( 'admin_init', array( $this, 'dtac_give_install' ) );
 		add_filter( "plugin_action_links_" . plugin_basename(__FILE__), array( $this, 'dtac_give_plugin_add_settings_link' ) );
@@ -140,53 +157,57 @@ final class CIP_Give_Donate_To_Access_Content {
 
 
 	/**
-	 * Add Settings link to the plugin page
-	 * 
-	 * @since 1.0
-	 * @param $links array
-	 * 
+	 * Add Settings link to the plugin page.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $links Setting links array.
+	 *
 	 * @return array
 	 */
 	public function dtac_give_plugin_add_settings_link( $links ) {
-		 $mylinks = array(
-		 '<a href="' . admin_url( 'edit.php?post_type=give_forms&page=give-settings&tab=donateaccess' ) . '">Settings</a>',
-		 );
+
+		$mylinks = array(
+			'<a href="' . esc_url( admin_url( 'edit.php?post_type=give_forms&page=give-settings&tab=donateaccess' ) ) . '">'. esc_html__( 'Settings', 'dtac-give' ) .'</a>',
+		);
+
 		return array_merge( $links, $mylinks );
 	}
 
 	/**
-	 * WP Registration Hook
-	 * 
-	 * Runs when the plugin is activated
-	 * 
-	 * @since 1.0
+	 * WP Registration Hook.
+	 *
+	 * Runs when the plugin is activated.
+	 *
+	 * @since 1.0.0
+	 *
 	 * @static
 	 */
 	public function dtac_give_install() {
-        
-        //Check if Main Give plugin is activated 
-        if( ! function_exists( 'Give' ) ) {
 
-        	$this->add_admin_notice( 'prompt_connect', 'error', sprintf( __( '<strong>Activation Error:</strong> You must have the <a href="%s" target="_blank">Give</a> core plugin installed and activated for Give Donate to Access Content Add-On to Work.', 'dtac-give' ), 'https://givewp.com' ) );
+		// Check if Main Give plugin is activated.
+		if( ! function_exists( 'Give' ) ) {
 
-        	deactivate_plugins( DTAC_GIVE_PLUGIN_BASENAME );
+			$this->add_admin_notice( 'prompt_connect', 'error', sprintf( __( '<strong>Activation Error:</strong> You must have the <a href="%s" target="_blank">Give</a> core plugin installed and activated for Give Donate to Access Content Add-On to Work.', 'dtac-give' ), 'https://givewp.com' ) );
 
-        	if ( isset( $_GET['activate'] ) ) {
+			deactivate_plugins( DTAC_GIVE_PLUGIN_BASENAME );
+
+			if ( isset( $_GET['activate'] ) ) {
 				unset( $_GET['activate'] );
 			}
-        }
+		}
  	}
 
 
  	/**
- 	 * PLugin Constants
- 	 * 
- 	 * Required constants to be used by the plugin.
- 	 * 
- 	 * @since 1.0
- 	 * 
- 	 * @return string
- 	 */
+	* PLugin Constants
+	*
+ 	* Required constants to be used by the plugin.
+ 	*
+ 	* @since 1.0
+ 	*
+ 	* @return string
+ 	*/
  	private function dtac_give_constants() {
 
  		// Plugin Folder Path
@@ -218,16 +239,16 @@ final class CIP_Give_Donate_To_Access_Content {
 
  	/**
  	 * [add_admin_notice]
- 	 * 
+ 	 *
  	 * Capture Admin Notices in an array
- 	 * 
+ 	 *
  	 * @since  1.0
- 	 * 
+ 	 *
  	 * @param [string] 	$slug    [message slug]
  	 * @param [string] 	$class   [message class like error, etc..]
  	 * @param [string] 	$message [the error or notice message]
- 	 * 
- 	 * @return  array 
+ 	 *
+ 	 * @return  array
  	 */
  	public function add_admin_notice( $slug, $class, $message ) {
 		$this->admin_notices[ $slug ] = array(
@@ -239,12 +260,12 @@ final class CIP_Give_Donate_To_Access_Content {
 
 	/**
 	 * [give_dtca_admin_notices]
-	 * 
+	 *
 	 * Add notices to admin_notices WP hook
-	 * 
+	 *
 	 * @since  1.0
-	 * 
-	 * @return [HTML] 
+	 *
+	 * @return [HTML]
 	 */
  	public function give_dtca_admin_notices(){
 
@@ -306,29 +327,29 @@ final class CIP_Give_Donate_To_Access_Content {
 
  	/**
  	 * Plugin Files
- 	 * 
+ 	 *
  	 * Include plugin files to run different plugin functionality
- 	 * 
+ 	 *
  	 * @since 1.0
- 	 * 
- 	 * @return void 
+ 	 *
+ 	 * @return void
  	 */
  	public function dtac_give_includes() {
 
- 		//General
+ 		// General.
  		require_once DTAC_GIVE_PLUGIN_DIR . 'includes/functions.php';
  		require_once DTAC_GIVE_PLUGIN_DIR . 'includes/scripts.php';
 
- 		//Frontend
+ 		// Frontend.
 	 	require_once DTAC_GIVE_PLUGIN_DIR . 'includes/frontend/class-functions.php';
  		require_once DTAC_GIVE_PLUGIN_DIR . 'includes/frontend/class-hooks.php';
  		require_once DTAC_GIVE_PLUGIN_DIR . 'includes/frontend/class-restrict-content.php';
  		require_once DTAC_GIVE_PLUGIN_DIR . 'includes/frontend/shortcodes.php';
 
- 		//Admin
+ 		// Admin.
  		require_once DTAC_GIVE_PLUGIN_DIR . 'includes/admin/class-functions.php';
  		require_once DTAC_GIVE_PLUGIN_DIR . 'includes/admin/class-give-donate-to-access-settings.php';
- 		
+
  	}
 
 
@@ -336,7 +357,7 @@ final class CIP_Give_Donate_To_Access_Content {
 
  		/**
  		 * Fires before plugin setup
- 		 * 
+ 		 *
  		 * @since  1.0
  		 */
  		do_action( 'dtac_give_before_plugin_setup' );
@@ -346,7 +367,7 @@ final class CIP_Give_Donate_To_Access_Content {
 
  		/**
  		 * Fires after plugin setup
- 		 * 
+ 		 *
  		 * @since  1.0
  		 */
  		do_action( 'dtac_give_after_plugin_setup' );
@@ -357,7 +378,7 @@ final class CIP_Give_Donate_To_Access_Content {
 
 /**
  * [GIVE_DTAC]
- * 
+ *
  * Instance of final class of this plugin
  */
 function DTAC_GIVE(){

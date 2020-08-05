@@ -1,57 +1,44 @@
 <?php
 /**
  * Custom Functions for Admin Area
- * 
- * @since  1.0
+ *
+ * @since 1.0.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
 
 /**
-* Class Donate_To_Access_Content_Give_Admin_Functions
-*/
+ * Class Donate_To_Access_Content_Give_Admin_Functions
+ *
+ * @since 1.0.0
+ */
 class Donate_To_Access_Content_Give_Admin_Functions {
-		
-	/**
-	 * [__construct]
-	 * 
-	 * Class Constructor
-	 */
-	public function __construct(){
-		
-	}
-
 
 	/**
-	 * [dtac_give_settings_array]
-	 * 
 	 * Return an array of required items to be used in different places
-	 * in Admin
-	 * 
-	 * @since  1.0
-	 * 
-	 * @param  [string] $key [name of array key which will return the array of items needed]
-	 * 
-	 * @return [array]
+	 * in Admin.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $key Mame of array key which will return the array of items needed.
+	 *
+	 * @return array
 	 */
 	protected function dtac_give_settings_array( $key ) {
 
 		$setting_options = array(
-
 			'restrict_access_to' => array(
-										'pages' => 'Pages',
-										'posts' => 'Posts',
-										'cats' 	=> 'Categories',
-										'cpt' 	=> 'Post Types',
-										'ctax'	=> 'Custom Taxonomies'
-									),
-			'yes_no' 			=> array(
-										'yes' 	=> 'Yes',
-										'no' 	=> 'No',
-									),
-
+				'pages' => 'Pages',
+				'posts' => 'Posts',
+				'cats'  => 'Categories',
+				'cpt'   => 'Post Types',
+				'ctax'  => 'Custom Taxonomies',
+			),
+			'yes_no' => array(
+				'yes' => 'Yes',
+				'no'  => 'No',
+			),
 		);
 
 		$setting_options = apply_filters( 'dtac_give_admin_array', $setting_options, $setting_options );
@@ -59,76 +46,63 @@ class Donate_To_Access_Content_Give_Admin_Functions {
 		return $setting_options[ $key ];
 	}
 
-
 	/**
-	 * [dtac_give_get_pages_posts]
-	 * 
-	 * Get all pages & posts that have a published status
-	 * 
-	 * @since  1.0
-	 * 
-	 * @param  string $get [What to get? Pages or Posts]
-	 * 
-	 * @return [array]
+	 * Get all pages & posts that have a published status.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $get What to get? Pages or Posts.
+	 *
+	 * @return array
 	 */
 	protected function dtac_give_get_pages_posts( $get = 'pages' ) {
 
 		$result = array();
+		$pages  = ( 'pages' == $get ? get_pages() : get_posts() );
 
-		$pages = ( 'pages' == $get ? get_pages() : get_posts() ); 
+		foreach ( $pages as $page ) {
+			$result[ $page->ID ] = $page->post_title;
+		}
 
-	  	foreach ( $pages as $page ) {
-
-	  		$result[$page->ID] = $page->post_title;
-		  	
-	  	}
-
-	  	return $result;
+		return $result;
 	}
 
-
-
 	/**
-	 * [dtac_give_get_custom_post_types]
-	 * 
-	 * Get all public custom post types
-	 * 
-	 * @since  1.0
-	 * 
-	 * @return [array]
+	 * Get all public custom post types.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array
 	 */
 	protected function dtac_give_get_custom_post_types() {
 
 		$result = array();
 
 		$args = array(
-		   'public'   => true,
-		   '_builtin' => false
+			'public'   => true,
+			'_builtin' => false,
 		);
+
 		$args = apply_filters( 'dtac_give_cpt_args', $args, $args );
 
-		$output 	= apply_filters( 'dtac_give_cpt_output_parameter', 'names' ); // names or objects, note names is the default
-		$operator 	= apply_filters( 'dtac_give_cpt_operator', 'and' ); // 'and' or 'or'
+		$output   = apply_filters( 'dtac_give_cpt_output_parameter', 'names' ); // names or objects, note names is the default.
+		$operator = apply_filters( 'dtac_give_cpt_operator', 'and' ); // 'and' or 'or'.
 
-		$post_types = get_post_types( $args, $output, $operator ); 
+		$post_types = get_post_types( $args, $output, $operator );
 
 		foreach ( $post_types  as $post_type ) {
-
-		   $result[$post_type] = $post_type;
+			$result[ $post_type ] = $post_type;
 		}
 
-	  	return $result;
+		return $result;
 	}
 
-
 	/**
-	 * [dtac_give_get_categories]
-	 * 
-	 * Get all WordPress categories
-	 * 
-	 * @since  1.0
-	 * 
-	 * @return [array]
+	 * Get all WordPress categories.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array
 	 */
 	protected function dtac_give_get_categories() {
 
@@ -137,22 +111,18 @@ class Donate_To_Access_Content_Give_Admin_Functions {
 		$cats = get_terms( 'category', 'orderby=count&hide_empty=0' );
 
 		foreach ( $cats as $key => $cat ) {
-			
-			$result[$cat->term_id] = $cat->name;
+			$result[ $cat->term_id ] = $cat->name;
 		}
 
-	  	return $result;
+		return $result;
 	}
 
-
 	/**
-	 * [dtac_give_get_custom_tax]
-	 * 
-	 * Get all registered and public custom taxonomies
-	 * 
-	 * @since  1.0
-	 * 
-	 * @return [array]
+	 * Get all registered and public custom taxonomies.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return array
 	 */
 	protected function dtac_give_get_custom_tax() {
 
@@ -160,17 +130,15 @@ class Donate_To_Access_Content_Give_Admin_Functions {
 
 		$taxonomies = dtac_give_get_custom_taxs();
 
-		if  ( $taxonomies ):
+		if ( $taxonomies ) :
 
 			foreach ( $taxonomies  as $taxonomy ) {
 
-				$args =  array( 'taxonomy' => $taxonomy->name ); 
-
+				$args  =  array( 'taxonomy' => $taxonomy->name );
 				$terms = get_terms( $args );
 
-				foreach ($terms as $key => $term) {
-
-					$result[$term->term_id] = $term->name . ' ( ' . $taxonomy->name . ' )';
+				foreach ( $terms as $key => $term ) {
+					$result[ $term->term_id ] = $term->name . ' ( ' . $taxonomy->name . ' )';
 				}
 			}
 
@@ -179,4 +147,4 @@ class Donate_To_Access_Content_Give_Admin_Functions {
 		return $result;
 	}
 
-}// End class Donate_To_Access_Content_Give_Admin_Functions
+} // End class Donate_To_Access_Content_Give_Admin_Functions.
