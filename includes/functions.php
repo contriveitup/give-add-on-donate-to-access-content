@@ -28,24 +28,18 @@ $give = Give();
  *
  * @since 1.0.0
  *
- * @return array|mix
+ * @return mixed
  */
-function dtac_give_get_settings( $key = '' ) {
+function dtac_give_get_settings( string $key = '' ) {
 
-	$settings = array();
+	$settings = get_option( 'dtac_give_settings', array() );
 
-	$settings = get_option( 'dtac_give_settings' );
+	if ( dtac_is_valid_array( $settings, $key, true ) ) {
 
-	if ( ! empty( $settings ) ) {
-
-		if ( '' !== $key ) {
-			$settings = $settings[ $key ];
-		} else {
-			$settings = (array) apply_filters( 'dtac_give_get_settings', $settings );
-		}
+		return $settings[ $key ] ?? '';
 	}
 
-	return $settings;
+	return (array) apply_filters( 'dtac_give_get_settings', $settings );
 }
 
 if ( ! function_exists( 'dtac_give_get_donor' ) ) :
@@ -141,14 +135,11 @@ function dtac_give_donation_form_url( $form_id, $current_page_id ) {
  *
  * @return boolean
  */
-function is_dtac_plugin_settings_page() {
+function is_dtac_plugin_settings_page() : bool {
 
 	$is_admin_settings_page = false;
 
-	$page = ( isset( $_GET['page'] ) && $_GET['page'] == 'give-settings' ? true : false );
-	$tab = ( isset( $_GET['tab'] ) && $_GET['tab'] == 'donateaccess' ? true : false );
-
-	if ( $page && $tab ) {
+	if ( isset( $_GET['page'] ) && 'dtac' === $_GET['page'] ) {
 		$is_admin_settings_page = true;
 	}
 
@@ -160,7 +151,7 @@ function is_dtac_plugin_settings_page() {
  *
  * Get all registered custom taxonomies
  *
- * @since  1.0
+ * @since  1.0.0
  *
  * @return [array]
  */
@@ -184,7 +175,7 @@ function dtac_give_get_custom_taxs() {
  *
  * Get names of all registered taxonomies and return it in an array
  *
- * @since  1.0
+ * @since  1.0.0
  *
  * @return [array]
  */
@@ -232,3 +223,100 @@ if ( ! function_exists( 'dtac_give_get_donor_by_payment_id' ) ) {
 		return $result;
 	}
 } // End if function_exists check.
+
+/**
+ * Check if a class has implemented a given interface.
+ *
+ * @since 2.0.0
+ *
+ * @param string $class_name     Name of the class.
+ * @param string $interface_name Name of the interface.
+ *
+ * @return boolean
+ */
+function has_implemented_interface( string $class_name, string $interface_name ) : bool {
+
+	$class = new ReflectionClass( $class_name );
+
+	if ( $class->implementsInterface( $interface_name ) ) {
+		return $class;
+	}
+
+	return false;
+}
+
+/**
+ * Contains an array key or array is valid.
+ *
+ * By default it checks for an empty and if the array is actually a
+ * type of array
+ *
+ * @since 2.0.0
+ *
+ * @param mixed  $value     Array to check.
+ * @param string $key       Array key to check if it exists in the array.
+ * @param bool   $check_key Only check key if this is true. Default false.
+ *
+ * @return bool
+ */
+function dtac_is_valid_array( $value, string $key = '', bool $check_key = false ) : bool {
+
+	if ( is_array( $value ) ) {
+
+		if ( ! empty( $value ) ) {
+
+			if ( $check_key ) {
+
+				if ( array_key_exists( $key, $value ) ) {
+					return true;
+				}
+			}
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Multi Select input types.
+ *
+ * Array of input types where we can select more than
+ * one option.
+ *
+ * @since 2.0.0
+ *
+ * @return array
+ */
+function multiple_input_types() : array {
+
+	return array(
+		'multi-select',
+		'checkbox',
+	);
+}
+
+/**
+ * Allowed HTML tags in a string.
+ *
+ * Used by: wp_kses()
+ *
+ * @see https://codex.wordpress.org/Function_Reference/wp_kses
+ *
+ * @since 2.0.0
+ *
+ * @return array
+ */
+function dtac_allowed_html_tags() : array {
+
+	return array(
+		'a' => array(
+			'href'  => array(),
+			'title' => array(),
+		),
+		'br'     => array(),
+		'em'     => array(),
+		'strong' => array(),
+	);
+}

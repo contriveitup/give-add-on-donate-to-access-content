@@ -1,9 +1,17 @@
 == Changelog ==
-= 1.0: November 8, 2017 =
-* Initial Release. JMJK!!
+= 2.0.0: Aug 10, 2020 =
+* Updated
+    - Optimized PHP code.
+* Fixed
+    - Typos in plugin name and descriptions.
+* Added
+    - Admin page to manage plugin settings.
+
+= 1.0.2: July 1, 2020 =
+* Tested: WordPress 5.4.x.
 
 = 1.0.1: December 20, 2017 =
 * Fixed: Fatal Error - Class not found.
 
-= 1.0.2: July 1, 2020 =
-* Tested: WordPress 5.4.x.
+= 1.0: November 8, 2017 =
+* Initial Release. JMJK!!

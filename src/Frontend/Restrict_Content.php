@@ -5,6 +5,10 @@
  * @since 1.0.0
  */
 
+namespace DTAC\Frontend;
+
+use DTAC\Frontend\Functions;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -16,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @uses Class::Donate_To_Access_Content_Give_Functions
  */
-class Donate_To_Access_Content_Give_Restrict_Cotent extends Donate_To_Access_Content_Give_Functions {
+class Restrict_Content extends Functions {
 
 	/**
 	 * Class constructor
@@ -42,43 +46,43 @@ class Donate_To_Access_Content_Give_Restrict_Cotent extends Donate_To_Access_Con
 
 		$form_id          = (int) dtac_give_get_settings( 'dtac_give_restrict_access_give_form_id' );
 		$restrict_website = dtac_give_get_settings( 'dtac_give_restrict_website' );
-		$to_restrcit      = dtac_give_get_settings( 'dtac_give_restrict_access_to' );
+		$to_restrict      = dtac_give_get_settings( 'dtac_give_restrict_access_to' );
 
-		if ( ! $form_id || 0 == $form_id ) {
+		if ( ! $form_id || 0 === $form_id ) {
 			return;
 		}
 
 		// If whole website is restricted.
-		if ( 'yes' == $restrict_website && ! is_admin() ) {
+		if ( 'yes' === $restrict_website && ! is_admin() ) {
 
 			$this->dtac_give_restrict_whole_site( $form_id );
 
 		} else {
 
-			if ( is_array( $to_restrcit ) && ! empty( $to_restrcit ) ) :
+			if ( is_array( $to_restrict ) && ! empty( $to_restrict ) ) :
 
 				// If pages.
-				if ( in_array( 'pages', $to_restrcit ) && is_page() ) {
+				if ( in_array( 'pages', $to_restrict, true ) && is_page() ) {
 					$this->dtac_give_restrict_pages( $form_id );
 				}
 
 				// If posts.
-				if ( in_array( 'posts', $to_restrcit ) && is_single() ) {
+				if ( in_array( 'posts', $to_restrict, true ) && is_single() ) {
 					$this->dtac_give_restrict_posts( $form_id );
 				}
 
 				// If categories.
-				if ( in_array( 'cats', $to_restrcit ) && ( is_archive() || is_single() ) ) {
+				if ( in_array( 'cats', $to_restrict, true ) && ( is_archive() || is_single() ) ) {
 					$this->dtac_give_restrict_cats( $form_id );
 				}
 
 				// If custom post types.
-				if ( in_array( 'cpt', $to_restrcit ) && is_singular() ) {
+				if ( in_array( 'cpt', $to_restrict, true ) && is_singular() ) {
 					$this->dtac_give_restrict_cpt( $form_id );
 				}
 
 				// If custom tax.
-				if ( in_array( 'ctax', $to_restrcit ) && is_tax() ) {
+				if ( in_array( 'ctax', $to_restrict, true ) && is_tax() ) {
 					$this->dtac_give_restrict_ctax( $form_id );
 				}
 
@@ -86,6 +90,4 @@ class Donate_To_Access_Content_Give_Restrict_Cotent extends Donate_To_Access_Con
 		}
 	}
 
-} // End class Donate_To_Access_Content_Give_Restrict_Cotent.
-
-new Donate_To_Access_Content_Give_Restrict_Cotent();
+} // End class Restrict_Content.

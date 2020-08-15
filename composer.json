@@ -1,0 +1,19 @@
+{
+    "name": "cip-dtac/cip-dtac",
+    "description": "This is a Addon to Give Donation plugin. It helps site owners to restrict users from accessing a specific content on a post or a page or restrict the entire website.",
+    "type": "project",
+    "require-dev": {
+        "phpunit/phpunit": "^9.3"
+    },
+    "license": "GPL v3",
+    "authors": [{
+        "name": "Rupak Dhiman",
+        "email": "contriveitup@gmail.com"
+    }],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "DTAC\\": "src/"
+        }
+    }
+}

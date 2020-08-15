@@ -5,6 +5,10 @@
  * @since 1.0.0
  */
 
+namespace DTAC\Frontend;
+
+use DTAC\Frontend\Functions;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -13,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 1.0.0
  */
-class Donate_To_Access_Content_Give_Hooks extends Donate_To_Access_Content_Give_Functions {
+class Hooks extends Functions {
 
 	/**
 	 * Class constructor. Fires Give plugin hooks.
@@ -94,7 +98,7 @@ class Donate_To_Access_Content_Give_Hooks extends Donate_To_Access_Content_Give_
 			$donor_id = dtac_give_get_donor_by_payment_id( $payment_id );
 
 			// Add website access rights to donor meta table.
-			DTAC_GIVE()->give->donor_meta->add_meta( $donor_id, 'give_dtca_access_website', 'yes' );
+			$this->give->donor_meta->add_meta( $donor_id, 'give_dtca_access_website', 'yes' );
 
 			// Update the access rights in the payments meta table as well.
 			update_post_meta( $payment_id, '_dtac_give_access_to_content', $access_content );
@@ -103,6 +107,4 @@ class Donate_To_Access_Content_Give_Hooks extends Donate_To_Access_Content_Give_
 		}
 	}
 
-} // End class Donate_To_Access_Content_Give_Hooks.
-
-new Donate_To_Access_Content_Give_Hooks();
+} // End class Hooks.

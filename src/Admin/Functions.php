@@ -5,15 +5,17 @@
  * @since 1.0.0
  */
 
+namespace DTAC\Admin;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Donate_To_Access_Content_Give_Admin_Functions
+ * Class AdminFunctions
  *
  * @since 1.0.0
  */
-class Donate_To_Access_Content_Give_Admin_Functions {
+abstract class Functions {
 
 	/**
 	 * Return an array of required items to be used in different places
@@ -21,11 +23,11 @@ class Donate_To_Access_Content_Give_Admin_Functions {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param string $key Mame of array key which will return the array of items needed.
+	 * @param string $key Name of array key which will return the array of items needed.
 	 *
 	 * @return array
 	 */
-	protected function dtac_give_settings_array( $key ) {
+	protected function dtac_give_settings_array( string $key ) : array {
 
 		$setting_options = array(
 			'restrict_access_to' => array(
@@ -55,7 +57,7 @@ class Donate_To_Access_Content_Give_Admin_Functions {
 	 *
 	 * @return array
 	 */
-	protected function dtac_give_get_pages_posts( $get = 'pages' ) {
+	protected function dtac_give_get_pages_posts( string $get = 'pages' ) : array {
 
 		$result = array();
 		$pages  = ( 'pages' == $get ? get_pages() : get_posts() );
@@ -74,7 +76,7 @@ class Donate_To_Access_Content_Give_Admin_Functions {
 	 *
 	 * @return array
 	 */
-	protected function dtac_give_get_custom_post_types() {
+	protected function dtac_give_get_custom_post_types() : array {
 
 		$result = array();
 
@@ -104,7 +106,7 @@ class Donate_To_Access_Content_Give_Admin_Functions {
 	 *
 	 * @return array
 	 */
-	protected function dtac_give_get_categories() {
+	protected function dtac_give_get_categories() : array {
 
 		$result = array();
 
@@ -124,7 +126,7 @@ class Donate_To_Access_Content_Give_Admin_Functions {
 	 *
 	 * @return array
 	 */
-	protected function dtac_give_get_custom_tax() {
+	protected function dtac_give_get_custom_tax() : array {
 
 		$result = array();
 
@@ -147,4 +149,26 @@ class Donate_To_Access_Content_Give_Admin_Functions {
 		return $result;
 	}
 
-} // End class Donate_To_Access_Content_Give_Admin_Functions.
+	/**
+	 * Return includes folder path.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param string $file             Name of the file.
+	 * @param string $sub_directory    Name of the sub directory. Defaults to empty string.
+	 * @param string $parent_directory Name of the directory defaults to 'admin'.
+	 *
+	 * @return void
+	 */
+	protected function include_file( string $file, string $sub_directory = '', string $parent_directory = 'admin' ) : void {
+
+		$sub_directory = ( '' !== $sub_directory ) ? $sub_directory . '/' : '';
+
+		$file = DTAC_GIVE_PLUGIN_DIR . 'includes/' . $parent_directory . '/' . $sub_directory . $file . '.php';
+
+		if ( file_exists( $file ) ) {
+			require $file;
+		}
+	}
+
+} // End class AdminFunctions.

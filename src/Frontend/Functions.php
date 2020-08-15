@@ -5,17 +5,41 @@
  * @since 1.0.0
  */
 
+namespace DTAC\Frontend;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'Donate_To_Access_Content_Give_Functions' ) ) :
+if ( ! class_exists( 'Functions' ) ) :
 
 	/**
 	 * Plugin specific funcitons.
 	 *
 	 * @since 1.0.0
 	 */
-	class Donate_To_Access_Content_Give_Functions {
+	class Functions {
+
+		/**
+		 * Give object instance
+		 *
+		 * @since 2.0.0
+		 *
+		 * @var object
+		 */
+		protected $give;
+
+
+		/**
+		 * Class constructor.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @return void
+		 */
+		public function __construct() {
+
+			$this->give = Give();
+		}
 
 		/**
 		 * Check the status of donation and if a user should be allowed to access
@@ -45,7 +69,7 @@ if ( ! class_exists( 'Donate_To_Access_Content_Give_Functions' ) ) :
 
 			$current_page_id = $wp_query->post->ID;
 
-			$is_restricted = $this->dtac_give_is_donor_restricted( $current_page_id );
+			$is_restricted = self::dtac_give_is_donor_restricted( $current_page_id );
 
 			if ( $is_restricted ) {
 				$result = $restrict_content;
@@ -114,7 +138,7 @@ if ( ! class_exists( 'Donate_To_Access_Content_Give_Functions' ) ) :
 			$donor = dtac_give_get_donor();
 
 			if ( $donor ) {
-				$donated = DTAC_GIVE()->give->donor_meta->get_meta( $donor->id, 'give_dtca_access_website', true );
+				$donated = $this->give->donor_meta->get_meta( $donor->id, 'give_dtca_access_website', true );
 			}
 
 			if ( ! $donated || 'yes' !== $donated ) {
@@ -152,7 +176,7 @@ if ( ! class_exists( 'Donate_To_Access_Content_Give_Functions' ) ) :
 
 				if ( is_page( $pages ) ) {
 
-					$is_restricted = $this->dtac_give_is_donor_restricted( $current_page );
+					$is_restricted = self::dtac_give_is_donor_restricted( $current_page );
 
 					if ( $is_restricted ) {
 						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_page ) );
@@ -184,7 +208,7 @@ if ( ! class_exists( 'Donate_To_Access_Content_Give_Functions' ) ) :
 
 				if ( is_single( $posts ) ) {
 
-					$is_restricted = $this->dtac_give_is_donor_restricted( $current_post );
+					$is_restricted = self::dtac_give_is_donor_restricted( $current_post );
 
 					if ( $is_restricted ) {
 						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_post ) );
@@ -222,7 +246,7 @@ if ( ! class_exists( 'Donate_To_Access_Content_Give_Functions' ) ) :
 
 				if ( is_category( $cats ) ) {
 
-					$is_restricted = $this->dtac_give_is_donor_restricted( $current_cat );
+					$is_restricted = self::dtac_give_is_donor_restricted( $current_cat );
 
 					if ( $is_restricted ) {
 						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_cat ) );
@@ -255,7 +279,7 @@ if ( ! class_exists( 'Donate_To_Access_Content_Give_Functions' ) ) :
 
 				if ( is_singular( $cpts ) ) {
 
-					$is_restricted = $this->dtac_give_is_donor_restricted( $current_cpt );
+					$is_restricted = self::dtac_give_is_donor_restricted( $current_cpt );
 
 					if ( $is_restricted ) {
 						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_cpt ) );
@@ -290,7 +314,7 @@ if ( ! class_exists( 'Donate_To_Access_Content_Give_Functions' ) ) :
 
 				if ( is_tax( $taxonomies, $ctaxs ) ) {
 
-					$is_restricted = $this->dtac_give_is_donor_restricted( $current_ctax );
+					$is_restricted = self::dtac_give_is_donor_restricted( $current_ctax );
 
 					if ( $is_restricted ) {
 						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_ctax ) );
@@ -301,6 +325,6 @@ if ( ! class_exists( 'Donate_To_Access_Content_Give_Functions' ) ) :
 			} // End if empty check
 		}
 
-	} // End class Donate_To_Access_Content_Give_Functions.
+	} // End class Functions.
 
 endif; // End if class_exists check.

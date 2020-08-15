@@ -1,0 +1,13 @@
+body {
+    height: max-content;
+}
+
+.dtac-form-field {
+    .control {
+        .select {
+            &::after {
+                border: 0;
+            }
+        }
+    }
+}
