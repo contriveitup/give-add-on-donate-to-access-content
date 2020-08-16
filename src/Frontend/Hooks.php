@@ -45,6 +45,7 @@ class Hooks extends Functions {
 	 * @return mixed Form Fields.
 	 */
 	public function dtac_give_form_fields( $form_id ) {
+
 		global $wp_query;
 
 		$current_page_id = '';
@@ -57,7 +58,7 @@ class Hooks extends Functions {
 		// If a query string is set by the plugin or it is being viewed in a shortcode.
 		if ( isset( $_GET['dtac_give_content'] ) || $current_page_id != $form_id ) {
 
-			if ( '' !== $content || $content >= 1 ) {
+			if ( '' !== $content || $content >= '1' ) {
 				$current_page_id = $content;
 			} else {
 				$current_page_id = $wp_query->post->ID;
@@ -81,15 +82,15 @@ class Hooks extends Functions {
 	 */
 	public function save_dtac_give_payment_meta( $payment_id ) {
 
-		if ( ! isset( $_POST['dtac_give_process_donate_to_access'] ) || 1 !== $_POST['dtac_give_process_donate_to_access'] ) {
+		if ( ! isset( $_POST['dtac_give_process_donate_to_access'] ) || '1' !== $_POST['dtac_give_process_donate_to_access'] ) {
 			return;
 		}
 
-		if ( ! isset( $_POST['dtac_give_content'] ) || '' !== $_POST['dtac_give_content'] ) {
+		if ( ! isset( $_POST['dtac_give_content'] ) || '' === $_POST['dtac_give_content'] ) {
 			return;
 		}
 
-		$access_content = $_POST['dtac_give_content'];
+		$access_content = esc_attr( $_POST['dtac_give_content'] );
 
 		// If access to complete website is requested.
 		if ( 'site' === $access_content ) {

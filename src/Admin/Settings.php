@@ -120,15 +120,6 @@ if ( ! class_exists( 'Settings' ) ) :
 
 			$settings = array(
 				array(
-					'name'    => esc_html__( 'Restrict Whole Website', 'dtac-give' ),
-					'desc'    => __( "Selecting 'Yes' to this option will restrict the complete website expect for the Donation Form page.<br/><strong>To get this to work properly please provide a Give Donation 			   		Form ID below</strong>", 'dtac-give' ),
-					'id'      => 'dtac_give_restrict_website',
-					'type'    => 'select',
-					'default' => 'no',
-					'class'   => '',
-					'options' => $this->dtac_give_settings_array( 'yes_no' ),
-				),
-				array(
 					'name'    => esc_html__( 'Allow Pages', 'dtac-give' ),
 					'desc'    => __( 'Please select pages you wish to give access to when you are restricting the whole website.<br/><strong>By Default: The Donation Form page whose ID has been mentioned below 			   		will always be given access to</strong>', 'dtac-give' ),
 					'id'      => 'dtac_give_access_to_pages',
