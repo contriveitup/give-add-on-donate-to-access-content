@@ -2,10 +2,16 @@
 = 2.0.0: Aug 10, 2020 =
 * Updated
     - Optimized PHP code.
+    - Compatible with Give 2.7.5
+    - Removed the option to restrict the entire website. Not working in Sync with Give iFrame form.
 * Fixed
     - Typos in plugin name and descriptions.
+    - Not recognizing donors after payment success.
 * Added
     - Admin page to manage plugin settings.
+    - Introduced advance PHP Oops functionality like Interfaces, Abstract Classes and Traits.
+    - Composer support.
+    - Scripts & Styles compilation with Babel
 
 = 1.0.2: July 1, 2020 =
 * Tested: WordPress 5.4.x.

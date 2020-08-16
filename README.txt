@@ -3,9 +3,9 @@ Contributors: contriveitup, rupakdhiman
 Tags: donate, donate to access, donate to access content, give add-on, wordpress plugin, free wordpress plugin, free give plugin add-on, contriveitup
 Donate link: paypal.me/contriveitup
 Requires at least: 5.0
-Tested up to: 5.4.2
-Requires PHP: 5.4
-Stable tag: 1.0.2
+Tested up to: 5.5
+Requires PHP: 7.4
+Stable tag: 2.0.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -53,14 +53,28 @@ It has 2 options, the first one is required which is the ID of the donation form
 
 = What if I am on a single post page and a category in that post is restricted. Would a user will still be able to view that post? =
 
-Yes, for now on the Category Archive page can be restricted. If a post is in that category a user can view that post without donation unless you restrict that entire post altogether.
+Yes, for now the Category Archive page can be restricted. If a post is in that category, a user can view that post without donation unless you restrict that entire post altogether.
 
 == Changelog ==
-= 1.0: November 9, 2017 =
-* Initial Release. JMJK!!
+= 2.0.0: Aug 10, 2020 =
+* Updated
+    - Optimized PHP code.
+    - Compatible with Give 2.7.5
+    - Removed the option to restrict the entire website. Not working in Sync with Give iFrame form.
+* Fixed
+    - Typos in plugin name and descriptions.
+    - Not recognizing donors after payment success.
+* Added
+    - Admin page to manage plugin settings.
+    - Introduced advance PHP Oops functionality like Interfaces, Abstract Classes and Traits.
+    - Composer support.
+    - Scripts & Styles compilation with Babel
+
+= 1.0.2: July 1, 2020 =
+* Tested: WordPress 5.4.x.
 
 = 1.0.1: December 20, 2017 =
 * Fixed: Fatal Error - Class not found.
 
-= 1.0.2: July 1, 2020 =
-* Tested: WordPress 5.4.x.
+= 1.0: November 8, 2017 =
+* Initial Release. JMJK!!

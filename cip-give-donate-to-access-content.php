@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Give Addon - Donate To Access Content
  * Plugin URI: https://github.com/contriveitup/give-add-on-donate-to-access-content
- * Description: Give plugin Add-on ask users to donate in order to access content of a post or page. It can also restrict entire website to chosen post, page, category page, post types and much more...
+ * Description: Give (2.7.5) plugin Add-on ask users to donate in order to access content of a post or page. It can also restrict entire website to chosen post, page, category page, post types and much more...
  * Version: 2.0.0
  * Author: ContriveItUp
  * Author URI: https://github.com/contriveitup
@@ -18,12 +18,12 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Main Add-On class
  *
- * @since 1.0
+ * @since 1.0.0
  */
 final class Donate_To_Access_Content_Give_Addon {
 
 	/**
-	 * Main Class Instance
+	 * Main Class Instance.
 	 *
 	 * @since 1.0.0
 	 *
@@ -34,7 +34,7 @@ final class Donate_To_Access_Content_Give_Addon {
 	private static $instance;
 
 	/**
-	 * Save core Give plugin class instance
+	 * Save core Give plugin class instance.
 	 *
 	 * @since 1.0.0
 	 *
@@ -52,9 +52,9 @@ final class Donate_To_Access_Content_Give_Addon {
 	public $admin_notices = array();
 
 	/**
-	 * Singleton Method
+	 * Singleton Method.
 	 *
-	 * Makes sure only one instance of the class is returned
+	 * Makes sure only one instance of the class is returned.
 	 *
 	 * @since 1.0.0
 	 *
@@ -70,7 +70,7 @@ final class Donate_To_Access_Content_Give_Addon {
 	}
 
 	/**
-	 * Class Constructor
+	 * Class Constructor.
 	 *
 	 * @since 1.0.0
 	 *
@@ -229,15 +229,13 @@ final class Donate_To_Access_Content_Give_Addon {
 	}
 
 	/**
-	 * [add_admin_notice]
-	 *
-	 * Capture Admin Notices in an array
+	 * Capture Admin Notices in an array.
 	 *
 	 * @since  1.0.0
 	 *
 	 * @param string $slug    message slug.
 	 * @param string $class   message class like error, etc..
-	 * @param string $message the error or notice message.
+	 * @param string $message The error or notice message.
 	 *
 	 * @return  void
 	 */
@@ -255,7 +253,7 @@ final class Donate_To_Access_Content_Give_Addon {
 	 *
 	 * @return void
 	 */
-	public function give_dtca_admin_notices(){
+	public function give_dtca_admin_notices() : void {
 
 		$allowed_tags = array(
 			'a'      => array(
@@ -315,11 +313,9 @@ final class Donate_To_Access_Content_Give_Addon {
 	}
 
 	/**
-	 * Plugin Files
+	 * Include plugin files to run plugin's functionality.
 	 *
-	 * Include plugin files to run different plugin functionality.
-	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @return void
 	 */
@@ -339,7 +335,7 @@ final class Donate_To_Access_Content_Give_Addon {
 	 *
 	 * @return void
 	 */
-	public function dtac_give_setup() {
+	public function dtac_give_setup() : void {
 
 		/**
 		 * Fires before plugin setup
@@ -370,7 +366,7 @@ final class Donate_To_Access_Content_Give_Addon {
 } // End class Donate_To_Access_Content_Give_Addon
 
 /**
- * Initialize the class instance
+ * Initialize main class instance.
  *
  * @since 2.0.0
  */
