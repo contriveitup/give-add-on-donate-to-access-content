@@ -130,7 +130,7 @@ if ( ! class_exists( 'Settings' ) ) :
 				),
 				array(
 					'name'    => esc_html__( 'Give Donation Form ID', 'dtac-give' ),
-					'desc'    => __( 'Please enter a Give Donation Form ID. <br/>This form will be the form that a user will be redirected to in order to make the donation and access the pages,posts,etc... 				 selected here to restrict.', 'dtac-give' ),
+					'desc'    => __( 'Please enter a Give Donation Form ID. <br/>This form will be the form that a user will be redirected to in order to make the donation and access the restrcited content.', 					'dtac-give' ),
 					'id'      => 'dtac_give_restrict_access_give_form_id',
 					'type'    => 'text',
 					'class'   => array( 'input', 'is-fullwidth' ),
@@ -138,14 +138,14 @@ if ( ! class_exists( 'Settings' ) ) :
 				),
 				array(
 					'name'    => esc_html__( 'Restrict Content Message', 'dtac-give' ),
-					'desc'    => __( 'This message will appear instead of restricted content, if you choose to display a message instead of Donation form in the shortcode<br/>Please use %%donation_form_url%% to 				display the URL to donation form.<br/>The Donation form link will go to the form whose ID will be given in the shortcode', 'dtac-give' ),
+					'desc'    => __( 'This message will appear instead of restricted content, if you choose to display a message instead of Donation form in the shortcode<br/><strong>%%donation_form_url%%</strong> - Print the URL to donation form inside the message.<br/>The Donation form link will go to the form whose ID will be given in the shortcode', 'dtac-give' ),
 					'id'      => 'dtac_give_restrict_message',
 					'type'    => 'wysiwyg',
 					'default' => $this->dtac_give_restrict_message_content(),
 				),
 				array(
 					'name'    => esc_html__( 'Restrict Access To?', 'give' ),
-					'desc'    => __( 'Restrict Access to complete page, post, category, etc..', 'dtac-give' ),
+					'desc'    => __( 'Restrict Access to the types selected above.', 'dtac-give' ),
 					'id'      => 'dtac_give_restrict_access_to',
 					'type'    => 'multi-select',
 					'class'   => 'select2',
@@ -154,7 +154,7 @@ if ( ! class_exists( 'Settings' ) ) :
 				),
 				array(
 					'name'    => esc_html__( 'Restrict Pages', 'dtac-give' ),
-					'desc'    => __( 'Please select the pages you wish to restrict', 'dtac-give' ),
+					'desc'    => __( 'Please select the pages you wish to restrict. <br/>This won\'t work unless you have <strong>\'Pages\'</strong> selected in <strong>Restrict Access To?</strong> section.', 'dtac-give' ),
 					'id'      => 'dtac_give_restrict_access_to_pages',
 					'type'    => 'multi-select',
 					'class'   => 'select2',
@@ -163,7 +163,7 @@ if ( ! class_exists( 'Settings' ) ) :
 				),
 				array(
 					'name'    => esc_html__( 'Restrict Posts', 'dtac-give' ),
-					'desc'    => __( 'Please select the posts you wish to restrict', 'dtac-give' ),
+					'desc'    => __( 'Please select the posts you wish to restrict. <br/>This won\'t work unless you have <strong>\'Posts\'</strong> selected in <strong>Restrict Access To?</strong> section.', 'dtac-give' ),
 					'id'      => 'dtac_give_restrict_access_to_posts',
 					'type'    => 'multi-select',
 					'class'   => 'select2',
@@ -172,7 +172,7 @@ if ( ! class_exists( 'Settings' ) ) :
 				),
 				array(
 					'name'    => esc_html__( 'Restrict Custom Post Types', 'dtac-give' ),
-					'desc'    => __( 'Please select the custom posts types you wish to restrict', 'dtac-give' ),
+					'desc'    => __( 'Please select the custom posts types you wish to restrict. <br/>This won\'t work unless you have <strong>\'Post Types\'</strong> selected in <strong>Restrict Access To?</strong> section.', 'dtac-give' ),
 					'id'      => 'dtac_give_restrict_access_to_cpt',
 					'type'    => 'multi-select',
 					'class'   => 'select2',
@@ -181,7 +181,7 @@ if ( ! class_exists( 'Settings' ) ) :
 				),
 				array(
 					'name'    => esc_html__( 'Restrict Categories', 'dtac-give' ),
-					'desc'    => __( 'Please select the categories you wish to restrict', 'dtac-give' ),
+					'desc'    => __( 'Please select the categories you wish to restrict. <br/>This won\'t work unless you have <strong>\'Categories\'</strong> selected in <strong>Restrict Access To?</strong> section.', 'dtac-give' ),
 					'id'      => 'dtac_give_restrict_access_to_cats',
 					'type'    => 'multi-select',
 					'class'   => 'select2',
@@ -190,7 +190,7 @@ if ( ! class_exists( 'Settings' ) ) :
 				),
 				array(
 					'name'    => esc_html__( 'Restrict Custom Taxonomies', 'dtac-give' ),
-					'desc'    => __( 'Please select custom Taxonomies you wish to restrict', 'dtac-give' ),
+					'desc'    => __( 'Please select custom Taxonomies you wish to restrict. <br/>This won\'t work unless you have <strong>\'Custom Taxonomies\'</strong> selected in <strong>Restrict Access To?</strong> section.', 'dtac-give' ),
 					'id'      => 'dtac_give_restrict_access_to_custom_tax',
 					'type'    => 'multi-select',
 					'class'   => 'select2',
