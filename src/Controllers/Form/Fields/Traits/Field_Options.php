@@ -144,6 +144,35 @@ trait Field_Options {
 	}
 
 	/**
+	 * Get field attributes.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @param array $options Field Options.
+	 *
+	 * @return string
+	 */
+	protected function extra_attributes( array $options ) : string {
+
+		if ( ! dtac_is_valid_array( $options, 'attrs', true ) ) {
+			return '';
+		}
+
+		if ( ! dtac_is_valid_array( $options['attrs'] ) ) {
+			return '';
+		}
+
+		$attrs = '';
+
+		foreach ( $options['attrs'] as $attr_key => $attr_value ) {
+
+			$attrs .= esc_html( $attr_key ) . '="' . esc_html( $attr_value ) . '" ';
+		}
+
+		return $attrs;
+	}
+
+	/**
 	 * Output field attributes.
 	 *
 	 * @since 2.0.0
@@ -154,17 +183,18 @@ trait Field_Options {
 	 */
 	protected function field_attributes( array $options ) : void {
 
-		$attributes  = ( '' !== $this->field_name_id( $options ) ) ? 'id=' . $this->field_name_id( $options ) . ' ' : ' ';
-		$attributes .= ( '' !== $this->css_classes( $options ) ) ? 'class=' . $this->css_classes( $options ) . ' ' : ' ';
+		$attributes  = ( '' !== $this->field_name_id( $options ) ) ? 'id="' . $this->field_name_id( $options ) . '" ' : '';
+		$attributes .= ( '' !== $this->extra_attributes( $options ) ) ? $this->extra_attributes( $options ) : '';
+		$attributes .= ( '' !== $this->css_classes( $options ) ) ? 'class="' . $this->css_classes( $options ) . '" ' : '';
 
 		if ( in_array( $options['type'], multiple_input_types(), true ) ) {
 
-			$attributes .= ( '' !== $this->field_name_id( $options ) ) ? 'name=' . $this->field_name_id( $options ) . '[]' : '';
+			$attributes .= ( '' !== $this->field_name_id( $options ) ) ? 'name="' . $this->field_name_id( $options ) . '[]"' : '';
 		} else {
 
-			$attributes .= ( '' !== $this->field_name_id( $options ) ) ? 'name=' . $this->field_name_id( $options ) . '' : '';
+			$attributes .= ( '' !== $this->field_name_id( $options ) ) ? 'name="' . $this->field_name_id( $options ) . '"' : '';
 		}
 
-		echo esc_html( $attributes );
+		echo $attributes; // phpcs:ignore
 	}
 }

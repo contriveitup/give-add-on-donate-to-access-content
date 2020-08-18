@@ -135,6 +135,7 @@ if ( ! class_exists( 'Settings' ) ) :
 					'type'    => 'text',
 					'class'   => array( 'input', 'is-fullwidth' ),
 					'default' => '1',
+					'attrs'   => array( 'required' => 'required' ),
 				),
 				array(
 					'name'    => esc_html__( 'Restrict Content Message', 'dtac-give' ),

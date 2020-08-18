@@ -267,9 +267,7 @@ function dtac_is_valid_array( $value, string $key = '', bool $check_key = false 
 
 			if ( $check_key ) {
 
-				if ( array_key_exists( $key, $value ) ) {
-					return true;
-				}
+				return array_key_exists( $key, $value );
 			}
 
 			return true;
