@@ -2,7 +2,7 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-This is the development repo for Donate to access content WordPress plugin. It contains uncompiled source files, you can download a compiled version of the plugin from WordPress.org or checkout the releases section for a compiled zip file.
+This is the development repo for **Donate to access content** WordPress plugin. It contains uncompiled source files, you can download a compiled version of the plugin from WordPress.org or checkout the releases section for a compiled zip file.
 
 Requires at least (WordPress): 5.0
 
