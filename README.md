@@ -18,6 +18,6 @@ Tested up to (Give): 2.7.5
 2.  Navigate into the cloned folder.
 3.  Run `composer install` and `npm install`
 
-Haivng any issues? Please create one [here](https://github.com/contriveitup/give-add-on-donate-to-access-content/issues).
+Having any issues? Please create one [here](https://github.com/contriveitup/give-add-on-donate-to-access-content/issues).
 
 You can find more info on this plugin on it's WordPress plugin page: https://wordpress.org/plugins/cip-dtac-for-give/
