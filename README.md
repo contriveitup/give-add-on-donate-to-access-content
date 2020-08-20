@@ -6,9 +6,9 @@ This is the development repo for Donate to access content WordPress plugin. It c
 
 Requires at least (WordPress): 5.0
 
-Tested up to (WordPress): 5.5
-
 Requires PHP: 7.4
+
+Tested up to (WordPress): 5.5
 
 Tested up to (Give): 2.7.5
 
