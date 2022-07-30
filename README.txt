@@ -2,10 +2,10 @@
 Contributors: contriveitup, rupakdhiman
 Tags: donate, donate to access, donate to access content, give add-on, wordpress plugin, free wordpress plugin, free give plugin add-on, contriveitup
 Donate link: paypal.me/contriveitup
-Requires at least: 5.0
-Tested up to: 5.5
+Requires at least: 5.5
+Tested up to: 6.0
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
