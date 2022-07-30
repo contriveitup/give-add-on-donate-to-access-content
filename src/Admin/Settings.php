@@ -121,7 +121,7 @@ if ( ! class_exists( 'Settings' ) ) :
 			$settings = array(
 				array(
 					'name'    => esc_html__( 'Allow Pages', 'dtac-give' ),
-					'desc'    => __( 'Please select pages you wish to give access to when you are restricting the whole website.<br/><strong>By Default: The Donation Form page whose ID has been mentioned below 			   		will always be given access to</strong>', 'dtac-give' ),
+					'desc'    => __( 'Please select pages you wish to give access to when you are restricting the whole website.<br/><strong>By Default: The Donation Form page whose ID has been mentioned below will always be given access to</strong>', 'dtac-give' ),
 					'id'      => 'dtac_give_access_to_pages',
 					'type'    => 'multi-select',
 					'class'   => 'select2',
@@ -130,12 +130,13 @@ if ( ! class_exists( 'Settings' ) ) :
 				),
 				array(
 					'name'    => esc_html__( 'Give Donation Form ID', 'dtac-give' ),
-					'desc'    => __( 'Please enter a Give Donation Form ID. <br/>This form will be the form that a user will be redirected to in order to make the donation and access the restrcited content.', 					'dtac-give' ),
+					'desc'    => __( 'Please enter a Give Donation Form ID. <br/>This form will be the form that a user will be redirected to in order to make the donation and access the restrcited content.', 'dtac-give' ),
 					'id'      => 'dtac_give_restrict_access_give_form_id',
-					'type'    => 'text',
-					'class'   => array( 'input', 'is-fullwidth' ),
+					'type'    => 'select',
+					'class'   => '',
 					'default' => '1',
 					'attrs'   => array( 'required' => 'required' ),
+					'options' => $this->dtac_get_give_forms(),
 				),
 				array(
 					'name'    => esc_html__( 'Restrict Content Message', 'dtac-give' ),

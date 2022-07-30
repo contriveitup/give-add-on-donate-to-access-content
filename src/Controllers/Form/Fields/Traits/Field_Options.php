@@ -87,6 +87,26 @@ trait Field_Options {
 	}
 
 	/**
+	 * Get field default value for select.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @param array $options Field Options.
+	 *
+	 * @return string
+	 */
+	protected function input_default_select( array $options ) : string {
+
+		if ( ! dtac_is_valid_array( $options, 'default', true ) ) {
+			return '';
+		}
+
+		$db_default = dtac_give_get_settings( $this->field_name_id( $options ) );
+
+		return ( ! empty( $db_default ) ) ? $db_default : esc_attr( $options['default'] );
+	}
+
+	/**
 	 * Get field default value for inputs for multi
 	 * select types.
 	 *
@@ -104,7 +124,7 @@ trait Field_Options {
 
 		$db_default = dtac_give_get_settings( $this->field_name_id( $options ) );
 
-		return ( '' !== $db_default ) ? (array) $db_default : (array) $options['default'];
+		return ( ! empty( $db_default ) ) ? (array) $db_default : (array) $options['default'];
 	}
 
 	/**

@@ -171,4 +171,28 @@ abstract class Functions {
 		}
 	}
 
+	/**
+	 * Fetch Give Forms by post type from DB.
+	 *
+	 * @since 2.1.0
+	 *
+	 * @return array
+	 */
+	protected function dtac_get_give_forms() : array {
+
+		$result = array();
+
+		$args = array ( 'post_type'   => 'give_forms' );
+		$args = apply_filters( 'dtac_give_get_form_args', $args, $args );
+
+		$give_forms = get_posts( $args );
+
+		if ( dtac_is_valid_array( $give_forms ) ) {
+			foreach( $give_forms as $give_form ) {
+				$result[ $give_form->ID ] = $give_form->post_title;
+			}
+		}
+
+		return $result;
+	}
 } // End class AdminFunctions.

@@ -76,7 +76,7 @@ class Select implements InterfaceFormFields {
 		<div class="control">
 			<div class="select is-fullwidth">
 				<select <?php $this->field_attributes( $this->options ); ?>>
-					<?php $this->select_options( $this->input_default( $this->options ) ); ?>
+					<?php $this->select_options( $this->input_default_select( $this->options ) ); ?>
 				</select>
 			</div>
 			<p class="help mt-3"><?php echo $this->description( $this->options ); ?></p>
