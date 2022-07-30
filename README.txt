@@ -56,6 +56,14 @@ It has 2 options, the first one is required which is the ID of the donation form
 Yes, for now the Category Archive page can be restricted. If a post is in that category, a user can view that post without donation unless you restrict that entire post altogether.
 
 == Changelog ==
+= 2.1.0: July 30, 2022 =
+* Added
+    - Function `dtac_get_give_forms` to get Give Forms and display inside a select box under Admin Settings.
+    - Function `input_default_select` to fetch default values from Settings array inside the select box.
+* Updated
+    - NPM Packages.
+    - Code Improvements.
+
 = 2.0.0: Aug 10, 2020 =
 * Updated
     - Optimized PHP code.
