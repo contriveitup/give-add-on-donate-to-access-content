@@ -143,9 +143,9 @@ if ( ! class_exists( 'Functions' ) ) :
 
 			if ( ! $donated || 'yes' !== $donated ) {
 
-				$current_cpt 	= get_post_type();
+				$current_cpt    = get_post_type();
 				$current_cpt_id = $wp_query->post->ID;
-				$access_to 		= dtac_give_get_settings( 'dtac_give_access_to_pages' );
+				$access_to      = dtac_give_get_settings( 'dtac_give_access_to_pages' );
 
 				if ( ! is_page( $access_to ) && ! is_singular( 'give_forms' ) && $current_cpt_id != $form_id ) {
 					wp_safe_redirect( dtac_give_donation_form_url( $form_id, 'site' ) );
@@ -214,7 +214,6 @@ if ( ! class_exists( 'Functions' ) ) :
 						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_post ) );
 						exit;
 					}
-
 				} // End if is_page check.
 			} // End if empty check.
 		}
@@ -237,7 +236,7 @@ if ( ! class_exists( 'Functions' ) ) :
 
 			$cats = dtac_give_get_settings( 'dtac_give_restrict_access_to_cats' );
 
-			$cats = ( ! empty ( $cats ) ? $cats : array() );
+			$cats = ( ! empty( $cats ) ? $cats : array() );
 
 			$category    = get_queried_object();
 			$current_cat = 'c' . $category->term_id;
@@ -252,7 +251,6 @@ if ( ! class_exists( 'Functions' ) ) :
 						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_cat ) );
 						exit;
 					}
-
 				} // End if is_page check.
 			} // End if empty check.
 		}
@@ -285,7 +283,6 @@ if ( ! class_exists( 'Functions' ) ) :
 						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_cpt ) );
 						exit;
 					}
-
 				} // End if is_page check.
 			} // End if empty check.
 		}
@@ -320,7 +317,6 @@ if ( ! class_exists( 'Functions' ) ) :
 						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_ctax ) );
 						exit;
 					}
-
 				} // End if is_page check
 			} // End if empty check
 		}

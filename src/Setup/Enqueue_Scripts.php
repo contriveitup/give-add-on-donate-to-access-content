@@ -2,7 +2,7 @@
 /**
  * Enqueue Admin & Frontend JS & CSS Scripts
  *
- * @since  1.0.0
+ * @since 1.0.0
  */
 
 namespace DTAC\Setup;
@@ -15,6 +15,7 @@ defined( 'ABSPATH' ) || exit;
  * @since 1.0.0
  */
 class Enqueue_Scripts {
+
 
 	/**
 	 * [__construct]
@@ -39,8 +40,8 @@ class Enqueue_Scripts {
 			return;
 		}
 
-		$script_path 	= DTAC_GIVE_PLUGIN_URL . 'assets/js/'; // Path to JS folder.
-		$style_path 	= DTAC_GIVE_PLUGIN_URL . 'assets/css/'; // Path to CSS folder.
+		$script_path = DTAC_GIVE_PLUGIN_URL . 'assets/js/'; // Path to JS folder.
+		$style_path  = DTAC_GIVE_PLUGIN_URL . 'assets/css/'; // Path to CSS folder.
 
 		/**
 		 * Bulma CSS

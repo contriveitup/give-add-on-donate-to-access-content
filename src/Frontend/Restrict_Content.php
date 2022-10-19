@@ -22,6 +22,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class Restrict_Content extends Functions {
 
+
 	/**
 	 * Class constructor
 	 *

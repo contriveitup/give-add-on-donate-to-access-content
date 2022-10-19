@@ -73,7 +73,7 @@ if ( ! class_exists( 'Settings' ) ) :
 				$this->menu_title,
 				'manage_options',
 				$this->menu_slug,
-				[ $this, 'dtac_settings_page_html' ]
+				array( $this, 'dtac_settings_page_html' )
 			);
 		}
 
@@ -188,7 +188,7 @@ if ( ! class_exists( 'Settings' ) ) :
 					'type'    => 'multi-select',
 					'class'   => 'select2',
 					'default' => array(),
-					'options' => $this->dtac_give_get_categories()
+					'options' => $this->dtac_give_get_categories(),
 				),
 				array(
 					'name'    => esc_html__( 'Restrict Custom Taxonomies', 'dtac-give' ),

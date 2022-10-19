@@ -49,14 +49,13 @@ class Hooks extends Functions {
 		global $wp_query;
 
 		$current_page_id = '';
-		$dta_true_field  = '';
 
 		$content = ( isset( $_GET['dtac_give_content'] ) ? $_GET['dtac_give_content'] : '' );
 
 		$current_page_id = $wp_query->post->ID;
 
 		// If a query string is set by the plugin or it is being viewed in a shortcode.
-		if ( isset( $_GET['dtac_give_content'] ) || $current_page_id != $form_id ) {
+		if ( isset( $_GET['dtac_give_content'] ) || $current_page_id !== $form_id ) {
 
 			if ( '' !== $content || $content >= '1' ) {
 				$current_page_id = $content;

@@ -25,6 +25,7 @@ if ( ! class_exists( 'Shortcodes' ) ) {
 	 */
 	class Shortcodes extends Functions {
 
+
 		/**
 		 * Class constructor.
 		 *
@@ -32,7 +33,7 @@ if ( ! class_exists( 'Shortcodes' ) ) {
 		 */
 		public function __construct() {
 
-			add_shortcode( 'cip_donate_to_access_content', [ $this, 'donate_to_access_give_shortcode_func' ] );
+			add_shortcode( 'cip_donate_to_access_content', array( $this, 'donate_to_access_give_shortcode_func' ) );
 		}
 
 		/**
@@ -46,7 +47,7 @@ if ( ! class_exists( 'Shortcodes' ) ) {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param array  $atts Shortcode Attributes.
+		 * @param array  $atts    Shortcode Attributes.
 		 * @param string $content Shortcode content.
 		 *
 		 * @return void
@@ -86,7 +87,6 @@ if ( ! class_exists( 'Shortcodes' ) ) {
 				$donation_link = dtac_give_donation_form_url( $a['form_id'], $current_page_id );
 				$message       = str_replace( '%%donation_form_url%%', $donation_link, $message );
 				$content       = $this->dtac_give_check_access( $content, $message );
-
 
 			endif;
 
