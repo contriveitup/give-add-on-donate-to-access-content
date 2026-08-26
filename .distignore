@@ -1,0 +1,23 @@
+# Exclude from WordPress.org SVN / plugin zip (10up deploy action, wp dist-archive).
+.git
+.github
+.gitignore
+.gitattributes
+.distignore
+.DS_Store
+.vscode
+.phpcs.xml.dist
+.phpunit.result.cache
+phpunit.xml
+composer.json
+composer.lock
+package.json
+package-lock.json
+babel.config.json
+node_modules
+vendor
+assets-src
+tests
+docs
+src/CLI
+README.md

@@ -3,3 +3,8 @@
 node_modules
 vendor
 assets
+.phpunit.result.cache
+
+# Local QA / seeding — do not publish to the public GitHub repo.
+/docs/
+/src/CLI/
