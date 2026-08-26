@@ -9,8 +9,8 @@
  * Tested up to: 7.1
  * Requires PHP: 8.1
  * Requires Plugins: give
- * Author: ContriveItUp
- * Author URI: https://github.com/contriveitup
+ * Author: TheMediaAble
+ * Author URI: https://themediaable.com
  * Text Domain: dtac-give
  * Domain Path: /languages
  * GitHub Plugin URI: https://github.com/contriveitup/give-add-on-donate-to-access-content
@@ -20,358 +20,101 @@
 // Exit if accessed directly.
 defined('ABSPATH') || exit;
 
+if (! defined('DTAC_GIVE_MIN_PHP')) {
+	define('DTAC_GIVE_MIN_PHP', '8.1');
+}
+
+if (! defined('DTAC_GIVE_PLUGIN_FILE')) {
+	define('DTAC_GIVE_PLUGIN_FILE', __FILE__);
+}
+
+if (! defined('DTAC_GIVE_PLUGIN_BASENAME')) {
+	define('DTAC_GIVE_PLUGIN_BASENAME', plugin_basename(__FILE__));
+}
+
+if (! defined('DTAC_GIVE_PLUGIN_DIR')) {
+	define('DTAC_GIVE_PLUGIN_DIR', plugin_dir_path(__FILE__));
+}
+
+if (! defined('DTAC_GIVE_PLUGIN_URL')) {
+	define('DTAC_GIVE_PLUGIN_URL', plugin_dir_url(__FILE__));
+}
+
+if (! defined('DTAC_GIVE_PLUGIN_VERSION')) {
+	define('DTAC_GIVE_PLUGIN_VERSION', '3.0.0');
+}
+
 /**
- * Main Add-On class
+ * Whether the current PHP version meets the plugin requirement.
  *
- * @since 1.0.0
+ * Kept free of return types so this file can load on PHP older than 8.1.
+ *
+ * @since 3.0.0
+ *
+ * @return bool
  */
-final class Donate_To_Access_Content_Give_Addon
+function dtac_give_php_version_is_supported()
 {
+	return version_compare(PHP_VERSION, DTAC_GIVE_MIN_PHP, '>=');
+}
 
-
-	/**
-	 * Main Class Instance.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access private
-	 *
-	 * @var object
-	 */
-	private static $instance;
-
-	/**
-	 * Save core Give plugin class instance.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var object
-	 */
-	public $give;
-
-	/**
-	 * Notices (array).
-	 *
-	 * @since 1.0.0
-	 *
-	 * @var array
-	 */
-	public $admin_notices = array();
-
-	/**
-	 * Singleton Method.
-	 *
-	 * Makes sure only one instance of the class is returned.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return object
-	 */
-	public static function dtac_give_instance()
-	{
-
-		if (! isset(self::$instance)) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
+/**
+ * Admin notice when PHP is too old.
+ *
+ * @since 3.0.0
+ *
+ * @return void
+ */
+function dtac_give_php_version_notice()
+{
+	if (! current_user_can('activate_plugins')) {
+		return;
 	}
 
-	/**
-	 * Class Constructor.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	private function __construct()
-	{
+	$message = sprintf(
+		/* translators: 1: current PHP version, 2: required PHP version */
+		__('Donate to Access Content requires PHP %2$s or later. This site is running PHP %1$s. The plugin has been deactivated to avoid a fatal error. Please upgrade PHP, then activate the plugin again.', 'dtac-give'),
+		PHP_VERSION,
+		DTAC_GIVE_MIN_PHP
+	);
 
-		$this->dtac_give_hooks();
-		$this->dtac_give_constants();
+	printf(
+		'<div class="notice notice-error"><p>%s</p></div>',
+		esc_html($message)
+	);
+}
 
-		if (function_exists('Give')) {
-
-			$this->give = Give();
-			$this->load_textdomain();
-			$this->dtac_give_includes();
-			$this->dtac_give_setup();
-		}
+/**
+ * Deactivate the plugin when PHP is below the required version.
+ *
+ * WordPress still loads an already-active plugin after an update, even when
+ * Requires PHP is higher than the server. Bail before including 8.1+ files.
+ *
+ * @since 3.0.0
+ *
+ * @return void
+ */
+function dtac_give_deactivate_for_php_version()
+{
+	if (! function_exists('deactivate_plugins')) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	}
 
-	/**
-	 * Throw error on object clone
-	 *
-	 * The whole idea of the singleton design pattern is that there is a single
-	 * object, therefore we don't want the object to be cloned.
-	 *
-	 * @since  1.0.0
-	 * @access protected
-	 *
-	 * @return void
-	 */
-	private function __clone()
-	{
-		// Cloning instances of the class is forbidden.
-		_doing_it_wrong(__FUNCTION__, esc_html__('Cheatin&#8217; huh?', 'dtac-give'), '1.0');
+	deactivate_plugins(DTAC_GIVE_PLUGIN_BASENAME);
+
+	if (isset($_GET['activate'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		unset($_GET['activate']);
 	}
+}
 
-	/**
-	 * Throw error on object wakeup
-	 *
-	 * The whole idea of the singleton design pattern is that there is a single
-	 * object, therefore we don't want the object to be cloned.
-	 *
-	 * @since  3.0.0 Method visibility is public for PHP 8+ compatibility.
-	 * @since  1.0.0
-	 * @access public
-	 *
-	 * @return void
-	 */
-	public function __wakeup()
-	{
-		// Cloning instances of the class is forbidden.
-		_doing_it_wrong(__FUNCTION__, esc_html__('Cheatin&#8217; huh?', 'dtac-give'), '1.0');
-	}
+if (! dtac_give_php_version_is_supported()) {
+	add_action('admin_notices', 'dtac_give_php_version_notice');
+	add_action('admin_init', 'dtac_give_deactivate_for_php_version');
+	register_activation_hook(DTAC_GIVE_PLUGIN_FILE, 'dtac_give_deactivate_for_php_version');
+	return;
+}
 
-	/**
-	 * WordPress Hooks.
-	 *
-	 * This contains plugin specific WordPress Hooks/Actions.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	public function dtac_give_hooks(): void
-	{
-
-		// Registration hook.
-		add_action('admin_notices', array($this, 'give_dtca_admin_notices'));
-		add_action('admin_init', array($this, 'dtac_give_install'));
-		add_filter('plugin_action_links_' . plugin_basename(__FILE__), array($this, 'dtac_give_plugin_add_settings_link'));
-	}
-
-	/**
-	 * Add Settings link to the plugin page.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param array $links Setting links array.
-	 *
-	 * @return array
-	 */
-	public function dtac_give_plugin_add_settings_link(array $links): array
-	{
-
-		$dtac_links = array(
-			'<a href="' . esc_url(admin_url('options-general.php?page=dtac')) . '">' . esc_html__('Settings', 'dtac-give') . '</a>',
-		);
-
-		return array_merge($dtac_links, $links);
-	}
-
-	/**
-	 * WP Registration Hook.
-	 *
-	 * Runs when the plugin is activated.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	public function dtac_give_install(): void
-	{
-
-		// Check if Main Give plugin is activated.
-		if (! function_exists('Give')) {
-
-			$this->add_admin_notice(
-				'prompt_connect',
-				'error',
-				sprintf(
-					/* translators: %s: GiveWP download URL */
-					__(
-						'Activation Error: You must have the <a href="%s" target="_blank" title="Download Give WP Plugin">Give</a> core plugin installed and activated for Give Donate to Access Content Add-On to Work.',
-						'dtac-give'
-					),
-					'https://givewp.com'
-				)
-			);
-
-			deactivate_plugins(DTAC_GIVE_PLUGIN_BASENAME);
-
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Core activation flag, not submitted form data.
-			if (isset($_GET['activate'])) {
-				unset($_GET['activate']);
-			}
-		}
-	}
-
-	/**
-	 * PLugin Constants.
-	 *
-	 * Required constants to be used by the plugin.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	private function dtac_give_constants(): void
-	{
-
-		// Plugin Folder Path.
-		if (! defined('DTAC_GIVE_PLUGIN_DIR')) {
-			define('DTAC_GIVE_PLUGIN_DIR', plugin_dir_path(__FILE__));
-		}
-
-		// Plugin Folder URL.
-		if (! defined('DTAC_GIVE_PLUGIN_URL')) {
-			define('DTAC_GIVE_PLUGIN_URL', plugin_dir_url(__FILE__));
-		}
-
-		// Plugin Basename aka: "give-donate-to-access/give-donate-to-access.php".
-		if (! defined('DTAC_GIVE_PLUGIN_BASENAME')) {
-			define('DTAC_GIVE_PLUGIN_BASENAME', plugin_basename(__FILE__));
-		}
-
-		// Plugin Root File.
-		if (! defined('DTAC_GIVE_PLUGIN_FILE')) {
-			define('DTAC_GIVE_PLUGIN_FILE', __FILE__);
-		}
-
-		// Plugin Version.
-		if (! defined('DTAC_GIVE_PLUGIN_VERSION')) {
-			define('DTAC_GIVE_PLUGIN_VERSION', '3.0.0');
-		}
-	}
-
-	/**
-	 * Capture Admin Notices in an array.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @param string $slug         Message slug.
-	 * @param string $notice_class Message class like error, etc.
-	 * @param string $message      The error or notice message.
-	 *
-	 * @return void
-	 */
-	public function add_admin_notice(string $slug, string $notice_class, string $message): void
-	{
-		$this->admin_notices[$slug] = array(
-			'class'   => $notice_class,
-			'message' => $message,
-		);
-	}
-
-	/**
-	 * Add notices to admin_notices WP hook.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	public function give_dtca_admin_notices(): void
-	{
-
-		$allowed_tags = array(
-			'a'      => array(
-				'href'  => array(),
-				'title' => array(),
-			),
-			'br'     => array(),
-			'em'     => array(),
-			'strong' => array(),
-		);
-
-		foreach ((array) $this->admin_notices as $key => $admin_notice) {
-
-			echo '<div class="' . esc_attr($admin_notice['class']) . '"><p>';
-			echo wp_kses($admin_notice['message'], $allowed_tags);
-			echo '</p></div>';
-		}
-	}
-
-	/**
-	 * Loads the plugin language files.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @access private
-	 *
-	 * @return void
-	 */
-	private function load_textdomain(): void
-	{
-
-		$lang_dir = dirname(plugin_basename(__FILE__)) . '/languages/';
-
-		load_plugin_textdomain('dtac-give', false, $lang_dir);
-	}
-
-	/**
-	 * Include plugin files to run plugin's functionality.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	public function dtac_give_includes(): void
-	{
-
-		// Composer autoload.
-		include_once DTAC_GIVE_PLUGIN_DIR . 'vendor/autoload.php';
-
-		// General.
-		include_once DTAC_GIVE_PLUGIN_DIR . 'includes/functions.php';
-	}
-
-	/**
-	 * Plugin setup.
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return void
-	 */
-	public function dtac_give_setup(): void
-	{
-
-		/**
-		 * Fires before plugin setup
-		 *
-		 * @since 1.0
-		 */
-		do_action('dtac_give_before_plugin_setup');
-
-		// Load Admin Modules.
-		new DTAC\Admin\Settings();
-		new DTAC\Admin\Metabox();
-		new DTAC\Admin\Insights();
-
-		// Load Frontend Modules.
-		new DTAC\Frontend\Hooks();
-		new DTAC\Frontend\Restrict_Content();
-		new DTAC\Frontend\Shortcodes();
-		new DTAC\Frontend\Leak_Protection();
-		new DTAC\Frontend\Blocks();
-		new DTAC\Frontend\Magic_Link();
-
-		// Load Setup Modules.
-		new \DTAC\Setup\Enqueue_Scripts();
-
-		if ( defined( 'WP_CLI' ) && WP_CLI && class_exists( '\\WP_CLI' ) && class_exists( '\\DTAC\\CLI\\Seed_Command' ) ) {
-			\WP_CLI::add_command( 'dtac', '\\DTAC\\CLI\\Seed_Command' );
-		}
-
-		/**
-		 * Fires after plugin setup
-		 *
-		 * @since 1.0
-		 */
-		do_action('dtac_give_after_plugin_setup');
-	}
-} // End class Donate_To_Access_Content_Give_Addon
+require_once DTAC_GIVE_PLUGIN_DIR . 'includes/class-donate-to-access-content-give-addon.php';
 
 /**
  * Initialize main class instance.

@@ -15,6 +15,7 @@
     - Access-grant spoofing via content-ID whitelist.
     - Cache headers on restricted URLs.
     - Uninstall now removes plugin settings and related donation/donor meta.
+    - Updating on PHP older than 8.1 deactivates with an admin notice instead of a parse fatal.
 
 = 2.1.0: July 30, 2022 =
 * Added

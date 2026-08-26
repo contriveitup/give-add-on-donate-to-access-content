@@ -56,6 +56,10 @@ It has 2 options, the first one is required which is the ID of the donation form
 
 Yes, for now the Category Archive page can be restricted. If a post is in that category, a user can view that post without donation unless you restrict that entire post altogether.
 
+= What happens if I update to 3.0 on PHP older than 8.1? =
+
+Version 3.0 requires PHP 8.1. If the plugin is already active on PHP 7.4 or 8.0, WordPress still loads it after an update. The bootstrap shows an admin error and deactivates the plugin instead of causing a fatal error. Upgrade PHP, then activate the plugin again.
+
 == Changelog ==
 = 3.0.0: August 26, 2026 =
 * Added
@@ -73,6 +77,7 @@ Yes, for now the Category Archive page can be restricted. If a post is in that c
     - Access-grant spoofing via content-ID whitelist.
     - Cache headers on restricted URLs.
     - Uninstall now removes plugin settings and related donation/donor meta.
+    - Updating on PHP older than 8.1 deactivates with an admin notice instead of a parse fatal.
 
 = 2.1.0: July 30, 2022 =
 * Added

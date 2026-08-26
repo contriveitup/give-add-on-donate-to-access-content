@@ -38,6 +38,8 @@ This plugin is **not** an official GiveWP product.
 - GiveWP active (legacy v2 forms and visual-builder v3 / v4 forms are both supported)
 - A published Give donation form to use as the default gate
 
+If 3.0.0 is installed or updated on PHP older than 8.1 (WordPress still loads an already-active plugin), the bootstrap shows an admin notice and deactivates the plugin instead of fatalling on 8.1 syntax. Upgrade PHP, then activate the plugin again.
+
 ## How it works
 
 ```mermaid
@@ -245,6 +247,9 @@ Not if you set **Minimum donation amount** globally or on the metabox. The donat
 
 **Does access last forever?**
 By default yes (`0` days). Set expiry globally or per post to require a newer donation.
+
+**What happens if the site is still on PHP 7.4 or 8.0 after updating to 3.0?**
+The plugin deactivates itself and shows an admin error. It does not load the 8.1+ classes, so the rest of WordPress keeps running. Upgrade to PHP 8.1 or later, then activate the plugin again.
 
 **What happens to data if I delete the plugin?**
 Uninstall removes plugin settings and the meta keys listed under [Admin extras](#admin-extras). Give donations themselves are not deleted.
