@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Add a WYSIWYG field.
  *
@@ -12,10 +13,13 @@ namespace DTAC\Controllers\Form\Fields;
 use DTAC\Interfaces\InterfaceFormFields;
 use DTAC\Controllers\Form\Fields\Traits\Field_Options;
 
+defined( 'ABSPATH' ) || exit;
+
 /**
  * Class with settings and html for WYSIWYG
  */
 class Wysiwyg implements InterfaceFormFields {
+
 
 	use Field_Options;
 
@@ -48,7 +52,7 @@ class Wysiwyg implements InterfaceFormFields {
 	 *
 	 * @return string
 	 */
-	private function wysiwyg_content() : string {
+	private function wysiwyg_content(): string {
 
 		$content = $this->wysiwyg_default( $this->options );
 
@@ -62,7 +66,7 @@ class Wysiwyg implements InterfaceFormFields {
 	 *
 	 * @return string
 	 */
-	private function wysiwyg_id() : string {
+	private function wysiwyg_id(): string {
 
 		$id = $this->field_name_id( $this->options );
 
@@ -76,7 +80,7 @@ class Wysiwyg implements InterfaceFormFields {
 	 *
 	 * @return string
 	 */
-	private function wysiwyg_description() : string {
+	private function wysiwyg_description(): string {
 
 		$desc = $this->description( $this->options );
 

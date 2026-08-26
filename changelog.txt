@@ -1,4 +1,21 @@
 == Changelog ==
+= 3.0.0: August 26, 2026 =
+* Added
+    - GiveWP 3.x / 4.x visual-builder grant path alongside legacy v2 forms.
+    - Per-post metabox for restrict, donation form, minimum amount, and access expiry.
+    - Blocks: `dtac/restricted-content` and `dtac/my-unlocked-content`.
+    - Guest restore via signed email link and `[dtac_my_unlocked_content]` shortcode.
+    - REST, feed, search, and oEmbed leak protection.
+    - Donations-list Unlocked Content column and settings-page unlock counts.
+* Updated
+    - Requires WordPress 6.0+, PHP 8.1+, GiveWP 4.16.x (tested up to WordPress 7.1).
+    - WordPress coding standards (WPCS) cleanup.
+    - Composer and npm toolchains (PHPUnit 9.6, WPCS 3.x, Dart Sass, Babel 7).
+* Fixed
+    - Access-grant spoofing via content-ID whitelist.
+    - Cache headers on restricted URLs.
+    - Uninstall now removes plugin settings and related donation/donor meta.
+
 = 2.1.0: July 30, 2022 =
 * Added
     - Function `dtac_get_give_forms` to get Give Forms and display inside a select box under Admin Settings.

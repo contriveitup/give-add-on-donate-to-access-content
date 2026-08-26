@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Enqueue Admin & Frontend JS & CSS Scripts
  *
@@ -17,6 +18,7 @@ defined( 'ABSPATH' ) || exit;
 class Enqueue_Scripts {
 
 
+
 	/**
 	 * [__construct]
 	 *
@@ -25,6 +27,7 @@ class Enqueue_Scripts {
 	public function __construct() {
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'dtac_give_admin_scripts' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'dtac_give_block_editor_scripts' ) );
 	}
 
 	/**
@@ -34,7 +37,7 @@ class Enqueue_Scripts {
 	 *
 	 * @return void
 	 */
-	public function dtac_give_admin_scripts() : void {
+	public function dtac_give_admin_scripts(): void {
 
 		if ( ! is_dtac_plugin_settings_page() ) {
 			return;
@@ -74,4 +77,24 @@ class Enqueue_Scripts {
 		wp_enqueue_script( 'dtac-give-admin-js' );
 	}
 
+	/**
+	 * Editor scripts for Gutenberg blocks.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return void
+	 */
+	public function dtac_give_block_editor_scripts(): void {
+
+		$script_path = DTAC_GIVE_PLUGIN_URL . 'assets/js/';
+
+		wp_register_script(
+			'dtac-give-blocks',
+			$script_path . 'blocks.js',
+			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
+			DTAC_GIVE_PLUGIN_VERSION,
+			true
+		);
+		wp_enqueue_script( 'dtac-give-blocks' );
+	}
 } // End class Enqueue_Scripts.

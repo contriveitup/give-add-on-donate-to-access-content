@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Admin Settings
  *
@@ -21,6 +22,7 @@ if ( ! class_exists( 'Settings' ) ) :
 	 * Plugin Admin Settings
 	 */
 	class Settings extends Functions implements InterfaceFormSettings {
+
 
 		/**
 		 * Admin Page Title.
@@ -66,7 +68,7 @@ if ( ! class_exists( 'Settings' ) ) :
 		 *
 		 * @return void
 		 */
-		public function dtac_settings_page() : void {
+		public function dtac_settings_page(): void {
 
 			add_options_page(
 				$this->page_title,
@@ -112,11 +114,7 @@ if ( ! class_exists( 'Settings' ) ) :
 		 *
 		 * @return array
 		 */
-		public function dtac_form_settings() : array {
-
-			$settings = array();
-
-			$this->dtac_give_get_custom_tax();
+		public function dtac_form_settings(): array {
 
 			$settings = array(
 				array(
@@ -199,13 +197,37 @@ if ( ! class_exists( 'Settings' ) ) :
 					'default' => array(),
 					'options' => $this->dtac_give_get_custom_tax(),
 				),
+				array(
+					'name'    => esc_html__( 'Minimum donation amount', 'dtac-give' ),
+					'desc'    => __( 'Optional global minimum. Donations below this amount do not unlock content. Per-post metabox values override this. Existing restriction lists are unchanged.', 'dtac-give' ),
+					'id'      => 'dtac_give_min_amount',
+					'type'    => 'text',
+					'class'   => '',
+					'default' => '0',
+				),
+				array(
+					'name'    => esc_html__( 'Access expires after (days)', 'dtac-give' ),
+					'desc'    => __( 'Optional. Leave 0 for never. Per-post metabox values override this. Existing restriction lists are unchanged.', 'dtac-give' ),
+					'id'      => 'dtac_give_access_expires_days',
+					'type'    => 'text',
+					'class'   => '',
+					'default' => '0',
+				),
+				array(
+					'name'    => esc_html__( 'Restricted content in feeds and APIs', 'dtac-give' ),
+					'desc'    => __( 'Choose how restricted posts appear in REST, RSS/Atom, search, and oEmbed. Existing restriction lists are unchanged.', 'dtac-give' ),
+					'id'      => 'dtac_give_leak_mode',
+					'type'    => 'select',
+					'class'   => '',
+					'default' => 'hide',
+					'options' => $this->dtac_give_settings_array( 'leak_mode' ),
+				),
 			);
 
 			$settings = apply_filters( 'dtac_give_admin_settings', $settings );
 
 			return $settings;
 		}
-
 	} // End class Settings.
 
 endif; // End if class_exists check.

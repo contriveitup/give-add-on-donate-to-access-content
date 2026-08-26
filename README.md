@@ -4,13 +4,15 @@
 
 This is the development repo for **Donate to access content** WordPress plugin. It contains uncompiled source files, you can download a compiled version of the plugin from WordPress.org or checkout the releases section for a compiled zip file.
 
-Requires at least (WordPress): 5.5
+Requires at least (WordPress): 6.0
 
-Requires PHP: 7.4
+Requires PHP: 8.1
 
-Tested up to (WordPress): 6.0.1
+Tested up to (WordPress): 7.1
 
-Tested up to (Give): 2.21.4
+Tested up to (Give): 4.16.x
+
+Plugin version: 3.0.0
 
 # Installation
 

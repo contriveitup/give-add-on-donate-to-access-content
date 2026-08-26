@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Common options used in all form field
  *
@@ -18,6 +19,7 @@ defined( 'ABSPATH' ) || exit;
  */
 trait Field_Options {
 
+
 	/**
 	 * Get field css classes
 	 *
@@ -27,7 +29,7 @@ trait Field_Options {
 	 *
 	 * @return string
 	 */
-	protected function css_classes( array $options ) : string {
+	protected function css_classes( array $options ): string {
 
 		if ( ! dtac_is_valid_array( $options, 'class', true ) ) {
 			return '';
@@ -57,7 +59,7 @@ trait Field_Options {
 	 *
 	 * @return string
 	 */
-	protected function field_name_id( array $options ) : string {
+	protected function field_name_id( array $options ): string {
 
 		if ( ! dtac_is_valid_array( $options, 'id', true ) ) {
 			return '';
@@ -75,7 +77,7 @@ trait Field_Options {
 	 *
 	 * @return string
 	 */
-	protected function input_default( array $options ) : string {
+	protected function input_default( array $options ): string {
 
 		if ( ! dtac_is_valid_array( $options, 'default', true ) ) {
 			return '';
@@ -83,7 +85,11 @@ trait Field_Options {
 
 		$db_default = dtac_give_get_settings( $this->field_name_id( $options ) );
 
-		return ( '' !== $db_default ) ? esc_attr( $db_default ) : esc_attr( $options['default'] );
+		if ( is_scalar( $db_default ) && '' !== (string) $db_default ) {
+			return esc_attr( (string) $db_default );
+		}
+
+		return isset( $options['default'] ) ? esc_attr( (string) $options['default'] ) : '';
 	}
 
 	/**
@@ -95,7 +101,7 @@ trait Field_Options {
 	 *
 	 * @return string
 	 */
-	protected function input_default_select( array $options ) : string {
+	protected function input_default_select( array $options ): string {
 
 		if ( ! dtac_is_valid_array( $options, 'default', true ) ) {
 			return '';
@@ -103,7 +109,11 @@ trait Field_Options {
 
 		$db_default = dtac_give_get_settings( $this->field_name_id( $options ) );
 
-		return ( ! empty( $db_default ) ) ? $db_default : esc_attr( $options['default'] );
+		if ( is_scalar( $db_default ) && '' !== (string) $db_default ) {
+			return (string) $db_default;
+		}
+
+		return isset( $options['default'] ) ? (string) $options['default'] : '';
 	}
 
 	/**
@@ -116,7 +126,7 @@ trait Field_Options {
 	 *
 	 * @return array
 	 */
-	protected function input_default_multiple( array $options ) : array {
+	protected function input_default_multiple( array $options ): array {
 
 		if ( ! dtac_is_valid_array( $options, 'default', true ) ) {
 			return array();
@@ -124,7 +134,11 @@ trait Field_Options {
 
 		$db_default = dtac_give_get_settings( $this->field_name_id( $options ) );
 
-		return ( ! empty( $db_default ) ) ? (array) $db_default : (array) $options['default'];
+		if ( ! empty( $db_default ) ) {
+			return array_map( 'strval', (array) $db_default );
+		}
+
+		return isset( $options['default'] ) ? array_map( 'strval', (array) $options['default'] ) : array();
 	}
 
 	/**
@@ -136,13 +150,13 @@ trait Field_Options {
 	 *
 	 * @return string
 	 */
-	protected function wysiwyg_default( array $options ) : string {
+	protected function wysiwyg_default( array $options ): string {
 
 		if ( ! dtac_is_valid_array( $options, 'default', true ) ) {
 			return '';
 		}
 
-		return wp_kses_post( $options['default'] );
+		return isset( $options['default'] ) ? wp_kses_post( (string) $options['default'] ) : '';
 	}
 
 	/**
@@ -154,7 +168,7 @@ trait Field_Options {
 	 *
 	 * @return string
 	 */
-	protected function description( array $options ) : string {
+	protected function description( array $options ): string {
 
 		if ( ! dtac_is_valid_array( $options, 'desc', true ) ) {
 			return '';
@@ -172,7 +186,7 @@ trait Field_Options {
 	 *
 	 * @return string
 	 */
-	protected function extra_attributes( array $options ) : string {
+	protected function extra_attributes( array $options ): string {
 
 		if ( ! dtac_is_valid_array( $options, 'attrs', true ) ) {
 			return '';
@@ -201,13 +215,15 @@ trait Field_Options {
 	 *
 	 * @return void
 	 */
-	protected function field_attributes( array $options ) : void {
+	protected function field_attributes( array $options ): void {
 
 		$attributes  = ( '' !== $this->field_name_id( $options ) ) ? 'id="' . $this->field_name_id( $options ) . '" ' : '';
 		$attributes .= ( '' !== $this->extra_attributes( $options ) ) ? $this->extra_attributes( $options ) : '';
 		$attributes .= ( '' !== $this->css_classes( $options ) ) ? 'class="' . $this->css_classes( $options ) . '" ' : '';
 
-		if ( in_array( $options['type'], multiple_input_types(), true ) ) {
+		$field_type = isset( $options['type'] ) ? (string) $options['type'] : '';
+
+		if ( in_array( $field_type, multiple_input_types(), true ) ) {
 
 			$attributes .= ( '' !== $this->field_name_id( $options ) ) ? 'name="' . $this->field_name_id( $options ) . '[]"' : '';
 		} else {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Add a select input field.
  *
@@ -18,6 +19,7 @@ defined( 'ABSPATH' ) || exit;
  * Class with settings and html for Select Box
  */
 class Select implements InterfaceFormFields {
+
 
 	use Field_Options;
 
@@ -52,15 +54,16 @@ class Select implements InterfaceFormFields {
 	 *
 	 * @return void
 	 */
-	public function select_options( string $default_value = '' ) : void {
-
-		$selected = '';
+	public function select_options( string $default_value = '' ): void {
 
 		foreach ( $this->options['options'] as $key => $option ) {
 
-			$selected = ( $key === $default_value ) ? ' selected' : '';
-
-			echo '<option value="' . esc_html( $key ) . '" ' . $selected . '>' . esc_html( $option ) . '</option>';
+			printf(
+				'<option value="%1$s"%2$s>%3$s</option>',
+				esc_attr( (string) $key ),
+				selected( (string) $key, (string) $default_value, false ),
+				esc_html( $option )
+			);
 		}
 	}
 
@@ -73,14 +76,14 @@ class Select implements InterfaceFormFields {
 	 */
 	public function html() {
 		?>
-<div class="control">
-    <div class="select is-fullwidth">
-        <select <?php $this->field_attributes( $this->options ); ?>>
-            <?php $this->select_options( $this->input_default_select( $this->options ) ); ?>
-        </select>
-    </div>
-    <p class="help mt-3"><?php echo $this->description( $this->options ); ?></p>
-</div>
-<?php
+		<div class="control">
+			<div class="select is-fullwidth">
+				<select <?php $this->field_attributes( $this->options ); ?>>
+					<?php $this->select_options( $this->input_default_select( $this->options ) ); ?>
+				</select>
+			</div>
+			<p class="help mt-3"><?php echo wp_kses_post( $this->description( $this->options ) ); ?></p>
+		</div>
+		<?php
 	}
 }

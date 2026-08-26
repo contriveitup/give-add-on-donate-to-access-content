@@ -2,10 +2,11 @@
 Contributors: contriveitup, rupakdhiman
 Tags: donate, donate to access, donate to access content, give add-on, wordpress plugin, free wordpress plugin, free give plugin add-on, contriveitup
 Donate link: paypal.me/contriveitup
-Requires at least: 5.5
-Tested up to: 6.0
-Requires PHP: 7.4
-Stable tag: 2.1.0
+Requires at least: 6.0
+Tested up to: 7.1
+Requires PHP: 8.1
+Requires Plugins: give
+Stable tag: 3.0.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -56,6 +57,23 @@ It has 2 options, the first one is required which is the ID of the donation form
 Yes, for now the Category Archive page can be restricted. If a post is in that category, a user can view that post without donation unless you restrict that entire post altogether.
 
 == Changelog ==
+= 3.0.0: August 26, 2026 =
+* Added
+    - GiveWP 3.x / 4.x visual-builder grant path alongside legacy v2 forms.
+    - Per-post metabox for restrict, donation form, minimum amount, and access expiry.
+    - Blocks: `dtac/restricted-content` and `dtac/my-unlocked-content`.
+    - Guest restore via signed email link and `[dtac_my_unlocked_content]` shortcode.
+    - REST, feed, search, and oEmbed leak protection.
+    - Donations-list Unlocked Content column and settings-page unlock counts.
+* Updated
+    - Requires WordPress 6.0+, PHP 8.1+, GiveWP 4.16.x (tested up to WordPress 7.1).
+    - WordPress coding standards (WPCS) cleanup.
+    - Composer and npm toolchains (PHPUnit 9.6, WPCS 3.x, Dart Sass, Babel 7).
+* Fixed
+    - Access-grant spoofing via content-ID whitelist.
+    - Cache headers on restricted URLs.
+    - Uninstall now removes plugin settings and related donation/donor meta.
+
 = 2.1.0: July 30, 2022 =
 * Added
     - Function `dtac_get_give_forms` to get Give Forms and display inside a select box under Admin Settings.

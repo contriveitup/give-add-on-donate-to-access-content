@@ -55,7 +55,7 @@ class Process {
 	 *
 	 * @return bool
 	 */
-	private function nonce_validated() : bool {
+	private function nonce_validated(): bool {
 
 		return (bool) check_admin_referer( $this->admin_nonce_name, $this->admin_nonce_value );
 	}

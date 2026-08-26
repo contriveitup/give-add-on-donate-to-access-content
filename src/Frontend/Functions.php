@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Functions for frontend operations
  *
@@ -6,6 +7,8 @@
  */
 
 namespace DTAC\Frontend;
+
+use DTAC\Give\Give_Adapter;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -19,26 +22,53 @@ if ( ! class_exists( 'Functions' ) ) :
 	 */
 	class Functions {
 
+
 		/**
 		 * Give object instance
 		 *
 		 * @since 2.0.0
 		 *
-		 * @var object
+		 * @var object|null
 		 */
 		protected $give;
 
+		/**
+		 * Give compatibility adapter.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @var Give_Adapter|null
+		 */
+		protected $give_adapter;
 
 		/**
 		 * Class constructor.
 		 *
+		 * @since 3.0.0 Store the Give adapter instead of assuming Give() is always present.
 		 * @since 2.0.0
 		 *
 		 * @return void
 		 */
 		public function __construct() {
 
-			$this->give = Give();
+			$this->give_adapter = dtac_give_adapter();
+			$this->give         = function_exists( 'Give' ) ? Give() : null;
+		}
+
+		/**
+		 * Give compatibility adapter.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @return Give_Adapter
+		 */
+		protected function give_adapter(): Give_Adapter {
+
+			if ( ! $this->give_adapter instanceof Give_Adapter ) {
+				$this->give_adapter = dtac_give_adapter();
+			}
+
+			return $this->give_adapter;
 		}
 
 		/**
@@ -54,22 +84,9 @@ if ( ! class_exists( 'Functions' ) ) :
 		 */
 		public function dtac_give_check_access( $content, $restrict_content = '' ) {
 
-			global $wp_query;
-
-			// Initialize the varibales.
-			$id              = '';
-			$field           = '';
-			$value           = '';
-			$donor           = array();
-			$current_page_id = 0;
-			$access_content  = array();
-			$result          = '';
-
-			$result = $restrict_content;
-
-			$current_page_id = $wp_query->post->ID;
-
-			$is_restricted = self::dtac_give_is_donor_restricted( $current_page_id );
+			$result          = $restrict_content;
+			$current_page_id = dtac_give_get_current_object_id();
+			$is_restricted   = self::dtac_give_is_donor_restricted( $current_page_id );
 
 			if ( $is_restricted ) {
 				$result = $restrict_content;
@@ -83,6 +100,7 @@ if ( ! class_exists( 'Functions' ) ) :
 		/**
 		 * Check if content is restrcied for donor or not.
 		 *
+		 * @since 3.0.0 Use the Give adapter and strict content-ID matching.
 		 * @since 1.0.0
 		 *
 		 * @param mixed $content Content page, post id or slug.
@@ -92,30 +110,15 @@ if ( ! class_exists( 'Functions' ) ) :
 		public static function dtac_give_is_donor_restricted( $content ) {
 
 			$is_restricted = true;
+			$content_id    = dtac_give_sanitize_content_id( $content );
+			$donor         = dtac_give_get_donor();
 
-			$donor = dtac_give_get_donor();
+			if ( $donor && '' !== $content_id ) {
+				$access_content = dtac_give_adapter()->get_unlocked_content_ids( $donor );
 
-			// If donor exists.
-			if ( ! empty( $donor ) ) {
-
-				$payment_ids = $donor->payment_ids;
-
-				$payment_ids = explode( ',', $payment_ids );
-
-				// If there is a payment ID.
-				if ( ! empty( $payment_ids ) ) :
-
-					foreach ( $payment_ids as $payment_id ) {
-
-						// Get content ID's to acess.
-						$access_content[] = get_post_meta( $payment_id, '_dtac_give_access_to_content', true );
-					}
-
-					if ( in_array( $content, $access_content ) ) {
-						$is_restricted = false;
-					}
-
-				endif;
+				if ( in_array( $content_id, $access_content, true ) ) {
+					$is_restricted = false;
+				}
 			}
 
 			return $is_restricted;
@@ -131,23 +134,21 @@ if ( ! class_exists( 'Functions' ) ) :
 		 * @return void
 		 */
 		public function dtac_give_restrict_whole_site( $form_id ) {
-			global $wp_query;
 
 			$donated = '';
-
-			$donor = dtac_give_get_donor();
+			$donor   = dtac_give_get_donor();
 
 			if ( $donor ) {
-				$donated = $this->give->donor_meta->get_meta( $donor->id, 'give_dtca_access_website', true );
+				$donor_id = $this->give_adapter()->get_donor_id( $donor );
+				$donated  = $this->give_adapter()->get_donor_meta( $donor_id, Give_Adapter::SITE_ACCESS_META_KEY );
 			}
 
 			if ( ! $donated || 'yes' !== $donated ) {
 
-				$current_cpt    = get_post_type();
-				$current_cpt_id = $wp_query->post->ID;
+				$current_cpt_id = dtac_give_get_current_object_id();
 				$access_to      = dtac_give_get_settings( 'dtac_give_access_to_pages' );
 
-				if ( ! is_page( $access_to ) && ! is_singular( 'give_forms' ) && $current_cpt_id != $form_id ) {
+				if ( ! is_page( $access_to ) && ! is_singular( 'give_forms' ) && (int) $current_cpt_id !== (int) $form_id ) {
 					wp_safe_redirect( dtac_give_donation_form_url( $form_id, 'site' ) );
 					exit;
 				}
@@ -164,13 +165,12 @@ if ( ! class_exists( 'Functions' ) ) :
 		 * @return void
 		 */
 		public function dtac_give_restrict_pages( $form_id ) {
-			global $wp_query;
 
 			$pages = dtac_give_get_settings( 'dtac_give_restrict_access_to_pages' );
 
 			$pages = ( ! empty( $pages ) ? $pages : array() );
 
-			$current_page = $wp_query->post->ID;
+			$current_page = dtac_give_get_current_object_id();
 
 			if ( ! empty( $pages ) ) {
 
@@ -182,8 +182,8 @@ if ( ! class_exists( 'Functions' ) ) :
 						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_page ) );
 						exit;
 					}
-				} // End if is_page check.
-			} // End if empty check.
+				}
+			}
 		}
 
 		/**
@@ -196,13 +196,12 @@ if ( ! class_exists( 'Functions' ) ) :
 		 * @return void
 		 */
 		public function dtac_give_restrict_posts( $form_id ) {
-			global $wp_query;
 
 			$posts = dtac_give_get_settings( 'dtac_give_restrict_access_to_posts' );
 
 			$posts = ( ! empty( $posts ) ? $posts : array() );
 
-			$current_post = $wp_query->post->ID;
+			$current_post = dtac_give_get_current_object_id();
 
 			if ( ! empty( $posts ) ) {
 
@@ -214,10 +213,9 @@ if ( ! class_exists( 'Functions' ) ) :
 						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_post ) );
 						exit;
 					}
-				} // End if is_page check.
-			} // End if empty check.
+				}
+			}
 		}
-
 
 		/**
 		 * Restrict Categories.
@@ -232,13 +230,17 @@ if ( ! class_exists( 'Functions' ) ) :
 		 * @return void
 		 */
 		public function dtac_give_restrict_cats( $form_id ) {
-			global $wp_query;
 
 			$cats = dtac_give_get_settings( 'dtac_give_restrict_access_to_cats' );
 
 			$cats = ( ! empty( $cats ) ? $cats : array() );
 
-			$category    = get_queried_object();
+			$category = get_queried_object();
+
+			if ( ! $category instanceof \WP_Term ) {
+				return;
+			}
+
 			$current_cat = 'c' . $category->term_id;
 
 			if ( ! empty( $cats ) ) {
@@ -251,8 +253,8 @@ if ( ! class_exists( 'Functions' ) ) :
 						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_cat ) );
 						exit;
 					}
-				} // End if is_page check.
-			} // End if empty check.
+				}
+			}
 		}
 
 		/**
@@ -265,7 +267,6 @@ if ( ! class_exists( 'Functions' ) ) :
 		 * @return void
 		 */
 		public function dtac_give_restrict_cpt( $form_id ) {
-			global $wp_query;
 
 			$cpts = dtac_give_get_settings( 'dtac_give_restrict_access_to_cpt' );
 
@@ -283,8 +284,8 @@ if ( ! class_exists( 'Functions' ) ) :
 						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_cpt ) );
 						exit;
 					}
-				} // End if is_page check.
-			} // End if empty check.
+				}
+			}
 		}
 
 		/**
@@ -297,15 +298,19 @@ if ( ! class_exists( 'Functions' ) ) :
 		 * @return void
 		 */
 		public function dtac_give_restrict_ctax( $form_id ) {
-			global $wp_query;
 
 			$ctaxs = dtac_give_get_settings( 'dtac_give_restrict_access_to_custom_tax' );
 
 			$ctaxs = ( ! empty( $ctaxs ) ? $ctaxs : array() );
 
-			$taxonomies     = dtac_give_get_custom_taxs_names(); // Get names of all registered taxonomies.
+			$taxonomies     = dtac_give_get_custom_taxs_names();
 			$queried_object = get_queried_object();
-			$current_ctax   = 'c' . $queried_object->term_id; // Currently displayed tax ID.
+
+			if ( ! $queried_object instanceof \WP_Term ) {
+				return;
+			}
+
+			$current_ctax = 'c' . $queried_object->term_id;
 
 			if ( ! empty( $ctaxs ) ) {
 
@@ -317,10 +322,9 @@ if ( ! class_exists( 'Functions' ) ) :
 						wp_safe_redirect( dtac_give_donation_form_url( $form_id, $current_ctax ) );
 						exit;
 					}
-				} // End if is_page check
-			} // End if empty check
+				}
+			}
 		}
-
 	} // End class Functions.
 
 endif; // End if class_exists check.

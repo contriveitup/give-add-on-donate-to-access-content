@@ -1,4 +1,5 @@
 <?php
+
 use DTAC\Controllers\Form\Form;
 
 $form = new Form( new DTAC\Admin\Settings() );
@@ -13,6 +14,15 @@ new DTAC\Controllers\Form\Process();
 			<div class="column is-two-thirds">
 				<div class="box">
 					<?php $form->output(); ?>
+				</div>
+			</div>
+			<div class="column">
+				<div class="box">
+					<?php
+					if ( class_exists( '\\DTAC\\Admin\\Insights', false ) ) {
+						\DTAC\Admin\Insights::render_summary();
+					}
+					?>
 				</div>
 			</div>
 		</div>

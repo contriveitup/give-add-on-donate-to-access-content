@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Add a select input field.
  *
@@ -18,6 +19,7 @@ defined( 'ABSPATH' ) || exit;
  * Class with settings and html for Text Box
  */
 class Text implements InterfaceFormFields {
+
 
 	use Field_Options;
 
@@ -52,7 +54,7 @@ class Text implements InterfaceFormFields {
 	 */
 	private function input_value() {
 
-		echo 'value="' . $this->input_default( $this->options ) . '"'; // phpcs:ignore
+		echo 'value="' . esc_attr( $this->input_default( $this->options ) ) . '"';
 	}
 
 	/**
@@ -66,7 +68,7 @@ class Text implements InterfaceFormFields {
 		?>
 		<div class="control">
 			<input type="text" <?php $this->field_attributes( $this->options ); ?> <?php $this->input_value(); ?> />
-			<p class="help mt-3"><?php echo $this->description( $this->options ); ?></p>
+			<p class="help mt-3"><?php echo wp_kses_post( $this->description( $this->options ) ); ?></p>
 		</div>
 		<?php
 	}

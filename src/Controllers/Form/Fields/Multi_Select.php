@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Add a multi select input field.
  *
@@ -19,6 +20,7 @@ defined( 'ABSPATH' ) || exit;
  * (Multiple)
  */
 class Multi_Select implements InterfaceFormFields {
+
 
 	use Field_Options;
 
@@ -53,17 +55,18 @@ class Multi_Select implements InterfaceFormFields {
 	 *
 	 * @return void
 	 */
-	public function select_options( array $default_value = array() ) : void {
-
-		$selected = '';
+	public function select_options( array $default_value = array() ): void {
 
 		foreach ( $this->options['options'] as $key => $option ) {
 
 			$key = (string) $key;
 
-			$selected = ( in_array( $key, $default_value, true ) ) ? ' selected' : '';
-
-			echo '<option value="' . esc_html( $key ) . '" ' . $selected . '>' . esc_html( $option ) . '</option>';
+			printf(
+				'<option value="%1$s"%2$s>%3$s</option>',
+				esc_attr( $key ),
+				selected( in_array( $key, $default_value, true ), true, false ),
+				esc_html( $option )
+			);
 		}
 	}
 
@@ -82,7 +85,7 @@ class Multi_Select implements InterfaceFormFields {
 					<?php $this->select_options( $this->input_default_multiple( $this->options ) ); ?>
 				</select>
 			</div>
-			<p class="help mt-3"><?php echo $this->description( $this->options ); ?></p>
+			<p class="help mt-3"><?php echo wp_kses_post( $this->description( $this->options ) ); ?></p>
 		</div>
 		<?php
 	}

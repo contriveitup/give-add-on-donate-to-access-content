@@ -27,7 +27,7 @@ abstract class Form_Fields {
 	 *
 	 * @return object
 	 */
-	protected function output_field( array $settings ) : object {
+	protected function output_field( array $settings ): object {
 
 		$class_name = 'DTAC\Controllers\Form\Fields\\' . trim( ucwords( str_replace( '-', '_', $settings['type'] ) ) );
 
@@ -45,7 +45,7 @@ abstract class Form_Fields {
 	 *
 	 * @return void
 	 */
-	abstract protected function submit_button() : void;
+	abstract protected function submit_button(): void;
 
 	/**
 	 * Nonce Field for the form
@@ -54,5 +54,5 @@ abstract class Form_Fields {
 	 *
 	 * @return void
 	 */
-	abstract protected function form_nonce_field() : void;
+	abstract protected function form_nonce_field(): void;
 }

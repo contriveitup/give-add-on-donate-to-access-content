@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Shortcodes
  *
@@ -26,6 +27,7 @@ if ( ! class_exists( 'Shortcodes' ) ) {
 	class Shortcodes extends Functions {
 
 
+
 		/**
 		 * Class constructor.
 		 *
@@ -33,7 +35,10 @@ if ( ! class_exists( 'Shortcodes' ) ) {
 		 */
 		public function __construct() {
 
+			parent::__construct();
+
 			add_shortcode( 'cip_donate_to_access_content', array( $this, 'donate_to_access_give_shortcode_func' ) );
+			add_shortcode( 'dtac_my_unlocked_content', array( $this, 'my_unlocked_content_shortcode' ) );
 		}
 
 		/**
@@ -47,14 +52,15 @@ if ( ! class_exists( 'Shortcodes' ) ) {
 		 *
 		 * @since 1.0.0
 		 *
-		 * @param array  $atts    Shortcode Attributes.
-		 * @param string $content Shortcode content.
+		 * @param array|string $atts    Shortcode Attributes.
+		 * @param string|null  $content Shortcode content.
 		 *
-		 * @return void
+		 * @return string|void
 		 */
-		public function donate_to_access_give_shortcode_func( $atts, $content = null ) {
+		public function donate_to_access_give_shortcode_func( $atts, $content = '' ) {
 
-			global $wp_query;
+			$atts    = is_array( $atts ) ? $atts : array();
+			$content = is_string( $content ) ? $content : '';
 
 			$a = shortcode_atts(
 				array(
@@ -69,28 +75,24 @@ if ( ! class_exists( 'Shortcodes' ) ) {
 				return;
 			}
 
-			$current_page_id = $wp_query->post->ID;
+			$current_page_id = dtac_give_get_current_object_id();
+			$restrict        = dtac_give_get_restriction_output( (int) $a['form_id'], (string) $a['show'], $current_page_id );
 
-			// If show type is a form.
-			if ( 'form' === $a['show'] ) :
+			return $this->dtac_give_check_access( $content, $restrict );
+		}
 
-				$restrict_content = do_shortcode( '[give_form id="' . $a['form_id'] . '"]' );
+		/**
+		 * List content the current donor has unlocked.
+		 *
+		 * Usage: [dtac_my_unlocked_content]
+		 *
+		 * @since 3.0.0
+		 *
+		 * @return string
+		 */
+		public function my_unlocked_content_shortcode(): string {
 
-				$content = $this->dtac_give_check_access( $content, $restrict_content );
-
-			endif;
-
-			// If show type is a message.
-			if ( 'message' === $a['show'] ) :
-
-				$message       = dtac_give_get_settings( 'dtac_give_restrict_message' );
-				$donation_link = dtac_give_donation_form_url( $a['form_id'], $current_page_id );
-				$message       = str_replace( '%%donation_form_url%%', $donation_link, $message );
-				$content       = $this->dtac_give_check_access( $content, $message );
-
-			endif;
-
-			return $content;
+			return dtac_give_get_unlocked_content_html();
 		}
 	}
 }

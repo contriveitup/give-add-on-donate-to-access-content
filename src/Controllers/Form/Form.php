@@ -69,7 +69,7 @@ class Form extends Form_Fields {
 	 *
 	 * @return void
 	 */
-	private function start_form_tag() : void {
+	private function start_form_tag(): void {
 
 		echo '<form action="" method="post">';
 	}
@@ -81,7 +81,7 @@ class Form extends Form_Fields {
 	 *
 	 * @return void
 	 */
-	private function close_form_tag() : void {
+	private function close_form_tag(): void {
 
 		echo '</form>';
 	}
@@ -93,7 +93,7 @@ class Form extends Form_Fields {
 	 *
 	 * @return void
 	 */
-	private function form_fields_parent_container_open() : void {
+	private function form_fields_parent_container_open(): void {
 
 		echo '<fieldset>';
 	}
@@ -105,7 +105,7 @@ class Form extends Form_Fields {
 	 *
 	 * @return void
 	 */
-	private function form_fields_parent_container_close() : void {
+	private function form_fields_parent_container_close(): void {
 
 		echo '</fieldset>';
 	}
@@ -118,7 +118,7 @@ class Form extends Form_Fields {
 	 *
 	 * @return void
 	 */
-	private function form_field_wrapper_open() : void {
+	private function form_field_wrapper_open(): void {
 
 		echo '<div class="field dtac-form-field">';
 	}
@@ -131,7 +131,7 @@ class Form extends Form_Fields {
 	 *
 	 * @return void
 	 */
-	private function form_field_wrapper_close() : void {
+	private function form_field_wrapper_close(): void {
 
 		echo '</div>';
 	}
@@ -143,7 +143,7 @@ class Form extends Form_Fields {
 	 *
 	 * @return void
 	 */
-	private function form_field_label( $label ) : void {
+	private function form_field_label( $label ): void {
 
 		echo '<label class="label">' . esc_html( $label ) . '</label>';
 	}
@@ -157,7 +157,7 @@ class Form extends Form_Fields {
 	 *
 	 * @return void
 	 */
-	private function form_field( array $settings ) : void {
+	private function form_field( array $settings ): void {
 
 		$this->output_field( $settings )->html();
 	}
@@ -169,7 +169,7 @@ class Form extends Form_Fields {
 	 *
 	 * @return void
 	 */
-	protected function submit_button() : void {
+	protected function submit_button(): void {
 
 		$submit_button = '<button type="submit" class="button is-primary mt-5" name="dtac_save_admin_settings">' . esc_html__( 'Save Changes', 'dtac-give' ) . '</button>';
 
@@ -183,7 +183,7 @@ class Form extends Form_Fields {
 	 *
 	 * @return void
 	 */
-	public function form_nonce_field() : void {
+	public function form_nonce_field(): void {
 
 		wp_nonce_field( $this->admin_nonce_name, $this->admin_nonce_value );
 	}

@@ -37,5 +37,5 @@ interface InterfaceFormSettings {
 	 *
 	 * @return array
 	 */
-	public function dtac_form_settings() : array;
+	public function dtac_form_settings(): array;
 }
