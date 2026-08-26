@@ -73,6 +73,23 @@ class Process {
 		unset( $post_data[ $this->admin_nonce_value ] );
 		unset( $post_data['dtac_save_admin_settings'] );
 
+		foreach ( $post_data as $key => $value ) {
+			unset( $value );
+
+			if ( ! is_string( $key ) || 0 === strpos( $key, '_' ) ) {
+				unset( $post_data[ $key ] );
+			}
+		}
+
 		update_option( 'dtac_give_settings', $post_data );
+
+		if ( function_exists( 'add_settings_error' ) ) {
+			add_settings_error(
+				'dtac_give_settings',
+				'dtac_give_settings_updated',
+				__( 'Settings saved.', 'dtac-give' ),
+				'updated'
+			);
+		}
 	}
 }

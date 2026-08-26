@@ -102,14 +102,17 @@ class Insights {
 
 		$counts = self::get_unlock_counts();
 
-		echo '<h3>' . esc_html__( 'Unlock insights', 'dtac-give' ) . '</h3>';
+		echo '<div class="dtac-insights">';
+		echo '<h2 class="dtac-card__title">' . esc_html__( 'Unlock insights', 'dtac-give' ) . '</h2>';
+		echo '<p class="dtac-card__intro">' . esc_html__( 'Completed donations that unlocked restricted content.', 'dtac-give' ) . '</p>';
 
 		if ( empty( $counts ) ) {
-			echo '<p>' . esc_html__( 'No content has been unlocked yet.', 'dtac-give' ) . '</p>';
+			echo '<p class="dtac-insights__empty">' . esc_html__( 'No content has been unlocked yet.', 'dtac-give' ) . '</p>';
+			echo '</div>';
 			return;
 		}
 
-		echo '<table class="widefat striped"><thead><tr>';
+		echo '<table class="dtac-insights-table"><thead><tr>';
 		echo '<th>' . esc_html__( 'Content', 'dtac-give' ) . '</th>';
 		echo '<th>' . esc_html__( 'Unlocks', 'dtac-give' ) . '</th>';
 		echo '</tr></thead><tbody>';
@@ -120,6 +123,7 @@ class Insights {
 		}
 
 		echo '</tbody></table>';
+		echo '</div>';
 	}
 
 	/**

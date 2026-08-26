@@ -171,9 +171,47 @@ class Form extends Form_Fields {
 	 */
 	protected function submit_button(): void {
 
-		$submit_button = '<button type="submit" class="button is-primary mt-5" name="dtac_save_admin_settings">' . esc_html__( 'Save Changes', 'dtac-give' ) . '</button>';
+		echo '<div class="dtac-settings-submit">';
+		echo '<button type="submit" class="button button-primary is-primary dtac-settings-submit__button" name="dtac_save_admin_settings">' . esc_html__( 'Save Changes', 'dtac-give' ) . '</button>';
+		echo '</div>';
+	}
 
-		echo $submit_button; // phpcs:ignore
+	/**
+	 * Open a settings section around grouped fields.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param array $settings Heading field settings.
+	 *
+	 * @return void
+	 */
+	private function open_settings_section( array $settings ): void {
+
+		$title = isset( $settings['name'] ) ? (string) $settings['name'] : '';
+		$desc  = isset( $settings['desc'] ) ? (string) $settings['desc'] : '';
+
+		echo '<div class="dtac-settings-section">';
+		echo '<div class="dtac-settings-section__header">';
+		echo '<h2 class="dtac-settings-section__title">' . esc_html( $title ) . '</h2>';
+
+		if ( '' !== $desc ) {
+			echo '<p class="dtac-settings-section__desc">' . wp_kses_post( $desc ) . '</p>';
+		}
+
+		echo '</div>';
+		echo '<div class="dtac-settings-section__fields">';
+	}
+
+	/**
+	 * Close an open settings section.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return void
+	 */
+	private function close_settings_section(): void {
+
+		echo '</div></div>';
 	}
 
 	/**
@@ -198,6 +236,7 @@ class Form extends Form_Fields {
 	public function output() {
 
 		$settings_array = (array) $this->form_settings->dtac_form_settings();
+		$open_section   = false;
 
 		$this->start_form_tag();
 
@@ -206,10 +245,30 @@ class Form extends Form_Fields {
 		$this->form_fields_parent_container_open();
 
 		foreach ( $settings_array as $settings ) {
+			if ( ! is_array( $settings ) ) {
+				continue;
+			}
+
+			if ( isset( $settings['type'] ) && 'heading' === $settings['type'] ) {
+				if ( $open_section ) {
+					$this->close_settings_section();
+				}
+
+				$this->open_settings_section( $settings );
+				$open_section = true;
+				continue;
+			}
+
+			$label = isset( $settings['name'] ) ? (string) $settings['name'] : '';
+
 			$this->form_field_wrapper_open();
-			$this->form_field_label( $settings['name'] );
+			$this->form_field_label( $label );
 			$this->form_field( $settings );
 			$this->form_field_wrapper_close();
+		}
+
+		if ( $open_section ) {
+			$this->close_settings_section();
 		}
 
 		$this->submit_button();

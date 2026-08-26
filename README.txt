@@ -69,6 +69,8 @@ Version 3.0 requires PHP 8.1. If the plugin is already active on PHP 7.4 or 8.0,
     - Guest restore via signed email link and `[dtac_my_unlocked_content]` shortcode.
     - REST, feed, search, and oEmbed leak protection.
     - Donations-list Unlocked Content column and settings-page unlock counts.
+    - Settings page visual refresh with grouped sections.
+    - Cross-sell for Signals Dispatch for WooCommerce (themediaable) on the settings sidebar.
 * Updated
     - Requires WordPress 6.0+, PHP 8.1+, GiveWP 4.16.x (tested up to WordPress 7.1).
     - WordPress coding standards (WPCS) cleanup.

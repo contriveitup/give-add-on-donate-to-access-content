@@ -109,8 +109,8 @@ class DTAC_Give_Php_Bootstrap_Test extends TestCase
         $source = file_get_contents($this->bootstrap);
 
         $this->assertIsString($source);
-        $this->assertStringContainsString("define( 'DTAC_GIVE_MIN_PHP', '8.1' )", $source);
-        $this->assertStringContainsString('version_compare( PHP_VERSION, DTAC_GIVE_MIN_PHP, \'>=\' )', $source);
+        $this->assertMatchesRegularExpression("/define\\(\\s*'DTAC_GIVE_MIN_PHP'\\s*,\\s*'8\\.1'\\s*\\)/", $source);
+        $this->assertMatchesRegularExpression("/version_compare\\(\\s*PHP_VERSION\\s*,\\s*DTAC_GIVE_MIN_PHP\\s*,\\s*'>='\\s*\\)/", $source);
         $this->assertStringContainsString('dtac_give_deactivate_for_php_version', $source);
         $this->assertStringContainsString('dtac_give_php_version_notice', $source);
     }

@@ -1,13 +1,238 @@
 body {
-    height: max-content;
+	height: max-content;
 }
 
 .dtac-form-field {
-    .control {
-        .select {
-            &::after {
-                border: 0;
-            }
-        }
-    }
+	.control {
+		.select {
+			&::after {
+				border: 0;
+			}
+		}
+	}
+}
+
+.donate-to-access-content-admin-page {
+	--dtac-bg: #f4f7fb;
+	--dtac-surface: #ffffff;
+	--dtac-ink: #152033;
+	--dtac-muted: #5b677a;
+	--dtac-line: #d9e2ef;
+	--dtac-accent: #0b6bcb;
+	--dtac-accent-soft: #e8f2fc;
+	--dtac-radius: 14px;
+	width: auto;
+	max-width: none;
+	margin: 12px 20px 40px 2px;
+	padding-right: 20px;
+	box-sizing: border-box;
+	color: var(--dtac-ink);
+}
+
+.dtac-settings-hero {
+	background:
+		linear-gradient(135deg, #10233f 0%, #1d4f91 58%, #2f80ed 100%);
+	border-radius: var(--dtac-radius);
+	color: #fff;
+	padding: 28px 32px;
+	margin-bottom: 24px;
+	box-shadow: 0 16px 40px rgba(16, 35, 63, 0.18);
+}
+
+.dtac-settings-hero__eyebrow {
+	margin: 0 0 8px;
+	font-size: 12px;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	opacity: 0.8;
+}
+
+.dtac-settings-hero__title {
+	margin: 0 0 10px;
+	color: #fff;
+	font-size: 28px;
+	line-height: 1.2;
+	font-weight: 700;
+}
+
+.dtac-settings-hero__lede {
+	margin: 0;
+	max-width: none;
+	font-size: 15px;
+	line-height: 1.55;
+	opacity: 0.92;
+}
+
+.dtac-settings {
+	width: 100%;
+}
+
+.dtac-settings-layout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+	gap: 24px;
+	align-items: start;
+	width: 100%;
+}
+
+.dtac-card {
+	background: var(--dtac-surface);
+	border: 1px solid var(--dtac-line);
+	border-radius: var(--dtac-radius);
+	box-shadow: 0 8px 24px rgba(21, 32, 51, 0.05);
+	padding: 22px 24px;
+}
+
+.dtac-card--form {
+	padding: 8px 24px 24px;
+}
+
+.dtac-card__title {
+	margin: 0 0 8px;
+	font-size: 18px;
+	line-height: 1.3;
+}
+
+.dtac-card__intro {
+	margin: 0 0 16px;
+	color: var(--dtac-muted);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.dtac-settings-section {
+	border-bottom: 1px solid var(--dtac-line);
+	margin: 0 0 8px;
+	padding: 20px 0 8px;
+}
+
+.dtac-settings-section:last-of-type {
+	border-bottom: 0;
+}
+
+.dtac-settings-section__header {
+	margin-bottom: 16px;
+}
+
+.dtac-settings-section__title {
+	margin: 0 0 6px;
+	font-size: 16px;
+	line-height: 1.35;
+}
+
+.dtac-settings-section__desc {
+	margin: 0;
+	color: var(--dtac-muted);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.donate-to-access-content-admin-page .dtac-form-field {
+	margin-bottom: 18px;
+}
+
+.donate-to-access-content-admin-page .dtac-form-field .label {
+	margin-bottom: 8px;
+	font-weight: 600;
+}
+
+.donate-to-access-content-admin-page .dtac-form-field input[type="text"],
+.donate-to-access-content-admin-page .dtac-form-field select,
+.donate-to-access-content-admin-page .dtac-form-field .select select,
+.donate-to-access-content-admin-page .dtac-form-field .select2-container {
+	width: 100%;
+	max-width: 100%;
+}
+
+.donate-to-access-content-admin-page .dtac-form-field .help {
+	color: var(--dtac-muted);
+}
+
+.dtac-settings-submit {
+	display: flex;
+	justify-content: flex-start;
+	padding-top: 8px;
+}
+
+.dtac-settings-submit__button.button-primary {
+	min-height: 40px;
+	padding: 0 22px;
+}
+
+.dtac-insights-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+}
+
+.dtac-insights-table th,
+.dtac-insights-table td {
+	padding: 8px 0;
+	border-bottom: 1px solid var(--dtac-line);
+	text-align: left;
+}
+
+.dtac-insights-table th {
+	color: var(--dtac-muted);
+	font-weight: 600;
+}
+
+.dtac-insights__empty {
+	margin: 0;
+	color: var(--dtac-muted);
+}
+
+.dtac-card--cross-sell {
+	background:
+		linear-gradient(180deg, var(--dtac-accent-soft) 0%, #fff 42%);
+}
+
+.dtac-cross-sell__eyebrow {
+	margin: 0 0 8px;
+	color: var(--dtac-accent);
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+.dtac-cross-sell__features {
+	margin: 0 0 18px;
+	padding-left: 18px;
+	color: var(--dtac-ink);
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.dtac-cross-sell__features li {
+	margin-bottom: 6px;
+}
+
+.dtac-cross-sell__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.dtac-cross-sell__status {
+	display: inline-block;
+	margin-right: 4px;
+	padding: 4px 10px;
+	border-radius: 999px;
+	background: var(--dtac-accent-soft);
+	color: var(--dtac-accent);
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.dtac-settings-sidebar {
+	display: grid;
+	gap: 16px;
+}
+
+@media screen and (max-width: 1100px) {
+	.dtac-settings-layout {
+		grid-template-columns: 1fr;
+	}
 }

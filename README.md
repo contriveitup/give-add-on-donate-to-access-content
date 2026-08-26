@@ -180,7 +180,7 @@ Use a real Give form ID from **Donations → All Forms**. Test both form builder
 ## Admin extras
 
 - Donations list: **Unlocked Content** column (Give payments table).
-- Settings screen: **Unlock insights** table counting grants per content ID.
+- Settings screen: grouped sections, **Unlock insights** table counting grants per content ID, and a themediaable cross-sell for [Signals Dispatch for WooCommerce](https://wordpress.org/plugins/signals-dispatch-for-woocommerce/).
 - Uninstalling the plugin deletes `dtac_give_settings` (and the network option on multisite) plus related post/donation/donor meta (`_dtac_give_access_to_content`, `_dtac_give_restrict`, `_dtac_give_form_id`, `_dtac_give_min_amount`, `_dtac_give_expiry_days`, `give_dtca_access_website`).
 
 ## Install from WordPress.org
@@ -216,7 +216,7 @@ PHP namespace is `DTAC\` (PSR-4 from `src/`). Shared helpers live in `includes/f
 ```
 cip-give-donate-to-access-content.php   Bootstrap, Give dependency check
 includes/                               Shared helpers (restriction, grants, content IDs)
-src/Admin/                              Settings, metabox, donation-list insights
+src/Admin/                              Settings, metabox, insights, themediaable cross-sell
 src/Frontend/                           Redirects, shortcodes, blocks, leak filters, magic link
 src/Give/                               GiveWP adapter
 src/Controllers/                        Settings form field renderers

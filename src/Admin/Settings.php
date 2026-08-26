@@ -118,13 +118,9 @@ if ( ! class_exists( 'Settings' ) ) :
 
 			$settings = array(
 				array(
-					'name'    => esc_html__( 'Allow Pages', 'dtac-give' ),
-					'desc'    => __( 'Please select pages you wish to give access to when you are restricting the whole website.<br/><strong>By Default: The Donation Form page whose ID has been mentioned below will always be given access to</strong>', 'dtac-give' ),
-					'id'      => 'dtac_give_access_to_pages',
-					'type'    => 'multi-select',
-					'class'   => 'select2',
-					'default' => array(),
-					'options' => $this->dtac_give_get_pages_posts(),
+					'name' => esc_html__( 'Donation & access', 'dtac-give' ),
+					'desc' => esc_html__( 'Choose the GiveWP form visitors use to unlock content, plus the default restricted-content message.', 'dtac-give' ),
+					'type' => 'heading',
 				),
 				array(
 					'name'    => esc_html__( 'Give Donation Form ID', 'dtac-give' ),
@@ -142,6 +138,11 @@ if ( ! class_exists( 'Settings' ) ) :
 					'id'      => 'dtac_give_restrict_message',
 					'type'    => 'wysiwyg',
 					'default' => $this->dtac_give_restrict_message_content(),
+				),
+				array(
+					'name' => esc_html__( 'What to restrict', 'dtac-give' ),
+					'desc' => esc_html__( 'Pick content types first, then the pages, posts, taxonomies, or custom types that should stay locked until a donation is made.', 'dtac-give' ),
+					'type' => 'heading',
 				),
 				array(
 					'name'    => esc_html__( 'Restrict Access To?', 'give' ),
@@ -196,6 +197,20 @@ if ( ! class_exists( 'Settings' ) ) :
 					'class'   => 'select2',
 					'default' => array(),
 					'options' => $this->dtac_give_get_custom_tax(),
+				),
+				array(
+					'name' => esc_html__( 'Exceptions & unlock rules', 'dtac-give' ),
+					'desc' => esc_html__( 'Always-accessible pages, global minimum donation, access expiry, and how restricted content appears in feeds and APIs.', 'dtac-give' ),
+					'type' => 'heading',
+				),
+				array(
+					'name'    => esc_html__( 'Allow Pages', 'dtac-give' ),
+					'desc'    => __( 'Please select pages you wish to give access to when you are restricting the whole website.<br/><strong>By Default: The Donation Form page whose ID has been mentioned below will always be given access to</strong>', 'dtac-give' ),
+					'id'      => 'dtac_give_access_to_pages',
+					'type'    => 'multi-select',
+					'class'   => 'select2',
+					'default' => array(),
+					'options' => $this->dtac_give_get_pages_posts(),
 				),
 				array(
 					'name'    => esc_html__( 'Minimum donation amount', 'dtac-give' ),
