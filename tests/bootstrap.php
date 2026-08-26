@@ -93,7 +93,96 @@ if (! function_exists('wp_unslash')) {
 	 */
 	function wp_unslash($value)
 	{
+		if (is_array($value)) {
+			return array_map('wp_unslash', $value);
+		}
+
 		return is_string($value) ? stripslashes($value) : $value;
+	}
+}
+
+if (! function_exists('wp_kses_post')) {
+	/**
+	 * Minimal post-KSES stub that strips scripts and event handlers.
+	 *
+	 * @param mixed $data Raw HTML.
+	 * @return string
+	 */
+	function wp_kses_post($data)
+	{
+		$data = (string) $data;
+		$data = preg_replace('#<script\b[^>]*>.*?</script>#is', '', $data);
+		$data = preg_replace('#\son[a-z]+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)#i', '', $data);
+
+		return $data;
+	}
+}
+
+if (! function_exists('wp_validate_redirect')) {
+	/**
+	 * @param string $location Location.
+	 * @param string $default  Fallback.
+	 * @return string
+	 */
+	function wp_validate_redirect($location, $default = '')
+	{
+		if (! is_string($location) || '' === $location) {
+			return $default;
+		}
+
+		if (0 !== strpos($location, '/') || 0 === strpos($location, '//')) {
+			return $default;
+		}
+
+		return $location;
+	}
+}
+
+if (! function_exists('add_query_arg')) {
+	/**
+	 * @param mixed  $key   Key or args array.
+	 * @param mixed  $value Value or URL.
+	 * @param string $url   URL when $key is a string.
+	 * @return string
+	 */
+	function add_query_arg($key, $value = null, $url = null)
+	{
+		if (is_array($key)) {
+			$args = $key;
+			$url  = is_string($value) ? $value : 'https://example.test/';
+		} else {
+			$args = array((string) $key => $value);
+			$url  = is_string($url) ? $url : 'https://example.test/';
+		}
+
+		$parts = wp_parse_url($url);
+		$query = array();
+
+		if (is_array($parts) && ! empty($parts['query'])) {
+			parse_str($parts['query'], $query);
+		}
+
+		foreach ($args as $arg_key => $arg_value) {
+			$query[$arg_key] = $arg_value;
+		}
+
+		$scheme = (is_array($parts) && ! empty($parts['scheme'])) ? $parts['scheme'] . '://' : '';
+		$host   = (is_array($parts) && ! empty($parts['host'])) ? $parts['host'] : '';
+		$path   = (is_array($parts) && ! empty($parts['path'])) ? $parts['path'] : '';
+		$base   = $scheme . $host . $path;
+
+		return $base . '?' . http_build_query($query);
+	}
+}
+
+if (! function_exists('do_shortcode')) {
+	/**
+	 * @param string $content Content.
+	 * @return string
+	 */
+	function do_shortcode($content)
+	{
+		return (string) $content;
 	}
 }
 
@@ -549,6 +638,19 @@ if (! function_exists('is_user_logged_in')) {
 	function is_user_logged_in()
 	{
 		return false;
+	}
+}
+
+if (! function_exists('current_user_can')) {
+	/**
+	 * @param string $capability Capability.
+	 * @return bool
+	 */
+	function current_user_can($capability)
+	{
+		unset($capability);
+
+		return ! empty($GLOBALS['dtac_give_test_can_manage_options']);
 	}
 }
 

@@ -115,6 +115,95 @@ function dtac_give_normalize_id_list($values): array
 }
 
 /**
+ * Allowed restriction-type values for `dtac_give_restrict_access_to`.
+ *
+ * @since 3.0.0
+ *
+ * @return string[]
+ */
+function dtac_give_allowed_restriction_types(): array
+{
+
+	return array('pages', 'posts', 'cats', 'cpt', 'ctax');
+}
+
+/**
+ * Sanitize posted `dtac_give_settings` values.
+ *
+ * Unknown keys are dropped. Existing option key names are unchanged.
+ *
+ * @since 3.0.0
+ *
+ * @param array $input Raw settings, typically from $_POST.
+ *
+ * @return array
+ */
+function dtac_give_sanitize_settings(array $input): array
+{
+
+	$clean = array();
+
+	if (array_key_exists('dtac_give_restrict_access_give_form_id', $input)) {
+		$clean['dtac_give_restrict_access_give_form_id'] = (string) absint($input['dtac_give_restrict_access_give_form_id']);
+	}
+
+	if (array_key_exists('dtac_give_restrict_message', $input)) {
+		$clean['dtac_give_restrict_message'] = wp_kses_post((string) $input['dtac_give_restrict_message']);
+	}
+
+	if (array_key_exists('dtac_give_restrict_access_to', $input)) {
+		$types = $input['dtac_give_restrict_access_to'];
+
+		if (! is_array($types)) {
+			$types = ('' === $types || false === $types || null === $types || 'none' === $types) ? array() : array($types);
+		}
+
+		$types = array_map('sanitize_key', $types);
+		$clean['dtac_give_restrict_access_to'] = array_values(array_intersect($types, dtac_give_allowed_restriction_types()));
+	}
+
+	$id_list_keys = array(
+		'dtac_give_restrict_access_to_pages',
+		'dtac_give_restrict_access_to_posts',
+		'dtac_give_restrict_access_to_cats',
+		'dtac_give_restrict_access_to_custom_tax',
+		'dtac_give_access_to_pages',
+	);
+
+	foreach ($id_list_keys as $list_key) {
+		if (array_key_exists($list_key, $input)) {
+			$clean[$list_key] = dtac_give_normalize_id_list($input[$list_key]);
+		}
+	}
+
+	if (array_key_exists('dtac_give_restrict_access_to_cpt', $input)) {
+		$cpts = dtac_give_normalize_id_list($input['dtac_give_restrict_access_to_cpt']);
+		$cpts = array_map('sanitize_key', $cpts);
+		$clean['dtac_give_restrict_access_to_cpt'] = array_values(array_filter($cpts));
+	}
+
+	if (array_key_exists('dtac_give_min_amount', $input)) {
+		$amount = dtac_give_sanitize_amount($input['dtac_give_min_amount']);
+		$clean['dtac_give_min_amount'] = (0.0 === $amount) ? '0' : (string) $amount;
+	}
+
+	if (array_key_exists('dtac_give_access_expires_days', $input)) {
+		$clean['dtac_give_access_expires_days'] = (string) absint($input['dtac_give_access_expires_days']);
+	}
+
+	if (array_key_exists('dtac_give_leak_mode', $input)) {
+		$mode = sanitize_key((string) $input['dtac_give_leak_mode']);
+		$clean['dtac_give_leak_mode'] = in_array($mode, array('hide', 'excerpt'), true) ? $mode : 'hide';
+	}
+
+	if (array_key_exists('dtac_give_restrict_website', $input)) {
+		$clean['dtac_give_restrict_website'] = ('yes' === $input['dtac_give_restrict_website']) ? 'yes' : 'no';
+	}
+
+	return $clean;
+}
+
+/**
  * Setting keys that restrict content, keyed by content-ID shape.
  *
  * @since 3.0.0
@@ -681,8 +770,8 @@ function dtac_give_get_restriction_output(int $form_id, string $show = 'form', $
 	if ('message' === $show) {
 		$message = dtac_give_get_settings('dtac_give_restrict_message');
 		$message = is_string($message) ? $message : '';
-		$link    = dtac_give_donation_form_url($form_id, $content_id);
-		$output  = str_replace('%%donation_form_url%%', $link, $message);
+		$link    = esc_url(dtac_give_donation_form_url($form_id, $content_id));
+		$output  = wp_kses_post(str_replace('%%donation_form_url%%', $link, $message));
 	} else {
 		$output = do_shortcode('[give_form id="' . absint($form_id) . '"]');
 	}

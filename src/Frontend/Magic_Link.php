@@ -238,17 +238,18 @@ class Magic_Link extends Functions {
 	 */
 	private function current_url(): string {
 
-		$host = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
-		$uri  = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '/'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$uri  = is_string( $uri ) ? $uri : '/';
+		$uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '/'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$uri = is_string( $uri ) ? $uri : '/';
+
+		if ( 0 !== strpos( $uri, '/' ) || 0 === strpos( $uri, '//' ) ) {
+			$uri = '/';
+		}
 
 		if ( function_exists( 'wp_validate_redirect' ) ) {
 			$uri = wp_validate_redirect( $uri, '/' );
 		}
 
-		$scheme = is_ssl() ? 'https://' : 'http://';
-
-		return esc_url_raw( $scheme . $host . $uri );
+		return esc_url_raw( home_url( $uri ) );
 	}
 
 	/**

@@ -115,5 +115,25 @@ class DTAC_Give_Settings_Page_Test extends TestCase {
 		$this->assertIsString( $source );
 		$this->assertStringContainsString( "update_option( 'dtac_give_settings', \$post_data )", $source );
 		$this->assertStringContainsString( "0 === strpos( \$key, '_' )", $source );
+		$this->assertStringContainsString( "current_user_can( 'manage_options' )", $source );
+		$this->assertStringContainsString( 'dtac_give_sanitize_settings', $source );
+	}
+
+	/**
+	 * Restore links are built from home_url, not the Host header.
+	 *
+	 * @return void
+	 */
+	public function test_magic_link_uses_home_url_not_http_host() {
+
+		$file = dirname( __DIR__ ) . '/src/Frontend/Magic_Link.php';
+
+		$this->assertFileExists( $file );
+
+		$source = file_get_contents( $file );
+
+		$this->assertIsString( $source );
+		$this->assertStringContainsString( 'home_url( $uri )', $source );
+		$this->assertStringNotContainsString( 'HTTP_HOST', $source );
 	}
 }

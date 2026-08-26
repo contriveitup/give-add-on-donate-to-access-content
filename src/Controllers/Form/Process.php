@@ -43,8 +43,12 @@ class Process {
 	 */
 	public function __construct() {
 
-		if ( dtac_is_valid_array( $_POST, 'dtac_save_admin_settings', true ) && $this->nonce_validated() ) { // phpcs:ignore
-			$this->process_form( $_POST ); // phpcs:ignore
+		if ( dtac_is_valid_array( $_POST, 'dtac_save_admin_settings', true ) && $this->nonce_validated() ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			if ( ! current_user_can( 'manage_options' ) ) {
+				return;
+			}
+
+			$this->process_form( wp_unslash( $_POST ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		}
 	}
 
@@ -80,6 +84,8 @@ class Process {
 				unset( $post_data[ $key ] );
 			}
 		}
+
+		$post_data = dtac_give_sanitize_settings( $post_data );
 
 		update_option( 'dtac_give_settings', $post_data );
 
