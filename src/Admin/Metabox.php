@@ -21,6 +21,7 @@ defined( 'ABSPATH' ) || exit;
 class Metabox {
 
 
+
 	/**
 	 * Class constructor.
 	 *
@@ -28,8 +29,58 @@ class Metabox {
 	 */
 	public function __construct() {
 
+		add_action( 'init', array( $this, 'register_meta' ) );
 		add_action( 'add_meta_boxes', array( $this, 'register' ) );
 		add_action( 'save_post', array( $this, 'save' ), 10, 2 );
+	}
+
+	/**
+	 * Register restriction meta so the block editor can persist it.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @return void
+	 */
+	public function register_meta(): void {
+
+		if ( ! function_exists( 'register_post_meta' ) ) {
+			return;
+		}
+
+		$keys  = dtac_give_post_meta_keys();
+		$types = dtac_give_restrictable_post_types();
+		$auth  = static function () {
+			return current_user_can( 'edit_posts' );
+		};
+
+		$meta = array(
+			$keys['restrict']    => 'string',
+			$keys['form_id']     => 'integer',
+			$keys['min_amount']  => 'string',
+			$keys['expiry_days'] => 'integer',
+		);
+
+		foreach ( $types as $post_type ) {
+			foreach ( $meta as $meta_key => $type ) {
+				register_post_meta(
+					$post_type,
+					$meta_key,
+					array(
+						'single'            => true,
+						'type'              => $type,
+						'show_in_rest'      => true,
+						'auth_callback'     => $auth,
+						'sanitize_callback' => static function ( $value ) use ( $type ) {
+							if ( 'integer' === $type ) {
+								return absint( $value );
+							}
+
+							return sanitize_text_field( (string) $value );
+						},
+					)
+				);
+			}
+		}
 	}
 
 	/**
@@ -192,27 +243,6 @@ class Metabox {
 	 */
 	private function get_give_forms(): array {
 
-		$result = array();
-		$forms  = get_posts(
-			array(
-				'post_type'      => 'give_forms',
-				'posts_per_page' => -1,
-				'post_status'    => 'publish',
-			)
-		);
-
-		if ( ! is_array( $forms ) ) {
-			return $result;
-		}
-
-		foreach ( $forms as $form ) {
-			if ( ! is_object( $form ) || ! isset( $form->ID ) ) {
-				continue;
-			}
-
-			$result[ (int) $form->ID ] = isset( $form->post_title ) ? (string) $form->post_title : (string) $form->ID;
-		}
-
-		return $result;
+		return dtac_give_get_give_forms_for_picker();
 	}
 }

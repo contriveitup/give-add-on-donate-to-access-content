@@ -6,5 +6,6 @@ assets
 .phpunit.result.cache
 
 # Local QA / seeding — do not publish to the public GitHub repo.
-/docs/
+/docs/*
+!/docs/HOOKS.md
 /src/CLI/

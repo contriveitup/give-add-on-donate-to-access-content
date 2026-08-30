@@ -9,6 +9,7 @@
     - Donations-list Unlocked Content column and settings-page unlock counts.
     - Settings page visual refresh with grouped sections.
     - Cross-sell for Signals Dispatch for WooCommerce (themediaable) on the settings sidebar.
+    - Developer hooks for restriction decisions, grants, gate markup, redirects, guest restore, leak protection, and shortcode/block output (see docs/HOOKS.md).
 * Updated
     - Requires WordPress 6.0+, PHP 8.1+, GiveWP 4.16.x (tested up to WordPress 7.1).
     - WordPress coding standards (WPCS) cleanup.

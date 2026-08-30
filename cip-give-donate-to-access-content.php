@@ -18,30 +18,30 @@
  */
 
 // Exit if accessed directly.
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
-if (! defined('DTAC_GIVE_MIN_PHP')) {
-	define('DTAC_GIVE_MIN_PHP', '8.1');
+if ( ! defined( 'DTAC_GIVE_MIN_PHP' ) ) {
+	define( 'DTAC_GIVE_MIN_PHP', '8.1' );
 }
 
-if (! defined('DTAC_GIVE_PLUGIN_FILE')) {
-	define('DTAC_GIVE_PLUGIN_FILE', __FILE__);
+if ( ! defined( 'DTAC_GIVE_PLUGIN_FILE' ) ) {
+	define( 'DTAC_GIVE_PLUGIN_FILE', __FILE__ );
 }
 
-if (! defined('DTAC_GIVE_PLUGIN_BASENAME')) {
-	define('DTAC_GIVE_PLUGIN_BASENAME', plugin_basename(__FILE__));
+if ( ! defined( 'DTAC_GIVE_PLUGIN_BASENAME' ) ) {
+	define( 'DTAC_GIVE_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 }
 
-if (! defined('DTAC_GIVE_PLUGIN_DIR')) {
-	define('DTAC_GIVE_PLUGIN_DIR', plugin_dir_path(__FILE__));
+if ( ! defined( 'DTAC_GIVE_PLUGIN_DIR' ) ) {
+	define( 'DTAC_GIVE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 }
 
-if (! defined('DTAC_GIVE_PLUGIN_URL')) {
-	define('DTAC_GIVE_PLUGIN_URL', plugin_dir_url(__FILE__));
+if ( ! defined( 'DTAC_GIVE_PLUGIN_URL' ) ) {
+	define( 'DTAC_GIVE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
 
-if (! defined('DTAC_GIVE_PLUGIN_VERSION')) {
-	define('DTAC_GIVE_PLUGIN_VERSION', '3.0.0');
+if ( ! defined( 'DTAC_GIVE_PLUGIN_VERSION' ) ) {
+	define( 'DTAC_GIVE_PLUGIN_VERSION', '3.0.0' );
 }
 
 /**
@@ -53,9 +53,8 @@ if (! defined('DTAC_GIVE_PLUGIN_VERSION')) {
  *
  * @return bool
  */
-function dtac_give_php_version_is_supported()
-{
-	return version_compare(PHP_VERSION, DTAC_GIVE_MIN_PHP, '>=');
+function dtac_give_php_version_is_supported() {
+	return version_compare( PHP_VERSION, DTAC_GIVE_MIN_PHP, '>=' );
 }
 
 /**
@@ -65,22 +64,21 @@ function dtac_give_php_version_is_supported()
  *
  * @return void
  */
-function dtac_give_php_version_notice()
-{
-	if (! current_user_can('activate_plugins')) {
+function dtac_give_php_version_notice() {
+	if ( ! current_user_can( 'activate_plugins' ) ) {
 		return;
 	}
 
 	$message = sprintf(
 		/* translators: 1: current PHP version, 2: required PHP version */
-		__('Donate to Access Content requires PHP %2$s or later. This site is running PHP %1$s. The plugin has been deactivated to avoid a fatal error. Please upgrade PHP, then activate the plugin again.', 'dtac-give'),
+		__( 'Donate to Access Content requires PHP %2$s or later. This site is running PHP %1$s. The plugin has been deactivated to avoid a fatal error. Please upgrade PHP, then activate the plugin again.', 'dtac-give' ),
 		PHP_VERSION,
 		DTAC_GIVE_MIN_PHP
 	);
 
 	printf(
 		'<div class="notice notice-error"><p>%s</p></div>',
-		esc_html($message)
+		esc_html( $message )
 	);
 }
 
@@ -94,23 +92,22 @@ function dtac_give_php_version_notice()
  *
  * @return void
  */
-function dtac_give_deactivate_for_php_version()
-{
-	if (! function_exists('deactivate_plugins')) {
+function dtac_give_deactivate_for_php_version() {
+	if ( ! function_exists( 'deactivate_plugins' ) ) {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	}
 
-	deactivate_plugins(DTAC_GIVE_PLUGIN_BASENAME);
+	deactivate_plugins( DTAC_GIVE_PLUGIN_BASENAME );
 
-	if (isset($_GET['activate'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		unset($_GET['activate']);
+	if ( isset( $_GET['activate'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		unset( $_GET['activate'] );
 	}
 }
 
-if (! dtac_give_php_version_is_supported()) {
-	add_action('admin_notices', 'dtac_give_php_version_notice');
-	add_action('admin_init', 'dtac_give_deactivate_for_php_version');
-	register_activation_hook(DTAC_GIVE_PLUGIN_FILE, 'dtac_give_deactivate_for_php_version');
+if ( ! dtac_give_php_version_is_supported() ) {
+	add_action( 'admin_notices', 'dtac_give_php_version_notice' );
+	add_action( 'admin_init', 'dtac_give_deactivate_for_php_version' );
+	register_activation_hook( DTAC_GIVE_PLUGIN_FILE, 'dtac_give_deactivate_for_php_version' );
 	return;
 }
 
@@ -121,4 +118,4 @@ require_once DTAC_GIVE_PLUGIN_DIR . 'includes/class-donate-to-access-content-giv
  *
  * @since 2.0.0
  */
-add_action('plugins_loaded', array('Donate_To_Access_Content_Give_Addon', 'dtac_give_instance'));
+add_action( 'plugins_loaded', array( 'Donate_To_Access_Content_Give_Addon', 'dtac_give_instance' ) );

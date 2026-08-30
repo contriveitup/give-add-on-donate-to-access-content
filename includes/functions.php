@@ -158,7 +158,7 @@ function dtac_give_sanitize_settings(array $input): array
 			$types = ('' === $types || false === $types || null === $types || 'none' === $types) ? array() : array($types);
 		}
 
-		$types = array_map('sanitize_key', $types);
+		$types                                 = array_map('sanitize_key', $types);
 		$clean['dtac_give_restrict_access_to'] = array_values(array_intersect($types, dtac_give_allowed_restriction_types()));
 	}
 
@@ -177,13 +177,13 @@ function dtac_give_sanitize_settings(array $input): array
 	}
 
 	if (array_key_exists('dtac_give_restrict_access_to_cpt', $input)) {
-		$cpts = dtac_give_normalize_id_list($input['dtac_give_restrict_access_to_cpt']);
-		$cpts = array_map('sanitize_key', $cpts);
+		$cpts                                      = dtac_give_normalize_id_list($input['dtac_give_restrict_access_to_cpt']);
+		$cpts                                      = array_map('sanitize_key', $cpts);
 		$clean['dtac_give_restrict_access_to_cpt'] = array_values(array_filter($cpts));
 	}
 
 	if (array_key_exists('dtac_give_min_amount', $input)) {
-		$amount = dtac_give_sanitize_amount($input['dtac_give_min_amount']);
+		$amount                        = dtac_give_sanitize_amount($input['dtac_give_min_amount']);
 		$clean['dtac_give_min_amount'] = (0.0 === $amount) ? '0' : (string) $amount;
 	}
 
@@ -192,7 +192,7 @@ function dtac_give_sanitize_settings(array $input): array
 	}
 
 	if (array_key_exists('dtac_give_leak_mode', $input)) {
-		$mode = sanitize_key((string) $input['dtac_give_leak_mode']);
+		$mode                         = sanitize_key((string) $input['dtac_give_leak_mode']);
 		$clean['dtac_give_leak_mode'] = in_array($mode, array('hide', 'excerpt'), true) ? $mode : 'hide';
 	}
 
@@ -258,7 +258,69 @@ function dtac_give_enabled_restriction_types(): array
 function dtac_give_is_whole_site_restricted(): bool
 {
 
-	return 'yes' === dtac_give_get_settings('dtac_give_restrict_website');
+	$restricted = 'yes' === dtac_give_get_settings('dtac_give_restrict_website');
+
+	/**
+	 * Filter whether the whole site is behind the donation gate.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param bool $restricted Whether whole-site restriction is on.
+	 */
+	return (bool) apply_filters('dtac_give_is_whole_site_restricted', $restricted);
+}
+
+/**
+ * Published Give donation forms for admin and block pickers.
+ *
+ * @since 3.0.0
+ *
+ * @return array<int,string>
+ */
+function dtac_give_get_give_forms_for_picker(): array
+{
+
+	$result = array();
+	$args   = array(
+		'post_type'      => 'give_forms',
+		'posts_per_page' => -1,
+		'post_status'    => 'publish',
+		'orderby'        => 'title',
+		'order'          => 'ASC',
+		'no_found_rows'  => true,
+	);
+
+	/**
+	 * Filter the query args used to list Give forms in admin and block pickers.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $args     Query args.
+	 * @param array $defaults Same args, kept for backward compatibility.
+	 */
+	$args = apply_filters('dtac_give_get_form_args', $args, $args);
+
+	if (! function_exists('get_posts')) {
+		return $result;
+	}
+
+	$forms = get_posts($args);
+
+	if (! is_array($forms)) {
+		return $result;
+	}
+
+	foreach ($forms as $form) {
+		if (! is_object($form) || ! isset($form->ID)) {
+			continue;
+		}
+
+		$title = isset($form->post_title) ? (string) $form->post_title : '';
+
+		$result[(int) $form->ID] = ('' !== $title) ? $title : (string) $form->ID;
+	}
+
+	return $result;
 }
 
 /**
@@ -535,7 +597,15 @@ function dtac_give_get_form_id_for_content($content_id = ''): int
 		$form_id = absint(dtac_give_get_settings('dtac_give_restrict_access_give_form_id'));
 	}
 
-	return $form_id;
+	/**
+	 * Filter the Give form used to unlock a content ID.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param int    $form_id    Give form ID. Zero when none is configured.
+	 * @param string $content_id Sanitized content ID.
+	 */
+	return absint(apply_filters('dtac_give_form_id_for_content', $form_id, $content_id));
 }
 
 /**
@@ -563,28 +633,36 @@ function dtac_give_donation_unlocks_content(int $donation_id, string $content_id
 
 	$adapter = dtac_give_adapter();
 	$minimum = dtac_give_get_min_amount($content_id);
+	$unlocks = true;
 
 	if ($minimum > 0.0 && $adapter->get_donation_amount($donation_id) < $minimum) {
-		return false;
+		$unlocks = false;
 	}
 
 	$days = dtac_give_get_expiry_days($content_id);
 
-	if ($days > 0) {
+	if ($unlocks && $days > 0) {
 		$donated = $adapter->get_donation_timestamp($donation_id);
+		$day     = defined('DAY_IN_SECONDS') ? DAY_IN_SECONDS : 86400;
 
-		if ($donated <= 0) {
-			return false;
-		}
-
-		$day = defined('DAY_IN_SECONDS') ? DAY_IN_SECONDS : 86400;
-
-		if ((time() - $donated) > ($days * $day)) {
-			return false;
+		if ($donated <= 0 || (time() - $donated) > ($days * $day)) {
+			$unlocks = false;
 		}
 	}
 
-	return true;
+	/**
+	 * Filter whether a completed donation still unlocks a content ID.
+	 *
+	 * Runs after the minimum-amount and expiry checks, so it can grant
+	 * lifetime access or revoke access for refunded or flagged donations.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param bool   $unlocks     Whether the donation unlocks the content.
+	 * @param int    $donation_id Donation ID.
+	 * @param string $content_id  Sanitized content ID.
+	 */
+	return (bool) apply_filters('dtac_give_donation_unlocks_content', $unlocks, $donation_id, $content_id);
 }
 
 /**
@@ -711,9 +789,19 @@ function dtac_give_remember_guest_access(string $email): void
 	}
 
 	$cookie = \DTAC\Give\Give_Adapter::GUEST_ACCESS_COOKIE;
-	$expire = time() + (30 * (defined('DAY_IN_SECONDS') ? DAY_IN_SECONDS : 86400));
-	$path   = defined('COOKIEPATH') && COOKIEPATH ? COOKIEPATH : '/';
-	$domain = defined('COOKIE_DOMAIN') ? COOKIE_DOMAIN : '';
+
+	/**
+	 * Filter how long a guest email is remembered, in seconds.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param int    $duration Cookie lifetime in seconds. Default 30 days.
+	 * @param string $email    Donor email.
+	 */
+	$duration = absint(apply_filters('dtac_give_guest_access_duration', 30 * (defined('DAY_IN_SECONDS') ? DAY_IN_SECONDS : 86400), $email));
+	$expire   = time() + $duration;
+	$path     = defined('COOKIEPATH') && COOKIEPATH ? COOKIEPATH : '/';
+	$domain   = defined('COOKIE_DOMAIN') ? COOKIE_DOMAIN : '';
 
 	if (! headers_sent()) {
 		setcookie(
@@ -733,6 +821,15 @@ function dtac_give_remember_guest_access(string $email): void
 	$_COOKIE[$cookie] = $email;
 
 	dtac_give_adapter()->set_session_email($email);
+
+	/**
+	 * Fires once a guest email has been remembered for later access restores.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $email Donor email.
+	 */
+	do_action('dtac_give_guest_access_remembered', $email);
 }
 
 /**
@@ -771,16 +868,50 @@ function dtac_give_get_restriction_output(int $form_id, string $show = 'form', $
 		$message = dtac_give_get_settings('dtac_give_restrict_message');
 		$message = is_string($message) ? $message : '';
 		$link    = esc_url(dtac_give_donation_form_url($form_id, $content_id));
-		$output  = wp_kses_post(str_replace('%%donation_form_url%%', $link, $message));
+
+		/**
+		 * Filter the restriction message shown instead of a donation form.
+		 *
+		 * The `%%donation_form_url%%` placeholder is already replaced.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param string $message    Message HTML.
+		 * @param int    $form_id    Give form ID.
+		 * @param string $content_id Sanitized content ID.
+		 */
+		$message = (string) apply_filters('dtac_give_restriction_message', str_replace('%%donation_form_url%%', $link, $message), $form_id, $content_id);
+		$output  = wp_kses_post($message);
 	} else {
 		$output = do_shortcode('[give_form id="' . absint($form_id) . '"]');
 	}
 
-	if (class_exists('\\DTAC\\Frontend\\Magic_Link', false)) {
+	/**
+	 * Filter whether the "Already donated?" restore form is appended.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param bool   $show_restore Whether to append the restore form.
+	 * @param int    $form_id      Give form ID.
+	 * @param string $content_id   Sanitized content ID.
+	 */
+	$show_restore = (bool) apply_filters('dtac_give_show_restore_form', true, $form_id, $content_id);
+
+	if ($show_restore && class_exists('\\DTAC\\Frontend\\Magic_Link', false)) {
 		$output .= \DTAC\Frontend\Magic_Link::form_html();
 	}
 
-	return $output;
+	/**
+	 * Filter the full gate markup rendered for restricted visitors.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $output     Gate markup.
+	 * @param int    $form_id    Give form ID.
+	 * @param string $show       Either `form` or `message`.
+	 * @param string $content_id Sanitized content ID.
+	 */
+	return (string) apply_filters('dtac_give_restriction_output', $output, $form_id, $show, $content_id);
 }
 
 /**
@@ -793,16 +924,21 @@ function dtac_give_get_restriction_output(int $form_id, string $show = 'form', $
 function dtac_give_get_unlocked_content_html(): string
 {
 
-	$donor = dtac_give_get_donor();
-
-	if (! $donor) {
-		return '<p>' . esc_html__('No unlocked content found.', 'dtac-give') . '</p>';
-	}
-
-	$unlocked = dtac_give_adapter()->get_unlocked_content_ids($donor);
+	$donor    = dtac_give_get_donor();
+	$unlocked = $donor ? dtac_give_adapter()->get_unlocked_content_ids($donor) : array();
 
 	if (empty($unlocked)) {
-		return '<p>' . esc_html__('No unlocked content found.', 'dtac-give') . '</p>';
+		/**
+		 * Filter the message shown when a visitor has unlocked nothing.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param string $message Message HTML.
+		 */
+		return (string) apply_filters(
+			'dtac_give_no_unlocked_content_html',
+			'<p>' . esc_html__('No unlocked content found.', 'dtac-give') . '</p>'
+		);
 	}
 
 	$html = '<ul class="dtac-give-unlocked-content">';
@@ -812,15 +948,34 @@ function dtac_give_get_unlocked_content_html(): string
 		$url   = dtac_give_get_content_url((string) $content_id);
 
 		if ('' !== $url) {
-			$html .= '<li><a href="' . esc_url($url) . '">' . esc_html($label) . '</a></li>';
+			$item = '<li><a href="' . esc_url($url) . '">' . esc_html($label) . '</a></li>';
 		} else {
-			$html .= '<li>' . esc_html($label) . '</li>';
+			$item = '<li>' . esc_html($label) . '</li>';
 		}
+
+		/**
+		 * Filter a single row of the donor's unlocked-content list.
+		 *
+		 * @since 3.0.0
+		 *
+		 * @param string $item       List item HTML.
+		 * @param string $content_id Sanitized content ID.
+		 * @param string $url        Permalink, or an empty string.
+		 */
+		$html .= (string) apply_filters('dtac_give_unlocked_content_item_html', $item, (string) $content_id, $url);
 	}
 
 	$html .= '</ul>';
 
-	return $html;
+	/**
+	 * Filter the donor's unlocked-content list markup.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string   $html     List markup.
+	 * @param string[] $unlocked Sanitized content IDs.
+	 */
+	return (string) apply_filters('dtac_give_unlocked_content_html', $html, $unlocked);
 }
 
 /**
@@ -915,13 +1070,39 @@ function dtac_give_is_grantable_content_id($content_id): bool
 /**
  * Whether a post is currently restricted by settings or shortcode.
  *
- * @since 3.0.0
+ * @since 3.0.0 Added the `dtac_give_is_post_restricted` filter.
+ * @since 1.0.0
  *
  * @param int $post_id Post ID.
  *
  * @return bool
  */
 function dtac_give_is_post_restricted(int $post_id): bool
+{
+
+	$restricted = dtac_give_evaluate_post_restriction($post_id);
+
+	/**
+	 * Filter whether a post is behind the donation gate.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param bool $restricted Whether the post is restricted.
+	 * @param int  $post_id    Post ID.
+	 */
+	return (bool) apply_filters('dtac_give_is_post_restricted', $restricted, $post_id);
+}
+
+/**
+ * Evaluate the built-in restriction rules for a post.
+ *
+ * @since 3.0.0
+ *
+ * @param int $post_id Post ID.
+ *
+ * @return bool
+ */
+function dtac_give_evaluate_post_restriction(int $post_id): bool
 {
 
 	if ($post_id <= 0) {
@@ -934,6 +1115,10 @@ function dtac_give_is_post_restricted(int $post_id): bool
 		return false;
 	}
 
+	if ('no' === dtac_give_get_post_restriction_mode($post_id)) {
+		return false;
+	}
+
 	if (dtac_give_is_whole_site_restricted()) {
 		$access_pages = dtac_give_normalize_id_list(dtac_give_get_settings('dtac_give_access_to_pages'));
 		$form_id      = (int) dtac_give_get_settings('dtac_give_restrict_access_give_form_id');
@@ -943,10 +1128,6 @@ function dtac_give_is_post_restricted(int $post_id): bool
 		}
 
 		return true;
-	}
-
-	if ('no' === dtac_give_get_post_restriction_mode($post_id)) {
-		return false;
 	}
 
 	if (dtac_give_post_has_metabox_restriction($post_id)) {
@@ -1002,9 +1183,80 @@ function dtac_give_is_post_restricted(int $post_id): bool
 }
 
 /**
- * Whether the current visitor may view a restricted post.
+ * Whether the current user may edit a post in wp-admin / REST.
+ *
+ * Used so leak-protection does not hide restricted items from editors.
  *
  * @since 3.0.0
+ *
+ * @param int $post_id Post ID.
+ *
+ * @return bool
+ */
+function dtac_give_current_user_can_edit_post(int $post_id): bool
+{
+
+	if ($post_id <= 0 || ! function_exists('current_user_can')) {
+		return false;
+	}
+
+	/**
+	 * Filter whether the current user is treated as an editor of a post.
+	 *
+	 * Editors are never gated, so this also acts as a role-based bypass.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param bool $can_edit Whether the user may edit the post.
+	 * @param int  $post_id  Post ID.
+	 */
+	return (bool) apply_filters('dtac_give_current_user_can_edit_post', current_user_can('edit_post', $post_id), $post_id);
+}
+
+/**
+ * Whether restriction should be skipped for this request or content.
+ *
+ * Admin screens, the block editor, users who can edit the post, and
+ * per-post metabox "No" never lock content. Frontend visitors still do.
+ *
+ * @since 3.0.0
+ *
+ * @param mixed $content_id Content identifier.
+ *
+ * @return bool
+ */
+function dtac_give_should_bypass_restriction($content_id = 0): bool
+{
+
+	$bypass  = false;
+	$post_id = is_numeric($content_id) ? absint($content_id) : 0;
+
+	if (function_exists('is_admin') && is_admin()) {
+		$bypass = true;
+	} elseif ($post_id > 0 && 'no' === dtac_give_get_post_restriction_mode($post_id)) {
+		$bypass = true;
+	} elseif (defined('REST_REQUEST') && REST_REQUEST && function_exists('current_user_can') && current_user_can('edit_posts')) {
+		$bypass = true;
+	}
+
+	/**
+	 * Filter whether restriction is skipped for this request.
+	 *
+	 * Use this to let membership plugins, logged-in roles, or signed preview
+	 * links through the gate without a donation.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param bool  $bypass     Whether to skip restriction.
+	 * @param mixed $content_id Raw content identifier.
+	 */
+	return (bool) apply_filters('dtac_give_should_bypass_restriction', $bypass, $content_id);
+}
+
+/**
+ * Whether the current visitor may view a restricted post.
+ *
+ * @since 3.0.0 Added the `dtac_give_visitor_can_view_post` filter.
  *
  * @param int $post_id Post ID.
  *
@@ -1013,11 +1265,40 @@ function dtac_give_is_post_restricted(int $post_id): bool
 function dtac_give_visitor_can_view_post(int $post_id): bool
 {
 
+	$can_view = dtac_give_evaluate_visitor_access($post_id);
+
+	/**
+	 * Filter whether the current visitor may view a restricted post.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param bool $can_view Whether the visitor may view the post.
+	 * @param int  $post_id  Post ID.
+	 */
+	return (bool) apply_filters('dtac_give_visitor_can_view_post', $can_view, $post_id);
+}
+
+/**
+ * Evaluate the built-in access rules for the current visitor.
+ *
+ * @since 3.0.0
+ *
+ * @param int $post_id Post ID.
+ *
+ * @return bool
+ */
+function dtac_give_evaluate_visitor_access(int $post_id): bool
+{
+
 	if ($post_id <= 0) {
 		return false;
 	}
 
 	if (! dtac_give_is_post_restricted($post_id)) {
+		return true;
+	}
+
+	if (dtac_give_current_user_can_edit_post($post_id)) {
 		return true;
 	}
 
@@ -1358,6 +1639,13 @@ function dtac_give_get_settings(string $key = '')
 		$settings = array();
 	}
 
+	/**
+	 * Filter the whole plugin settings array before a key is read.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $settings Settings stored in the `dtac_give_settings` option.
+	 */
 	$settings = (array) apply_filters('dtac_give_get_settings', $settings);
 
 	if ('' === $key) {
@@ -1444,13 +1732,30 @@ function dtac_give_donation_form_url($form_id, $current_page_id)
 
 	$query_args = array('dtac_give_content' => $content_id);
 
+	/**
+	 * Filter the query args appended to the donation form URL.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $query_args Query args.
+	 * @param array $defaults   Same args, kept for backward compatibility.
+	 */
 	$query_args = apply_filters('dtac_give_redirection_query_string_array', $query_args, $query_args);
 
 	if ('' !== $content_id) {
 		dtac_give_remember_pending_content($content_id);
 	}
 
-	return add_query_arg($query_args, $form_url);
+	/**
+	 * Filter the donation form URL visitors are sent to.
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param string $url        Donation form URL.
+	 * @param int    $form_id    Give form ID.
+	 * @param string $content_id Sanitized content ID.
+	 */
+	return (string) apply_filters('dtac_give_donation_form_url', add_query_arg($query_args, $form_url), (int) $form_id, $content_id);
 }
 
 /**
@@ -1489,9 +1794,25 @@ function dtac_give_get_custom_taxs()
 	$taxomonies = array();
 
 	$args = array(); // Only get public tax and ignore built-in taxomonies.
+
+	/**
+	 * Filter the args passed to get_taxonomies() when listing custom taxonomies.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $args     Taxonomy query args.
+	 * @param array $defaults Same args, kept for backward compatibility.
+	 */
 	$args = apply_filters('dtac_give_custom_tax_args', $args, $args);
 
-	$output = apply_filters('dtac_give_custom_tax_output_value', 'objects'); // or names.
+	/**
+	 * Filter the return format used when listing custom taxonomies.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $output Either `objects` or `names`.
+	 */
+	$output = apply_filters('dtac_give_custom_tax_output_value', 'objects');
 
 	$taxonomies = get_taxonomies($args, $output);
 

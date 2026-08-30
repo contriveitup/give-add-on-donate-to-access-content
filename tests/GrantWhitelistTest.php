@@ -24,10 +24,11 @@ class DTAC_Give_Grant_Whitelist_Test extends TestCase
 
         parent::setUp();
 
-        $GLOBALS['dtac_give_test_settings']  = array();
-        $GLOBALS['dtac_give_test_posts']     = array();
-        $GLOBALS['dtac_give_test_terms']     = array();
-        $GLOBALS['dtac_give_test_post_meta'] = array();
+        $GLOBALS['dtac_give_test_settings']        = array();
+        $GLOBALS['dtac_give_test_posts']           = array();
+        $GLOBALS['dtac_give_test_terms']           = array();
+        $GLOBALS['dtac_give_test_post_meta']       = array();
+        $GLOBALS['dtac_give_test_can_edit_posts']  = array();
     }
 
     /**
@@ -38,14 +39,15 @@ class DTAC_Give_Grant_Whitelist_Test extends TestCase
     protected function tearDown(): void
     {
 
-        $GLOBALS['dtac_give_test_settings']  = array();
-        $GLOBALS['dtac_give_test_posts']     = array();
-        $GLOBALS['dtac_give_test_terms']     = array();
-        $GLOBALS['dtac_give_test_post_meta'] = array();
-        $_GET                                = array();
-        $_POST                              = array();
-        $_REQUEST                           = array();
-        $_COOKIE                            = array();
+        $GLOBALS['dtac_give_test_settings']       = array();
+        $GLOBALS['dtac_give_test_posts']          = array();
+        $GLOBALS['dtac_give_test_terms']          = array();
+        $GLOBALS['dtac_give_test_post_meta']      = array();
+        $GLOBALS['dtac_give_test_can_edit_posts'] = array();
+        $_GET                                     = array();
+        $_POST                                    = array();
+        $_REQUEST                                 = array();
+        $_COOKIE                                  = array();
 
         parent::tearDown();
     }
@@ -163,5 +165,87 @@ class DTAC_Give_Grant_Whitelist_Test extends TestCase
         $this->assertSame(array('12', '8'), dtac_give_normalize_id_list(array(12, '8', 0, '')));
         $this->assertSame(array('12'), dtac_give_normalize_id_list('12'));
         $this->assertSame(array(), dtac_give_normalize_id_list(''));
+    }
+
+    /**
+     * Editors can open restricted posts without a matching donation.
+     *
+     * @return void
+     */
+    public function test_editors_can_view_restricted_posts()
+    {
+
+        $GLOBALS['dtac_give_test_posts'][53] = (object) array(
+            'ID'           => 53,
+            'post_content' => 'Restricted page',
+            'post_type'    => 'page',
+            'post_excerpt' => '',
+        );
+
+        $GLOBALS['dtac_give_test_settings'] = array(
+            'dtac_give_restrict_access_to'       => array('pages'),
+            'dtac_give_restrict_access_to_pages' => array('53'),
+            'dtac_give_leak_mode'                => 'hide',
+        );
+
+        $this->assertTrue(dtac_give_is_post_restricted(53));
+        $this->assertFalse(dtac_give_visitor_can_view_post(53));
+        $this->assertFalse(dtac_give_current_user_can_edit_post(53));
+
+        $GLOBALS['dtac_give_test_can_edit_posts'] = array(53);
+
+        $this->assertTrue(dtac_give_current_user_can_edit_post(53));
+        $this->assertTrue(dtac_give_visitor_can_view_post(53));
+        $this->assertFalse(dtac_give_current_user_can_edit_post(12));
+    }
+
+    /**
+     * Leak protection skips REST hide for users who can edit the post.
+     *
+     * @return void
+     */
+    public function test_leak_protection_skips_editors_in_rest()
+    {
+
+        $file = dirname(__DIR__) . '/src/Frontend/Leak_Protection.php';
+
+        $this->assertFileExists($file);
+
+        $source = file_get_contents($file);
+
+        $this->assertIsString($source);
+        $this->assertStringContainsString('dtac_give_current_user_can_edit_post', $source);
+        $this->assertStringContainsString("function_exists( 'is_admin' ) && is_admin()", $source);
+        $this->assertStringContainsString("current_user_can( 'edit_posts' )", $source);
+        $this->assertStringContainsString("current_user_can( 'edit_post'", file_get_contents(dirname(__DIR__) . '/includes/functions.php'));
+    }
+
+    /**
+     * Restricted-content block uses an editor script and Give form select.
+     *
+     * @return void
+     */
+    public function test_restricted_content_block_uses_form_select()
+    {
+
+        $php = file_get_contents(dirname(__DIR__) . '/src/Frontend/Blocks.php');
+        $js  = file_get_contents(dirname(__DIR__) . '/assets-src/js/blocks.js');
+        $enqueue = file_get_contents(dirname(__DIR__) . '/src/Setup/Enqueue_Scripts.php');
+        $restrict = file_get_contents(dirname(__DIR__) . '/src/Frontend/Restrict_Content.php');
+
+        $this->assertIsString($php);
+        $this->assertIsString($js);
+        $this->assertIsString($enqueue);
+        $this->assertIsString($restrict);
+
+        $this->assertStringContainsString("'editor_script'   => 'dtac-give-blocks'", $php);
+        $this->assertStringContainsString('SelectControl', $js);
+        $this->assertStringContainsString('Give donation form', $js);
+        $this->assertStringContainsString('getFormOptions', $js);
+        $this->assertStringNotContainsString('TextControl', $js);
+        $this->assertStringContainsString('dtacGiveBlocks', $enqueue);
+        $this->assertStringContainsString('dtac_give_should_bypass_restriction', $restrict);
+        $this->assertStringContainsString("if ( is_admin() || wp_doing_ajax()", $restrict);
+        $this->assertStringContainsString('register_post_meta', file_get_contents(dirname(__DIR__) . '/src/Admin/Metabox.php'));
     }
 }

@@ -225,6 +225,13 @@ tests/                                  PHPUnit
 uninstall.php                           Data removal on plugin delete
 ```
 
+### Hooks
+
+Every extension point is documented in [docs/HOOKS.md](docs/HOOKS.md): restriction
+decisions, grant and expiry rules, gate markup, redirects, guest-restore emails,
+leak protection, shortcode and block output, and settings. All hooks are prefixed
+`dtac_give_`.
+
 ## Frequently asked questions
 
 **Is this an official Give add-on?**

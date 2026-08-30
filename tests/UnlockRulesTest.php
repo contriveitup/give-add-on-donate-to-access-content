@@ -24,10 +24,12 @@ class DTAC_Give_Unlock_Rules_Test extends TestCase
 
         parent::setUp();
 
-        $GLOBALS['dtac_give_test_settings']  = array();
-        $GLOBALS['dtac_give_test_posts']     = array();
-        $GLOBALS['dtac_give_test_terms']     = array();
-        $GLOBALS['dtac_give_test_post_meta'] = array();
+        $GLOBALS['dtac_give_test_settings']   = array();
+        $GLOBALS['dtac_give_test_posts']      = array();
+        $GLOBALS['dtac_give_test_terms']      = array();
+        $GLOBALS['dtac_give_test_post_meta']  = array();
+        $GLOBALS['dtac_give_test_is_admin']   = false;
+        $GLOBALS['dtac_give_test_give_forms'] = array();
     }
 
     /**
@@ -38,14 +40,16 @@ class DTAC_Give_Unlock_Rules_Test extends TestCase
     protected function tearDown(): void
     {
 
-        $GLOBALS['dtac_give_test_settings']  = array();
-        $GLOBALS['dtac_give_test_posts']     = array();
-        $GLOBALS['dtac_give_test_terms']     = array();
-        $GLOBALS['dtac_give_test_post_meta'] = array();
-        $_GET                                = array();
-        $_POST                               = array();
-        $_REQUEST                            = array();
-        $_COOKIE                             = array();
+        $GLOBALS['dtac_give_test_settings']   = array();
+        $GLOBALS['dtac_give_test_posts']      = array();
+        $GLOBALS['dtac_give_test_terms']      = array();
+        $GLOBALS['dtac_give_test_post_meta']  = array();
+        $GLOBALS['dtac_give_test_is_admin']   = false;
+        $GLOBALS['dtac_give_test_give_forms'] = array();
+        $_GET                                 = array();
+        $_POST                                = array();
+        $_REQUEST                             = array();
+        $_COOKIE                              = array();
 
         parent::tearDown();
     }
@@ -109,6 +113,69 @@ class DTAC_Give_Unlock_Rules_Test extends TestCase
 
         $this->assertFalse(dtac_give_is_grantable_content_id('90'));
         $this->assertFalse(dtac_give_is_post_restricted(90));
+        $this->assertTrue(dtac_give_should_bypass_restriction(90));
+    }
+
+    /**
+     * Metabox restrict=no opts a post out of whole-site restriction too.
+     *
+     * @return void
+     */
+    public function test_metabox_no_opts_out_of_whole_site()
+    {
+
+        $GLOBALS['dtac_give_test_posts'][91] = (object) array(
+            'ID'           => 91,
+            'post_content' => '<!-- wp:dtac/restricted-content --><p>Secret</p><!-- /wp:dtac/restricted-content -->',
+            'post_type'    => 'page',
+            'post_excerpt' => '',
+        );
+
+        $GLOBALS['dtac_give_test_settings'] = array(
+            'dtac_give_restrict_website' => 'yes',
+        );
+
+        $GLOBALS['dtac_give_test_post_meta'][91]['_dtac_give_restrict'] = 'no';
+
+        $this->assertFalse(dtac_give_is_post_restricted(91));
+        $this->assertTrue(dtac_give_should_bypass_restriction(91));
+    }
+
+    /**
+     * Restriction is skipped on admin screens.
+     *
+     * @return void
+     */
+    public function test_admin_screens_bypass_restriction()
+    {
+
+        $GLOBALS['dtac_give_test_is_admin'] = true;
+
+        $this->assertTrue(dtac_give_should_bypass_restriction(12));
+
+        $GLOBALS['dtac_give_test_is_admin'] = false;
+
+        $this->assertFalse(dtac_give_should_bypass_restriction(12));
+    }
+
+    /**
+     * Give form picker returns published forms keyed by ID.
+     *
+     * @return void
+     */
+    public function test_give_form_picker_uses_form_ids()
+    {
+
+        $form            = new WP_Post();
+        $form->ID        = 42;
+        $form->post_title = 'General Donation';
+        $form->post_type = 'give_forms';
+
+        $GLOBALS['dtac_give_test_give_forms'] = array($form);
+
+        $forms = dtac_give_get_give_forms_for_picker();
+
+        $this->assertSame(array(42 => 'General Donation'), $forms);
     }
 
     /**

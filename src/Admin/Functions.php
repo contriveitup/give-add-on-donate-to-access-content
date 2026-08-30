@@ -20,6 +20,7 @@ abstract class Functions {
 
 
 
+
 	/**
 	 * Return an array of required items to be used in different places
 	 * in Admin.
@@ -223,27 +224,6 @@ abstract class Functions {
 	 */
 	protected function dtac_get_give_forms(): array {
 
-		$result = array();
-
-		$args = array(
-			'post_type'      => 'give_forms',
-			'posts_per_page' => -1,
-			'post_status'    => 'publish',
-		);
-		$args = apply_filters( 'dtac_give_get_form_args', $args, $args );
-
-		$give_forms = get_posts( $args );
-
-		if ( dtac_is_valid_array( $give_forms ) ) {
-			foreach ( $give_forms as $give_form ) {
-				if ( ! is_object( $give_form ) || ! isset( $give_form->ID ) ) {
-					continue;
-				}
-
-				$result[ $give_form->ID ] = $give_form->post_title;
-			}
-		}
-
-		return $result;
+		return dtac_give_get_give_forms_for_picker();
 	}
 } // End class AdminFunctions.

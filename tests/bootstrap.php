@@ -241,6 +241,16 @@ if (! function_exists('is_ssl')) {
 	}
 }
 
+if (! function_exists('is_admin')) {
+	/**
+	 * @return bool
+	 */
+	function is_admin()
+	{
+		return ! empty($GLOBALS['dtac_give_test_is_admin']);
+	}
+}
+
 if (! function_exists('is_singular')) {
 	/**
 	 * @return bool
@@ -248,6 +258,21 @@ if (! function_exists('is_singular')) {
 	function is_singular()
 	{
 		return false;
+	}
+}
+
+if (! function_exists('get_posts')) {
+	/**
+	 * @param array $args Query args.
+	 * @return array
+	 */
+	function get_posts($args = array())
+	{
+		if (isset($args['post_type']) && 'give_forms' === $args['post_type'] && ! empty($GLOBALS['dtac_give_test_give_forms'])) {
+			return (array) $GLOBALS['dtac_give_test_give_forms'];
+		}
+
+		return array();
 	}
 }
 
@@ -646,9 +671,17 @@ if (! function_exists('current_user_can')) {
 	 * @param string $capability Capability.
 	 * @return bool
 	 */
-	function current_user_can($capability)
+	function current_user_can($capability, $object_id = 0)
 	{
-		unset($capability);
+		if ('edit_post' === $capability) {
+			$allowed = isset($GLOBALS['dtac_give_test_can_edit_posts'])
+				? (array) $GLOBALS['dtac_give_test_can_edit_posts']
+				: array();
+
+			return in_array((int) $object_id, array_map('intval', $allowed), true);
+		}
+
+		unset($object_id);
 
 		return ! empty($GLOBALS['dtac_give_test_can_manage_options']);
 	}

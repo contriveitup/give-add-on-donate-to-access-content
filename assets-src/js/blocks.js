@@ -5,16 +5,29 @@
 
   var el = wp.element.createElement;
   var registerBlockType = wp.blocks.registerBlockType;
-  var InnerBlocks = wp.blockEditor
-    ? wp.blockEditor.InnerBlocks
-    : wp.editor.InnerBlocks;
-  var InspectorControls = wp.blockEditor
-    ? wp.blockEditor.InspectorControls
-    : wp.editor.InspectorControls;
+  var blockEditor = wp.blockEditor || wp.editor || {};
+  var InnerBlocks = blockEditor.InnerBlocks;
+  var InspectorControls = blockEditor.InspectorControls;
   var PanelBody = wp.components.PanelBody;
-  var TextControl = wp.components.TextControl;
   var SelectControl = wp.components.SelectControl;
   var __ = wp.i18n.__;
+
+  function getFormOptions() {
+    if (
+      typeof dtacGiveBlocks !== "undefined" &&
+      dtacGiveBlocks.forms &&
+      dtacGiveBlocks.forms.length
+    ) {
+      return dtacGiveBlocks.forms;
+    }
+
+    return [
+      {
+        label: __("Use default form", "dtac-give"),
+        value: "0",
+      },
+    ];
+  }
 
   registerBlockType("dtac/restricted-content", {
     apiVersion: 2,
@@ -25,6 +38,9 @@
     ),
     category: "widgets",
     icon: "lock",
+    supports: {
+      html: false,
+    },
     attributes: {
       formId: {
         type: "number",
@@ -45,10 +61,14 @@
           el(
             PanelBody,
             { title: __("Donation gate", "dtac-give"), initialOpen: true },
-            el(TextControl, {
-              label: __("Give form ID", "dtac-give"),
-              type: "number",
-              value: props.attributes.formId || 0,
+            el(SelectControl, {
+              label: __("Give donation form", "dtac-give"),
+              help: __(
+                "Guests see this GiveWP form. The selected form ID is stored for unlocking.",
+                "dtac-give",
+              ),
+              value: String(props.attributes.formId || 0),
+              options: getFormOptions(),
               onChange: function (value) {
                 props.setAttributes({ formId: parseInt(value, 10) || 0 });
               },
@@ -69,7 +89,20 @@
             }),
           ),
         ),
-        el(InnerBlocks),
+        el(
+          "div",
+          { className: "dtac-restricted-content-editor" },
+          el(
+            "p",
+            { className: "dtac-restricted-content-editor__label" },
+            __(
+              "Restricted content — add blocks that stay hidden until a donation is made.",
+              "dtac-give",
+            ),
+          ),
+          el(InnerBlocks),
+          re,
+        ),
       );
     },
     save: function () {

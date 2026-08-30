@@ -19,6 +19,7 @@ class Enqueue_Scripts {
 
 
 
+
 	/**
 	 * [__construct]
 	 *
@@ -27,7 +28,7 @@ class Enqueue_Scripts {
 	public function __construct() {
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'dtac_give_admin_scripts' ) );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'dtac_give_block_editor_scripts' ) );
+		add_action( 'init', array( $this, 'dtac_give_register_block_editor_script' ), 9 );
 	}
 
 	/**
@@ -78,23 +79,58 @@ class Enqueue_Scripts {
 	}
 
 	/**
-	 * Editor scripts for Gutenberg blocks.
+	 * Register the Gutenberg editor script so block types can enqueue it.
 	 *
 	 * @since 3.0.0
 	 *
 	 * @return void
 	 */
-	public function dtac_give_block_editor_scripts(): void {
+	public function dtac_give_register_block_editor_script(): void {
 
-		$script_path = DTAC_GIVE_PLUGIN_URL . 'assets/js/';
+		if ( ! function_exists( 'wp_register_script' ) ) {
+			return;
+		}
 
 		wp_register_script(
 			'dtac-give-blocks',
-			$script_path . 'blocks.js',
+			DTAC_GIVE_PLUGIN_URL . 'assets/js/blocks.js',
 			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
 			DTAC_GIVE_PLUGIN_VERSION,
 			true
 		);
-		wp_enqueue_script( 'dtac-give-blocks' );
+
+		$forms   = dtac_give_get_give_forms_for_picker();
+		$options = array(
+			array(
+				'label' => esc_html__( 'Use default form', 'dtac-give' ),
+				'value' => '0',
+			),
+		);
+
+		foreach ( $forms as $form_id => $title ) {
+			$form_id = absint( $form_id );
+
+			if ( $form_id <= 0 ) {
+				continue;
+			}
+
+			$options[] = array(
+				'label' => sprintf(
+					/* translators: 1: form title, 2: form ID */
+					esc_html__( '%1$s (#%2$d)', 'dtac-give' ),
+					(string) $title,
+					$form_id
+				),
+				'value' => (string) $form_id,
+			);
+		}
+
+		wp_localize_script(
+			'dtac-give-blocks',
+			'dtacGiveBlocks',
+			array(
+				'forms' => $options,
+			)
+		);
 	}
 } // End class Enqueue_Scripts.
