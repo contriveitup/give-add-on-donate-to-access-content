@@ -13,7 +13,9 @@
     "deploy": "npm run css-deploy && npm run js-build",
     "js-build": "babel assets-src/js --out-dir assets/js",
     "js-watch": "babel assets-src/js --out-dir assets/js --watch",
-    "start": "npm-run-all --parallel css-watch js-watch"
+    "start": "npm-run-all --parallel css-watch js-watch",
+    "test": "npm run test:js",
+    "test:js": "node --test tests/js/*.test.js"
   },
   "repository": {
     "type": "git",

@@ -1,5 +1,8 @@
 # Hooks reference
 
+Developer extension points for Donate to Access Content. Site owners looking for
+setup answers should start with [FAQ.md](FAQ.md).
+
 All hooks are prefixed `dtac_give_`. Add them from a theme `functions.php`, an
 mu-plugin, or a companion plugin. Nothing here requires editing plugin files.
 

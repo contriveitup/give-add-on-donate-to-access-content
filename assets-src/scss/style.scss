@@ -182,6 +182,99 @@ body {
 	color: var(--dtac-muted);
 }
 
+.dtac-card--howto {
+	margin-top: 24px;
+}
+
+.dtac-howto__section {
+	margin: 0 0 22px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--dtac-line);
+}
+
+.dtac-howto__section:last-child {
+	margin-bottom: 0;
+	padding-bottom: 0;
+	border-bottom: 0;
+}
+
+.dtac-howto__heading {
+	margin: 0 0 8px;
+	font-size: 15px;
+	line-height: 1.35;
+}
+
+.dtac-howto__steps,
+.dtac-howto__bullets {
+	margin: 0 0 12px;
+	padding-left: 20px;
+	color: var(--dtac-ink);
+	font-size: 13px;
+	line-height: 1.55;
+}
+
+.dtac-howto__steps li,
+.dtac-howto__bullets li {
+	margin-bottom: 6px;
+}
+
+.dtac-howto p {
+	margin: 0 0 10px;
+	font-size: 13px;
+	line-height: 1.55;
+}
+
+.dtac-howto__note {
+	color: var(--dtac-muted);
+}
+
+.dtac-howto__code {
+	margin: 0 0 12px;
+	overflow-x: auto;
+	padding: 12px 14px;
+	border: 1px solid var(--dtac-line);
+	border-radius: 10px;
+	background: #f7fafc;
+	font-size: 12px;
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+.dtac-faq__list {
+	display: grid;
+	gap: 8px;
+}
+
+.dtac-faq__item {
+	border: 1px solid var(--dtac-line);
+	border-radius: 10px;
+	background: #fff;
+}
+
+.dtac-faq__question {
+	cursor: pointer;
+	list-style: none;
+	padding: 10px 12px;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.dtac-faq__question::-webkit-details-marker {
+	display: none;
+}
+
+.dtac-faq__answer {
+	padding: 0 12px 12px;
+	color: var(--dtac-muted);
+	font-size: 13px;
+	line-height: 1.55;
+}
+
+.dtac-faq__answer p {
+	margin: 0;
+}
+
 .dtac-card--cross-sell {
 	background:
 		linear-gradient(180deg, var(--dtac-accent-soft) 0%, #fff 42%);

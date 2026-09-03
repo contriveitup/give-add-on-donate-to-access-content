@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tests for settings-page grouping and themediaable cross-sell.
  *
@@ -10,26 +11,93 @@ use PHPUnit\Framework\TestCase;
 /**
  * Settings page markup and grouping tests.
  */
-class DTAC_Give_Settings_Page_Test extends TestCase {
+class DTAC_Give_Settings_Page_Test extends TestCase
+{
 
 	/**
 	 * Settings template exists and includes the Signals Dispatch card.
 	 *
 	 * @return void
 	 */
-	public function test_settings_template_includes_cross_sell() {
+	public function test_settings_template_includes_cross_sell()
+	{
 
-		$template = dirname( __DIR__ ) . '/includes/admin/html/settings.php';
+		$template = dirname(__DIR__) . '/includes/admin/html/settings.php';
 
-		$this->assertFileExists( $template );
+		$this->assertFileExists($template);
 
-		$source = file_get_contents( $template );
+		$source = file_get_contents($template);
 
-		$this->assertIsString( $source );
-		$this->assertStringContainsString( 'dtac-settings-hero', $source );
-		$this->assertStringContainsString( '\\DTAC\\Admin\\Cross_Sell::render()', $source );
-		$this->assertStringContainsString( '\\DTAC\\Admin\\Insights::render_summary()', $source );
-		$this->assertStringNotContainsString( "class_exists( '\\DTAC\\Admin\\Cross_Sell', false )", $source );
+		$this->assertIsString($source);
+		$this->assertStringContainsString('dtac-settings-hero', $source);
+		$this->assertStringContainsString('\\DTAC\\Admin\\Cross_Sell::render()', $source);
+		$this->assertStringContainsString('\\DTAC\\Admin\\Insights::render_summary()', $source);
+		$this->assertStringContainsString('\DTAC\Admin\Faq::render()', $source);
+		$this->assertStringContainsString('dtac-card--faq', $source);
+		$this->assertStringContainsString('\DTAC\Admin\How_To_Use::render()', $source);
+		$this->assertStringContainsString('dtac-card--howto', $source);
+		$this->assertStringNotContainsString("class_exists( '\\DTAC\\Admin\\Cross_Sell', false )", $source);
+	}
+
+	/**
+	 * FAQ class and public docs file exist with expected questions.
+	 *
+	 * @return void
+	 */
+	public function test_faq_docs_and_settings_card()
+	{
+
+		$faq_php = dirname(__DIR__) . '/src/Admin/Faq.php';
+		$faq_md  = dirname(__DIR__) . '/docs/FAQ.md';
+		$hooks   = dirname(__DIR__) . '/docs/HOOKS.md';
+
+		$this->assertFileExists($faq_php);
+		$this->assertFileExists($faq_md);
+		$this->assertFileExists($hooks);
+
+		require_once $faq_php;
+
+		$items = \DTAC\Admin\Faq::items();
+
+		$this->assertNotEmpty($items);
+		$this->assertSame('What can I restrict?', $items[0]['question']);
+
+		$source = file_get_contents($faq_md);
+
+		$this->assertIsString($source);
+		$this->assertStringContainsString('HOOKS.md', $source);
+		$this->assertStringContainsString('What content can I restrict?', $source);
+	}
+
+	/**
+	 * How-to-use walkthrough prints copy-paste shortcodes using the saved form ID.
+	 *
+	 * @return void
+	 */
+	public function test_how_to_use_prints_shortcodes()
+	{
+
+		$GLOBALS['dtac_give_test_settings'] = array(
+			'dtac_give_restrict_access_give_form_id' => '13',
+		);
+
+		require_once dirname(__DIR__) . '/src/Admin/How_To_Use.php';
+
+		$this->assertSame(13, \DTAC\Admin\How_To_Use::example_form_id());
+
+		ob_start();
+		\DTAC\Admin\How_To_Use::render();
+		$html = (string) ob_get_clean();
+
+		$this->assertStringContainsString('How to use this plugin', $html);
+		$this->assertStringContainsString('[cip_donate_to_access_content form_id="13" show="form"]', $html);
+		$this->assertStringContainsString('[cip_donate_to_access_content form_id="13" show="message"]', $html);
+		$this->assertStringContainsString('[dtac_my_unlocked_content]', $html);
+		$this->assertStringContainsString('Shortcode', $html);
+		$this->assertStringContainsString('Restricted Content', $html);
+		$this->assertStringContainsString('Restrict with donation', $html);
+
+		$GLOBALS['dtac_give_test_settings'] = array();
 	}
 
 	/**
@@ -37,18 +105,19 @@ class DTAC_Give_Settings_Page_Test extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function test_cross_sell_targets_signals_dispatch() {
+	public function test_cross_sell_targets_signals_dispatch()
+	{
 
-		$file = dirname( __DIR__ ) . '/src/Admin/Cross_Sell.php';
+		$file = dirname(__DIR__) . '/src/Admin/Cross_Sell.php';
 
-		$this->assertFileExists( $file );
+		$this->assertFileExists($file);
 
-		$source = file_get_contents( $file );
+		$source = file_get_contents($file);
 
-		$this->assertIsString( $source );
-		$this->assertStringContainsString( 'signals-dispatch-for-woocommerce', $source );
-		$this->assertStringContainsString( 'https://wordpress.org/plugins/signals-dispatch-for-woocommerce/', $source );
-		$this->assertStringContainsString( 'themediaable', $source );
+		$this->assertIsString($source);
+		$this->assertStringContainsString('signals-dispatch-for-woocommerce', $source);
+		$this->assertStringContainsString('https://wordpress.org/plugins/signals-dispatch-for-woocommerce/', $source);
+		$this->assertStringContainsString('themediaable', $source);
 	}
 
 	/**
@@ -56,28 +125,29 @@ class DTAC_Give_Settings_Page_Test extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function test_settings_keep_option_ids_and_add_headings() {
+	public function test_settings_keep_option_ids_and_add_headings()
+	{
 
-		$file = dirname( __DIR__ ) . '/src/Admin/Settings.php';
+		$file = dirname(__DIR__) . '/src/Admin/Settings.php';
 
-		$this->assertFileExists( $file );
+		$this->assertFileExists($file);
 
-		$source = file_get_contents( $file );
+		$source = file_get_contents($file);
 
-		$this->assertIsString( $source );
-		$this->assertStringContainsString( "'type' => 'heading'", $source );
-		$this->assertStringContainsString( 'dtac_give_restrict_access_give_form_id', $source );
-		$this->assertStringContainsString( 'dtac_give_restrict_message', $source );
-		$this->assertStringContainsString( 'dtac_give_restrict_access_to', $source );
-		$this->assertStringContainsString( 'dtac_give_restrict_access_to_pages', $source );
-		$this->assertStringContainsString( 'dtac_give_restrict_access_to_posts', $source );
-		$this->assertStringContainsString( 'dtac_give_restrict_access_to_cpt', $source );
-		$this->assertStringContainsString( 'dtac_give_restrict_access_to_cats', $source );
-		$this->assertStringContainsString( 'dtac_give_restrict_access_to_custom_tax', $source );
-		$this->assertStringContainsString( 'dtac_give_access_to_pages', $source );
-		$this->assertStringContainsString( 'dtac_give_min_amount', $source );
-		$this->assertStringContainsString( 'dtac_give_access_expires_days', $source );
-		$this->assertStringContainsString( 'dtac_give_leak_mode', $source );
+		$this->assertIsString($source);
+		$this->assertStringContainsString("'type' => 'heading'", $source);
+		$this->assertStringContainsString('dtac_give_restrict_access_give_form_id', $source);
+		$this->assertStringContainsString('dtac_give_restrict_message', $source);
+		$this->assertStringContainsString('dtac_give_restrict_access_to', $source);
+		$this->assertStringContainsString('dtac_give_restrict_access_to_pages', $source);
+		$this->assertStringContainsString('dtac_give_restrict_access_to_posts', $source);
+		$this->assertStringContainsString('dtac_give_restrict_access_to_cpt', $source);
+		$this->assertStringContainsString('dtac_give_restrict_access_to_cats', $source);
+		$this->assertStringContainsString('dtac_give_restrict_access_to_custom_tax', $source);
+		$this->assertStringContainsString('dtac_give_access_to_pages', $source);
+		$this->assertStringContainsString('dtac_give_min_amount', $source);
+		$this->assertStringContainsString('dtac_give_access_expires_days', $source);
+		$this->assertStringContainsString('dtac_give_leak_mode', $source);
 	}
 
 	/**
@@ -85,18 +155,19 @@ class DTAC_Give_Settings_Page_Test extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function test_form_renderer_handles_heading_fields() {
+	public function test_form_renderer_handles_heading_fields()
+	{
 
-		$file = dirname( __DIR__ ) . '/src/Controllers/Form/Form.php';
+		$file = dirname(__DIR__) . '/src/Controllers/Form/Form.php';
 
-		$this->assertFileExists( $file );
+		$this->assertFileExists($file);
 
-		$source = file_get_contents( $file );
+		$source = file_get_contents($file);
 
-		$this->assertIsString( $source );
-		$this->assertStringContainsString( "&& 'heading' === \$settings['type']", $source );
-		$this->assertStringContainsString( 'open_settings_section', $source );
-		$this->assertStringContainsString( 'close_settings_section', $source );
+		$this->assertIsString($source);
+		$this->assertStringContainsString("&& 'heading' === \$settings['type']", $source);
+		$this->assertStringContainsString('open_settings_section', $source);
+		$this->assertStringContainsString('close_settings_section', $source);
 	}
 
 	/**
@@ -104,19 +175,20 @@ class DTAC_Give_Settings_Page_Test extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function test_process_keeps_settings_option_name() {
+	public function test_process_keeps_settings_option_name()
+	{
 
-		$file = dirname( __DIR__ ) . '/src/Controllers/Form/Process.php';
+		$file = dirname(__DIR__) . '/src/Controllers/Form/Process.php';
 
-		$this->assertFileExists( $file );
+		$this->assertFileExists($file);
 
-		$source = file_get_contents( $file );
+		$source = file_get_contents($file);
 
-		$this->assertIsString( $source );
-		$this->assertStringContainsString( "update_option( 'dtac_give_settings', \$post_data )", $source );
-		$this->assertStringContainsString( "0 === strpos( \$key, '_' )", $source );
-		$this->assertStringContainsString( "current_user_can( 'manage_options' )", $source );
-		$this->assertStringContainsString( 'dtac_give_sanitize_settings', $source );
+		$this->assertIsString($source);
+		$this->assertStringContainsString("update_option( 'dtac_give_settings', \$post_data )", $source);
+		$this->assertStringContainsString("0 === strpos( \$key, '_' )", $source);
+		$this->assertStringContainsString("current_user_can( 'manage_options' )", $source);
+		$this->assertStringContainsString('dtac_give_sanitize_settings', $source);
 	}
 
 	/**
@@ -124,16 +196,17 @@ class DTAC_Give_Settings_Page_Test extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function test_magic_link_uses_home_url_not_http_host() {
+	public function test_magic_link_uses_home_url_not_http_host()
+	{
 
-		$file = dirname( __DIR__ ) . '/src/Frontend/Magic_Link.php';
+		$file = dirname(__DIR__) . '/src/Frontend/Magic_Link.php';
 
-		$this->assertFileExists( $file );
+		$this->assertFileExists($file);
 
-		$source = file_get_contents( $file );
+		$source = file_get_contents($file);
 
-		$this->assertIsString( $source );
-		$this->assertStringContainsString( 'home_url( $uri )', $source );
-		$this->assertStringNotContainsString( 'HTTP_HOST', $source );
+		$this->assertIsString($source);
+		$this->assertMatchesRegularExpression("/home_url\\(\\s*\\\$uri\\s*\\)/", $source);
+		$this->assertStringNotContainsString('HTTP_HOST', $source);
 	}
 }

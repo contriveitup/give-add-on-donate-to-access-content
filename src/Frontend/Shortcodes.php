@@ -93,8 +93,8 @@ if (! class_exists('Shortcodes')) {
 			$a = (array) apply_filters('dtac_give_shortcode_atts', $a, $atts);
 
 			// Revert back if a form id is not provided.
-			if ('' === $a['form_id']) {
-				return;
+			if ('' === $a['form_id'] || absint($a['form_id']) <= 0) {
+				return '';
 			}
 
 			$current_page_id = dtac_give_get_current_object_id();

@@ -140,8 +140,8 @@ class Restrict_Content extends Functions
 				$this->dtac_give_restrict_posts($form_id);
 			}
 
-			// If categories.
-			if (in_array('cats', $to_restrict, true) && (is_archive() || is_single())) {
+			// If categories — archives only; singular posts stay public unless listed themselves.
+			if (in_array('cats', $to_restrict, true) && is_category()) {
 				$this->dtac_give_restrict_cats($form_id);
 			}
 

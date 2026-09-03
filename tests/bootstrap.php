@@ -310,6 +310,20 @@ if (! function_exists('apply_filters')) {
 	}
 }
 
+if (! function_exists('__')) {
+	/**
+	 * @param string $text   Text.
+	 * @param string $domain Text domain.
+	 * @return string
+	 */
+	function __($text, $domain = '')
+	{
+		unset($domain);
+
+		return $text;
+	}
+}
+
 if (! function_exists('esc_html__')) {
 	/**
 	 * @param string $text   Text.
@@ -433,6 +447,10 @@ if (! function_exists('get_post')) {
 	 */
 	function get_post($post_id)
 	{
+		if ($post_id instanceof WP_Post) {
+			$post_id = $post_id->ID;
+		}
+
 		$post_id = (int) $post_id;
 
 		if (isset($GLOBALS['dtac_give_test_posts'][$post_id])) {
@@ -707,5 +725,324 @@ if (! function_exists('has_filter')) {
 	}
 }
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+if (! function_exists('add_action')) {
+	/**
+	 * @return true
+	 */
+	function add_action()
+	{
+		return true;
+	}
+}
+
+if (! function_exists('add_filter')) {
+	/**
+	 * @return true
+	 */
+	function add_filter()
+	{
+		return true;
+	}
+}
+
+if (! function_exists('add_shortcode')) {
+	/**
+	 * @return void
+	 */
+	function add_shortcode() {}
+}
+
+if (! function_exists('shortcode_atts')) {
+	/**
+	 * @param array  $pairs     Defaults.
+	 * @param array  $atts      User atts.
+	 * @param string $shortcode Shortcode tag.
+	 * @return array
+	 */
+	function shortcode_atts($pairs, $atts, $shortcode = '')
+	{
+		unset($shortcode);
+
+		$atts = is_array($atts) ? $atts : array();
+		$out  = array();
+
+		foreach ((array) $pairs as $name => $default) {
+			$out[$name] = array_key_exists($name, $atts) ? $atts[$name] : $default;
+		}
+
+		return $out;
+	}
+}
+
+if (! function_exists('wp_nonce_field')) {
+	/**
+	 * @return string
+	 */
+	function wp_nonce_field()
+	{
+		return '';
+	}
+}
+
+if (! function_exists('wp_doing_ajax')) {
+	/**
+	 * @return bool
+	 */
+	function wp_doing_ajax()
+	{
+		return false;
+	}
+}
+
+if (! function_exists('is_search')) {
+	/**
+	 * @return bool
+	 */
+	function is_search()
+	{
+		return ! empty($GLOBALS['dtac_give_test_is_search']);
+	}
+}
+
+if (! function_exists('get_the_ID')) {
+	/**
+	 * @return int
+	 */
+	function get_the_ID()
+	{
+		return isset($GLOBALS['dtac_give_test_the_id']) ? (int) $GLOBALS['dtac_give_test_the_id'] : 0;
+	}
+}
+
+if (! function_exists('wp_strip_all_tags')) {
+	/**
+	 * @param string $text Text.
+	 * @return string
+	 */
+	function wp_strip_all_tags($text)
+	{
+		return trim(strip_tags((string) $text));
+	}
+}
+
+if (! function_exists('wp_trim_words')) {
+	/**
+	 * @param string $text      Text.
+	 * @param int    $num_words Word count.
+	 * @param string $more      More suffix.
+	 * @return string
+	 */
+	function wp_trim_words($text, $num_words = 55, $more = '&hellip;')
+	{
+		$words = preg_split('/\s+/', trim((string) $text));
+		$words = array_slice(array_filter($words), 0, (int) $num_words);
+
+		return implode(' ', $words) . $more;
+	}
+}
+
+if (! function_exists('wp_is_post_revision')) {
+	/**
+	 * @return false
+	 */
+	function wp_is_post_revision()
+	{
+		return false;
+	}
+}
+
+if (! function_exists('wp_is_post_autosave')) {
+	/**
+	 * @return false
+	 */
+	function wp_is_post_autosave()
+	{
+		return false;
+	}
+}
+
+if (! function_exists('wp_verify_nonce')) {
+	/**
+	 * @param string $nonce  Nonce.
+	 * @param string $action Action.
+	 * @return bool
+	 */
+	function wp_verify_nonce($nonce, $action = '')
+	{
+		unset($action);
+
+		return 'valid' === $nonce;
+	}
+}
+
+if (! function_exists('get_post_type_object')) {
+	/**
+	 * @param string $post_type Post type.
+	 * @return object|null
+	 */
+	function get_post_type_object($post_type)
+	{
+		if ('' === $post_type) {
+			return null;
+		}
+
+		return (object) array(
+			'name' => $post_type,
+			'cap'  => (object) array(
+				'edit_post' => 'edit_post',
+			),
+		);
+	}
+}
+
+if (! function_exists('update_post_meta')) {
+	/**
+	 * @param int    $post_id Post ID.
+	 * @param string $key     Meta key.
+	 * @param mixed  $value   Meta value.
+	 * @return bool
+	 */
+	function update_post_meta($post_id, $key, $value)
+	{
+		$GLOBALS['dtac_give_test_post_meta'][(int) $post_id][$key] = $value;
+
+		return true;
+	}
+}
+
+if (! function_exists('delete_post_meta')) {
+	/**
+	 * @param int    $post_id Post ID.
+	 * @param string $key     Meta key.
+	 * @return bool
+	 */
+	function delete_post_meta($post_id, $key)
+	{
+		unset($GLOBALS['dtac_give_test_post_meta'][(int) $post_id][$key]);
+
+		return true;
+	}
+}
+
+if (! function_exists('esc_attr')) {
+	/**
+	 * @param string $text Text.
+	 * @return string
+	 */
+	function esc_attr($text)
+	{
+		return htmlspecialchars((string) $text, ENT_QUOTES);
+	}
+}
+
+if (! class_exists('WP_Error')) {
+	/**
+	 * Minimal REST error stub.
+	 */
+	class WP_Error
+	{
+		/**
+		 * @var string
+		 */
+		public $code;
+
+		/**
+		 * @var string
+		 */
+		public $message;
+
+		/**
+		 * @var array
+		 */
+		public $data;
+
+		/**
+		 * @param string $code    Error code.
+		 * @param string $message Message.
+		 * @param array  $data    Data.
+		 */
+		public function __construct($code = '', $message = '', $data = array())
+		{
+			$this->code    = $code;
+			$this->message = $message;
+			$this->data    = is_array($data) ? $data : array();
+		}
+
+		/**
+		 * @return string
+		 */
+		public function get_error_code()
+		{
+			return $this->code;
+		}
+
+		/**
+		 * @param string $key Data key.
+		 * @return mixed
+		 */
+		public function get_error_data($key = '')
+		{
+			unset($key);
+
+			return $this->data;
+		}
+	}
+}
+
+if (! class_exists('WP_REST_Request')) {
+	/**
+	 * Minimal REST request stub.
+	 */
+	class WP_REST_Request
+	{
+		/**
+		 * @var string
+		 */
+		public $route = '';
+
+		/**
+		 * @return string
+		 */
+		public function get_route()
+		{
+			return $this->route;
+		}
+	}
+}
+
+if (! class_exists('WP_Query')) {
+	/**
+	 * Minimal query stub.
+	 */
+	class WP_Query
+	{
+		/**
+		 * @var bool
+		 */
+		public $feed = false;
+
+		/**
+		 * @var bool
+		 */
+		public $search = false;
+
+		/**
+		 * @return bool
+		 */
+		public function is_feed()
+		{
+			return (bool) $this->feed;
+		}
+
+		/**
+		 * @return bool
+		 */
+		public function is_search()
+		{
+			return (bool) $this->search;
+		}
+	}
+}
+
+require_once dirname(__DIR__) . '/includes/autoload.php';
 require_once dirname(__DIR__) . '/includes/functions.php';

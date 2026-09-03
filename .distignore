@@ -21,3 +21,4 @@ tests
 docs
 src/CLI
 README.md
+*.map

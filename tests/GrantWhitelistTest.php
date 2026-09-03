@@ -215,9 +215,12 @@ class DTAC_Give_Grant_Whitelist_Test extends TestCase
 
         $this->assertIsString($source);
         $this->assertStringContainsString('dtac_give_current_user_can_edit_post', $source);
-        $this->assertStringContainsString("function_exists( 'is_admin' ) && is_admin()", $source);
-        $this->assertStringContainsString("current_user_can( 'edit_posts' )", $source);
-        $this->assertStringContainsString("current_user_can( 'edit_post'", file_get_contents(dirname(__DIR__) . '/includes/functions.php'));
+        $this->assertMatchesRegularExpression("/function_exists\\(\\s*'is_admin'\\s*\\)\\s*&&\\s*is_admin\\(\\)/", $source);
+        $this->assertMatchesRegularExpression("/current_user_can\\(\\s*'edit_posts'\\s*\\)/", $source);
+        $this->assertMatchesRegularExpression(
+            "/current_user_can\\(\\s*'edit_post'/",
+            file_get_contents(dirname(__DIR__) . '/includes/functions.php')
+        );
     }
 
     /**
@@ -242,10 +245,13 @@ class DTAC_Give_Grant_Whitelist_Test extends TestCase
         $this->assertStringContainsString('SelectControl', $js);
         $this->assertStringContainsString('Give donation form', $js);
         $this->assertStringContainsString('getFormOptions', $js);
+        $this->assertStringContainsString('useBlockProps', $js);
         $this->assertStringNotContainsString('TextControl', $js);
         $this->assertStringContainsString('dtacGiveBlocks', $enqueue);
         $this->assertStringContainsString('dtac_give_should_bypass_restriction', $restrict);
-        $this->assertStringContainsString("if ( is_admin() || wp_doing_ajax()", $restrict);
+        $this->assertMatchesRegularExpression('/if\s*\(\s*is_admin\(\)\s*\|\|\s*wp_doing_ajax\(\)/', $restrict);
+        $this->assertStringContainsString('is_category()', $restrict);
+        $this->assertStringNotContainsString('is_archive() || is_single()', $restrict);
         $this->assertStringContainsString('register_post_meta', file_get_contents(dirname(__DIR__) . '/src/Admin/Metabox.php'));
     }
 }

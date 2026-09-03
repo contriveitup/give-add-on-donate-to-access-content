@@ -286,11 +286,12 @@ if (! class_exists('Functions')) :
 		}
 
 		/**
-		 * Restrict Categories.
+		 * Restrict category archive pages.
 		 *
-		 * Restrict categories archive page or if a single post is being displayed and
-		 * the post are in any of the categories selected from the settings.
+		 * Singular posts in a restricted category stay public unless the post
+		 * itself is listed, metabox-restricted, or gated by shortcode/block.
 		 *
+		 * @since 3.0.0 Archives only.
 		 * @since 1.0.0
 		 *
 		 * @param int $form_id Donation Form ID.

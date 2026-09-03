@@ -14,7 +14,8 @@
  * Text Domain: dtac-give
  * Domain Path: /languages
  * GitHub Plugin URI: https://github.com/contriveitup/give-add-on-donate-to-access-content
- * License: GPL3
+ * License: GPLv3 or later
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  */
 
 // Exit if accessed directly.

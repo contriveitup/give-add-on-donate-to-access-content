@@ -1,5 +1,5 @@
 == Changelog ==
-= 3.0.0: August 26, 2026 =
+= 3.0.0: September 3, 2026 =
 * Added
     - GiveWP 3.x / 4.x visual-builder grant path alongside legacy v2 forms.
     - Per-post metabox for restrict, donation form, minimum amount, and access expiry.
@@ -9,11 +9,14 @@
     - Donations-list Unlocked Content column and settings-page unlock counts.
     - Settings page visual refresh with grouped sections.
     - Cross-sell for Signals Dispatch for WooCommerce (themediaable) on the settings sidebar.
-    - Developer hooks for restriction decisions, grants, gate markup, redirects, guest restore, leak protection, and shortcode/block output (see docs/HOOKS.md).
+    - Developer hooks for restriction decisions, grants, gate markup, redirects, guest restore, leak protection, and shortcode/block output.
+    - Local Select2 4.0.13 assets (JS, CSS, and MIT license) so admin settings do not load a CDN.
+    - Plugin PSR-4 autoloader so the WordPress.org zip does not ship Composer vendor or PHPUnit.
 * Updated
     - Requires WordPress 6.0+, PHP 8.1+, GiveWP 4.16.x (tested up to WordPress 7.1).
     - WordPress coding standards (WPCS) cleanup.
     - Composer and npm toolchains (PHPUnit 9.6, WPCS 3.x, Dart Sass, Babel 7).
+    - REST post-meta auth callback now requires `edit_post` for the object instead of generic `edit_posts`.
 * Fixed
     - Access-grant spoofing via content-ID whitelist.
     - Cache headers on restricted URLs.

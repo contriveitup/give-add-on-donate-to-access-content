@@ -49,6 +49,10 @@ function dtac_give_sanitize_content_id($content_id): string
 {
 
 	if (is_int($content_id) || (is_string($content_id) && is_numeric($content_id))) {
+		if ((int) $content_id <= 0) {
+			return '';
+		}
+
 		$post_id = absint($content_id);
 
 		return ($post_id > 0) ? (string) $post_id : '';
@@ -64,10 +68,19 @@ function dtac_give_sanitize_content_id($content_id): string
 		return 'site';
 	}
 
-	if (0 === strpos($content_id, 'c') && ('' === substr($content_id, 1) || is_numeric(substr($content_id, 1)))) {
-		$term_id = absint(substr($content_id, 1));
+	if (0 === strpos($content_id, 'c')) {
+		$raw_term_id = substr($content_id, 1);
 
-		return ($term_id > 0) ? 'c' . $term_id : '';
+		if (ctype_digit($raw_term_id)) {
+			$term_id = absint($raw_term_id);
+
+			return ($term_id > 0) ? 'c' . $term_id : '';
+		}
+
+		// Reject empty or numeric-looking leftovers (c, c-8, c+8, c08abc).
+		if ('' === $raw_term_id || (bool) preg_match('/^[+\-]?\d/', $raw_term_id)) {
+			return '';
+		}
 	}
 
 	$slug = sanitize_key($content_id);
@@ -1153,30 +1166,6 @@ function dtac_give_evaluate_post_restriction(int $post_id): bool
 
 	if (in_array('cpt', $types, true) && is_string($post_type) && in_array($post_type, dtac_give_normalize_id_list(dtac_give_get_settings($keys['cpt'])), true)) {
 		return true;
-	}
-
-	if (in_array('cats', $types, true)) {
-		$cat_ids = array_map('absint', dtac_give_normalize_id_list(dtac_give_get_settings($keys['cats'])));
-		$cat_ids = array_filter($cat_ids);
-
-		if (! empty($cat_ids) && has_term($cat_ids, 'category', $post_id)) {
-			return true;
-		}
-	}
-
-	if (in_array('ctax', $types, true)) {
-		$term_ids = array_map('absint', dtac_give_normalize_id_list(dtac_give_get_settings($keys['ctax'])));
-		$term_ids = array_filter($term_ids);
-
-		if (! empty($term_ids)) {
-			$taxonomies = dtac_give_get_custom_taxs_names();
-
-			foreach ($taxonomies as $taxonomy) {
-				if (has_term($term_ids, $taxonomy, $post_id)) {
-					return true;
-				}
-			}
-		}
 	}
 
 	return false;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tests for content-ID helpers used by the dual grant flow.
  *
@@ -10,14 +11,16 @@ use PHPUnit\Framework\TestCase;
 /**
  * Content ID helper tests.
  */
-class DTAC_Give_Content_Id_Test extends TestCase {
+class DTAC_Give_Content_Id_Test extends TestCase
+{
 
 	/**
 	 * Reset request globals between tests.
 	 *
 	 * @return void
 	 */
-	protected function tearDown() : void {
+	protected function tearDown(): void
+	{
 
 		$_GET     = array();
 		$_POST    = array();
@@ -33,13 +36,14 @@ class DTAC_Give_Content_Id_Test extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function test_sanitize_content_id_accepts_known_shapes() {
+	public function test_sanitize_content_id_accepts_known_shapes()
+	{
 
-		$this->assertSame( '12', dtac_give_sanitize_content_id( 12 ) );
-		$this->assertSame( '12', dtac_give_sanitize_content_id( '12' ) );
-		$this->assertSame( 'site', dtac_give_sanitize_content_id( 'site' ) );
-		$this->assertSame( 'c44', dtac_give_sanitize_content_id( 'c44' ) );
-		$this->assertSame( 'book', dtac_give_sanitize_content_id( 'book' ) );
+		$this->assertSame('12', dtac_give_sanitize_content_id(12));
+		$this->assertSame('12', dtac_give_sanitize_content_id('12'));
+		$this->assertSame('site', dtac_give_sanitize_content_id('site'));
+		$this->assertSame('c44', dtac_give_sanitize_content_id('c44'));
+		$this->assertSame('book', dtac_give_sanitize_content_id('book'));
 	}
 
 	/**
@@ -47,11 +51,16 @@ class DTAC_Give_Content_Id_Test extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function test_sanitize_content_id_rejects_empty_values() {
+	public function test_sanitize_content_id_rejects_empty_values()
+	{
 
-		$this->assertSame( '', dtac_give_sanitize_content_id( 0 ) );
-		$this->assertSame( '', dtac_give_sanitize_content_id( '' ) );
-		$this->assertSame( '', dtac_give_sanitize_content_id( 'c' ) );
+		$this->assertSame('', dtac_give_sanitize_content_id(0));
+		$this->assertSame('', dtac_give_sanitize_content_id(''));
+		$this->assertSame('', dtac_give_sanitize_content_id('c'));
+		$this->assertSame('', dtac_give_sanitize_content_id(-12));
+		$this->assertSame('', dtac_give_sanitize_content_id('c-8'));
+		$this->assertSame('', dtac_give_sanitize_content_id('c+8'));
+		$this->assertSame('', dtac_give_sanitize_content_id('c08abc'));
 	}
 
 	/**
@@ -59,12 +68,13 @@ class DTAC_Give_Content_Id_Test extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function test_content_id_from_url() {
+	public function test_content_id_from_url()
+	{
 
 		$url = 'https://example.com/donate/?dtac_give_content=88&utm_source=test';
 
-		$this->assertSame( '88', dtac_give_content_id_from_url( $url ) );
-		$this->assertSame( '', dtac_give_content_id_from_url( 'https://example.com/donate/' ) );
+		$this->assertSame('88', dtac_give_content_id_from_url($url));
+		$this->assertSame('', dtac_give_content_id_from_url('https://example.com/donate/'));
 	}
 
 	/**
@@ -72,15 +82,42 @@ class DTAC_Give_Content_Id_Test extends TestCase {
 	 *
 	 * @return void
 	 */
-	public function test_requested_content_id_reads_post_then_cookie() {
+	public function test_requested_content_id_reads_post_then_cookie()
+	{
 
 		$_POST['dtac_give_content'] = '15';
+		$_GET['dtac_give_content']  = '99';
 
-		$this->assertSame( '15', dtac_give_get_requested_content_id() );
+		$this->assertSame('15', dtac_give_get_requested_content_id());
 
-		unset( $_POST['dtac_give_content'] );
+		unset($_POST['dtac_give_content']);
 		$_COOKIE['dtac_give_pending_content'] = 'site';
 
-		$this->assertSame( 'site', dtac_give_get_requested_content_id() );
+		$this->assertSame('99', dtac_give_get_requested_content_id());
+
+		unset($_GET['dtac_give_content']);
+
+		$this->assertSame('site', dtac_give_get_requested_content_id());
+	}
+
+	/**
+	 * Pending-content cookie stores and clears sanitized IDs.
+	 *
+	 * @return void
+	 */
+	public function test_pending_content_cookie_round_trip()
+	{
+
+		dtac_give_remember_pending_content('c12');
+
+		$this->assertSame('c12', dtac_give_get_pending_content());
+
+		dtac_give_remember_pending_content('c-12');
+
+		$this->assertSame('c12', dtac_give_get_pending_content());
+
+		dtac_give_clear_pending_content();
+
+		$this->assertSame('', dtac_give_get_pending_content());
 	}
 }

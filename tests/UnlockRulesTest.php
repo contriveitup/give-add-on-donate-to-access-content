@@ -264,4 +264,120 @@ class DTAC_Give_Unlock_Rules_Test extends TestCase
         $this->assertTrue(dtac_give_is_grantable_content_id('77'));
         $this->assertTrue(dtac_give_is_post_restricted(77));
     }
+
+    /**
+     * Posts in a restricted category stay public on the singular view.
+     *
+     * @return void
+     */
+    public function test_category_restriction_does_not_lock_singular_posts()
+    {
+
+        $GLOBALS['dtac_give_test_posts'][64] = (object) array(
+            'ID'           => 64,
+            'post_content' => 'Public body in a restricted category.',
+            'post_type'    => 'post',
+            'post_excerpt' => 'Public excerpt.',
+        );
+
+        $GLOBALS['dtac_give_test_settings'] = array(
+            'dtac_give_restrict_access_to'      => array('cats'),
+            'dtac_give_restrict_access_to_cats' => array('8'),
+        );
+
+        $GLOBALS['dtac_give_test_terms']['64|category'] = array(8);
+
+        $this->assertFalse(dtac_give_is_post_restricted(64));
+        $this->assertTrue(dtac_give_visitor_can_view_post(64));
+        $this->assertTrue(dtac_give_is_grantable_content_id('c8'));
+        $this->assertFalse(dtac_give_is_grantable_content_id('64'));
+    }
+
+    /**
+     * Custom-taxonomy membership does not lock a singular CPT item.
+     *
+     * @return void
+     */
+    public function test_custom_tax_restriction_does_not_lock_singular_cpt()
+    {
+
+        $GLOBALS['dtac_give_test_posts'][65] = (object) array(
+            'ID'           => 65,
+            'post_content' => 'Book body.',
+            'post_type'    => 'dtac_book',
+            'post_excerpt' => '',
+        );
+
+        $GLOBALS['dtac_give_test_settings'] = array(
+            'dtac_give_restrict_access_to'            => array('ctax'),
+            'dtac_give_restrict_access_to_custom_tax' => array('9'),
+        );
+
+        $GLOBALS['dtac_give_test_terms']['65|dtac_genre'] = array(9);
+
+        $this->assertFalse(dtac_give_is_post_restricted(65));
+        $this->assertTrue(dtac_give_visitor_can_view_post(65));
+    }
+
+    /**
+     * Whole-site restriction still leaves the donation form and allow-list public.
+     *
+     * @return void
+     */
+    public function test_whole_site_skips_form_and_allow_pages()
+    {
+
+        $GLOBALS['dtac_give_test_posts'][10] = (object) array(
+            'ID'           => 10,
+            'post_content' => 'Give form',
+            'post_type'    => 'give_forms',
+            'post_excerpt' => '',
+        );
+        $GLOBALS['dtac_give_test_posts'][11] = (object) array(
+            'ID'           => 11,
+            'post_content' => 'Allow page',
+            'post_type'    => 'page',
+            'post_excerpt' => '',
+        );
+        $GLOBALS['dtac_give_test_posts'][12] = (object) array(
+            'ID'           => 12,
+            'post_content' => 'Locked page',
+            'post_type'    => 'page',
+            'post_excerpt' => '',
+        );
+
+        $GLOBALS['dtac_give_test_settings'] = array(
+            'dtac_give_restrict_website'             => 'yes',
+            'dtac_give_restrict_access_give_form_id' => '10',
+            'dtac_give_access_to_pages'              => array('11'),
+        );
+
+        $this->assertFalse(dtac_give_is_post_restricted(10));
+        $this->assertFalse(dtac_give_is_post_restricted(11));
+        $this->assertTrue(dtac_give_is_post_restricted(12));
+    }
+
+    /**
+     * Per-post expiry of 0 never expires even when the global TTL is set.
+     *
+     * @return void
+     */
+    public function test_per_post_zero_expiry_never_expires()
+    {
+
+        $GLOBALS['dtac_give_test_settings'] = array(
+            'dtac_give_access_expires_days' => '1',
+        );
+
+        $GLOBALS['dtac_give_test_post_meta'][12]['_dtac_give_expiry_days'] = 0;
+
+        $old                    = new WP_Post();
+        $old->ID                = 504;
+        $old->post_date_gmt     = gmdate('Y-m-d H:i:s', time() - (40 * DAY_IN_SECONDS));
+        $GLOBALS['dtac_give_test_posts'][504] = $old;
+        $GLOBALS['dtac_give_test_post_meta'][504]['_give_payment_total'] = 50;
+
+        $this->assertSame(0, dtac_give_get_expiry_days('12'));
+        $this->assertTrue(dtac_give_donation_unlocks_content(504, '12'));
+    }
 }

@@ -8,14 +8,15 @@
 
 namespace DTAC\Setup;
 
-defined( 'ABSPATH' ) || exit;
+defined('ABSPATH') || exit;
 
 /**
  * Add scripts to WordPress.
  *
  * @since 1.0.0
  */
-class Enqueue_Scripts {
+class Enqueue_Scripts
+{
 
 
 
@@ -25,10 +26,11 @@ class Enqueue_Scripts {
 	 *
 	 * Class Constructor.
 	 */
-	public function __construct() {
+	public function __construct()
+	{
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'dtac_give_admin_scripts' ) );
-		add_action( 'init', array( $this, 'dtac_give_register_block_editor_script' ), 9 );
+		add_action('admin_enqueue_scripts', array($this, 'dtac_give_admin_scripts'));
+		add_action('init', array($this, 'dtac_give_register_block_editor_script'), 9);
 	}
 
 	/**
@@ -38,9 +40,10 @@ class Enqueue_Scripts {
 	 *
 	 * @return void
 	 */
-	public function dtac_give_admin_scripts(): void {
+	public function dtac_give_admin_scripts(): void
+	{
 
-		if ( ! is_dtac_plugin_settings_page() ) {
+		if (! is_dtac_plugin_settings_page()) {
 			return;
 		}
 
@@ -50,32 +53,43 @@ class Enqueue_Scripts {
 		/**
 		 * Bulma CSS
 		 */
-		wp_register_style( 'dtac-give-bulma', $style_path . 'bulma.css', array(), DTAC_GIVE_PLUGIN_VERSION );
-		wp_enqueue_style( 'dtac-give-bulma' );
+		wp_register_style('dtac-give-bulma', $style_path . 'bulma.css', array(), DTAC_GIVE_PLUGIN_VERSION);
+		wp_enqueue_style('dtac-give-bulma');
 
 		/**
-		 * Plugin Select 2 CSS Styles
+		 * Select2 CSS (vendored; WordPress.org forbids remote scripts/styles).
 		 */
-		wp_register_style( 'dtac-give-admin-select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css', array(), DTAC_GIVE_PLUGIN_VERSION );
-		wp_enqueue_style( 'dtac-give-admin-select2' );
+		wp_register_style(
+			'dtac-give-admin-select2',
+			DTAC_GIVE_PLUGIN_URL . 'assets/vendor/select2/css/select2.min.css',
+			array(),
+			'4.0.13'
+		);
+		wp_enqueue_style('dtac-give-admin-select2');
 
 		/**
 		 * Plugin CSS Styles
 		 */
-		wp_register_style( 'dtac-give-admin', $style_path . 'style.css', array(), DTAC_GIVE_PLUGIN_VERSION );
-		wp_enqueue_style( 'dtac-give-admin' );
+		wp_register_style('dtac-give-admin', $style_path . 'style.css', array(), DTAC_GIVE_PLUGIN_VERSION);
+		wp_enqueue_style('dtac-give-admin');
 
 		/**
-		 * Plugin Select2
+		 * Select2 JS (vendored 4.0.13; unminified source ships beside the min file).
 		 */
-		wp_register_script( 'dtac-give-admin-select-2-js', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js', array( 'jquery' ), DTAC_GIVE_PLUGIN_VERSION, true );
-		wp_enqueue_script( 'dtac-give-admin-select-2-js' );
+		wp_register_script(
+			'dtac-give-admin-select-2-js',
+			DTAC_GIVE_PLUGIN_URL . 'assets/vendor/select2/js/select2.min.js',
+			array('jquery'),
+			'4.0.13',
+			true
+		);
+		wp_enqueue_script('dtac-give-admin-select-2-js');
 
 		/**
 		 * Plugin JS Scripts
 		 */
-		wp_register_script( 'dtac-give-admin-js', $script_path . 'main.js', array( 'jquery' ), DTAC_GIVE_PLUGIN_VERSION, true );
-		wp_enqueue_script( 'dtac-give-admin-js' );
+		wp_register_script('dtac-give-admin-js', $script_path . 'main.js', array('jquery'), DTAC_GIVE_PLUGIN_VERSION, true);
+		wp_enqueue_script('dtac-give-admin-js');
 	}
 
 	/**
@@ -85,16 +99,17 @@ class Enqueue_Scripts {
 	 *
 	 * @return void
 	 */
-	public function dtac_give_register_block_editor_script(): void {
+	public function dtac_give_register_block_editor_script(): void
+	{
 
-		if ( ! function_exists( 'wp_register_script' ) ) {
+		if (! function_exists('wp_register_script')) {
 			return;
 		}
 
 		wp_register_script(
 			'dtac-give-blocks',
 			DTAC_GIVE_PLUGIN_URL . 'assets/js/blocks.js',
-			array( 'wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n' ),
+			array('wp-blocks', 'wp-element', 'wp-block-editor', 'wp-components', 'wp-i18n'),
 			DTAC_GIVE_PLUGIN_VERSION,
 			true
 		);
@@ -102,22 +117,22 @@ class Enqueue_Scripts {
 		$forms   = dtac_give_get_give_forms_for_picker();
 		$options = array(
 			array(
-				'label' => esc_html__( 'Use default form', 'dtac-give' ),
+				'label' => esc_html__('Use default form', 'dtac-give'),
 				'value' => '0',
 			),
 		);
 
-		foreach ( $forms as $form_id => $title ) {
-			$form_id = absint( $form_id );
+		foreach ($forms as $form_id => $title) {
+			$form_id = absint($form_id);
 
-			if ( $form_id <= 0 ) {
+			if ($form_id <= 0) {
 				continue;
 			}
 
 			$options[] = array(
 				'label' => sprintf(
 					/* translators: 1: form title, 2: form ID */
-					esc_html__( '%1$s (#%2$d)', 'dtac-give' ),
+					esc_html__('%1$s (#%2$d)', 'dtac-give'),
 					(string) $title,
 					$form_id
 				),

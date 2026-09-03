@@ -16,6 +16,13 @@ This repository is the development source (uncompiled PHP, SCSS, and JavaScript)
 | Settings | **Settings → DTAC** |
 | License | [GPLv3 or later](LICENSE) |
 
+## Documentation
+
+| Audience | Doc |
+| --- | --- |
+| Public / site owners | [docs/FAQ.md](docs/FAQ.md) |
+| Developers | [docs/HOOKS.md](docs/HOOKS.md) |
+
 ## What it does
 
 Site owners pick content that guests cannot view until they donate through a Give form. After a completed donation, the plugin records which content that donor unlocked. Later visits by the same donor (logged-in Give donor, session email, or restored guest cookie) show the original content.
@@ -234,6 +241,10 @@ leak protection, shortcode and block output, and settings. All hooks are prefixe
 
 ## Frequently asked questions
 
+Public answers for site owners live in [docs/FAQ.md](docs/FAQ.md). The same FAQ
+appears on **Settings → DTAC**. Developers extending the plugin should use
+[docs/HOOKS.md](docs/HOOKS.md).
+
 **Is this an official Give add-on?**
 No. It depends on GiveWP but is maintained independently.
 
@@ -279,6 +290,8 @@ Full history: [README.txt](README.txt) (WordPress.org readme) and [changelog.txt
 
 ## Support
 
+- Public FAQ: [docs/FAQ.md](docs/FAQ.md)
+- Developer hooks: [docs/HOOKS.md](docs/HOOKS.md)
 - Bugs and features: [GitHub issues](https://github.com/contriveitup/give-add-on-donate-to-access-content/issues)
 - WordPress.org listing: [cip-dtac-for-give](https://wordpress.org/plugins/cip-dtac-for-give/)
 

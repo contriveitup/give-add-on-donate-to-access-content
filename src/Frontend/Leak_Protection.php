@@ -130,7 +130,7 @@ class Leak_Protection extends Functions
 			return $posts;
 		}
 
-		if ('excerpt' === dtac_give_get_leak_mode() && ! ($query instanceof \WP_Query && $query->is_feed())) {
+		if ('excerpt' === dtac_give_get_leak_mode()) {
 			return $posts;
 		}
 

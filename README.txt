@@ -1,113 +1,125 @@
 === Donate to Access Content ===
 Contributors: contriveitup, rupakdhiman
-Tags: donate, donate to access, donate to access content, give add-on, wordpress plugin, free wordpress plugin, free give plugin add-on, contriveitup
-Donate link: paypal.me/contriveitup
+Tags: donate, give, restrict-content, membership, donations
+Donate link: https://www.paypal.me/contriveitup
 Requires at least: 6.0
 Tested up to: 7.1
 Requires PHP: 8.1
 Requires Plugins: give
 Stable tag: 3.0.0
-License: GPLv3
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
+License: GPLv3 or later
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-An Unoffcial [Give](https://wordpress.org/plugins/give/) plugin add-on to restrict site\'s content until donation is made.
+Unofficial GiveWP add-on that hides selected WordPress content until a visitor completes a qualifying donation.
 
 == Description ==
-This is a Free add-on to Give donation plugin which allows admin to restrict the content of their website until a user has made a donation. 
 
-Once a user has made the donation they can access the content. Admin can choose to restrict the content of the site via shortcode or they restrict the entire website or a particular page, post, category, post type, etc... with the help of plugin settings.
+Donate to Access Content is a free, unofficial add-on for [GiveWP](https://wordpress.org/plugins/give/). It is not an official GiveWP product.
 
-You can also track the development at : https://github.com/contriveitup/give-add-on-donate-to-access-content
+Site owners can hide posts, pages, custom post types, category archives, or a portion of a page until a visitor donates through a Give form. After a completed donation, that donor can return and see the original content.
+
+= What you can restrict =
+
+* Individual pages and posts (settings lists or the Restrict with donation metabox)
+* Category and custom taxonomy archive pages
+* Entire public custom post types
+* A portion of a page with the `[cip_donate_to_access_content]` shortcode or the Restricted Content block
+
+Give donation form pages are never treated as restricted content.
+
+= After a donation =
+
+Access is based on Give donors, not a WordPress login. The same donor can return later as:
+
+* A logged-in WordPress user linked to that Give donor
+* A guest whose browser still has the guest-access cookie
+* A guest who uses "Already donated?" and opens the signed email link
+
+Optional settings include a minimum donation amount, access expiry in days, and how restricted posts appear in REST, RSS, search, and oEmbed.
+
+= Requirements =
+
+* WordPress 6.0 or later
+* PHP 8.1 or later
+* GiveWP active (legacy v2 forms and visual-builder v3 / v4 forms)
+* A published Give donation form to use as the default gate
+
+Development source: https://github.com/contriveitup/give-add-on-donate-to-access-content
+
+= Third-party libraries =
+
+Admin settings use Select2 4.0.13 (MIT License), bundled in assets/vendor/select2/. Unminified JS and CSS are included next to the minified files.
 
 == Installation ==
-== Automatic Plugin Installation ==
 
-1. Go to Plugins > Add New.
-2. Type in the name of the WordPress Plugin or descriptive keyword, author, or tag in Search Plugins box or click a tag link below the screen.
-3. Find the WordPress Plugin you wish to install.
-4. Click Details for more information about the Plugin and instructions you may wish to print or save to help setup the Plugin.
-5. Click Install Now to install the WordPress Plugin.
-
-== Manual Plugin Installation ==
-
-Note: Installation of a WordPress Plugin manually requires FTP familiarity and the awareness that you may put your site at risk if you install a WordPress Plugin incompatible with the current version or from an unreliable source.
-
-1. Download your WordPress Plugin to your desktop.
-2. If downloaded as a zip archive, extract the Plugin folder to your desktop.
-3. With your FTP program, upload the Plugin folder to the wp-content/plugins folder in your WordPress directory online.
-4. Go to Plugins screen and find the newly uploaded Plugin in the list.
-5. Click Activate to activate it.
+1. Install and activate [GiveWP](https://wordpress.org/plugins/give/).
+2. Install and activate Donate to Access Content.
+3. Create or choose a published Give donation form (Donations → All Forms).
+4. Go to Settings → DTAC, set the default form, and choose what to restrict.
+5. Save changes, then visit a restricted URL in a private/incognito window to confirm guests see the gate.
 
 == Frequently Asked Questions ==
 
-= What type of content can I restrict with this plugin? =
+= Is this an official GiveWP add-on? =
 
-With this plugin, you can restrict the content on a page or post by using plugin\'s shortcode or you can restrict an entire page, post, category archive page, custom post type, custom taxonomy archive page.
+No. It requires GiveWP but is maintained independently.
 
-= What shortcode is used to restrict the content? =
+= What shortcode restricts content? =
 
-The shortcode which is used to restrict the content is:
+`[cip_donate_to_access_content form_id="1" show="form"]` wraps the secret content. `form_id` is required. `show` can be `form` (default) or `message`.
 
-[cip_donate_to_access_content form_id=1 show="form|message"]
+List content the current donor has unlocked with `[dtac_my_unlocked_content]`.
 
-It has 2 options, the first one is required which is the ID of the donation form which would appear instead of the restricted content. The second option is to either show a Donation form or a Message in place of the restricted content.
+= If a category is restricted, can visitors still open a post in that category? =
 
-= What if I am on a single post page and a category in that post is restricted. Would a user will still be able to view that post? =
+Yes, unless that post is also restricted. Category and custom-taxonomy settings gate archives, not every singular post in the term.
 
-Yes, for now the Category Archive page can be restricted. If a post is in that category, a user can view that post without donation unless you restrict that entire post altogether.
+= Who gets access after a donation? =
+
+Give donors. A logged-in subscriber without a matching donor record still sees the gate.
+
+= Can guests recover access after clearing cookies? =
+
+Yes. On gated output, use "Already donated?" with the email from the donation. If that address has qualifying unlocks, WordPress sends a signed link that expires in one hour. The confirmation notice is the same whether or not the email has donations.
+
+= Will a small donation unlock paid content? =
+
+Not if you set a minimum donation amount globally or on the metabox. `0` means any completed donation qualifies.
+
+= Does access last forever? =
+
+By default yes. Set access expiry in days globally or per post. Metabox `0` means that post never expires, even if a global TTL is set.
 
 = What happens if I update to 3.0 on PHP older than 8.1? =
 
 Version 3.0 requires PHP 8.1. If the plugin is already active on PHP 7.4 or 8.0, WordPress still loads it after an update. The bootstrap shows an admin error and deactivates the plugin instead of causing a fatal error. Upgrade PHP, then activate the plugin again.
 
 == Changelog ==
-= 3.0.0: August 26, 2026 =
-* Added
-    - GiveWP 3.x / 4.x visual-builder grant path alongside legacy v2 forms.
-    - Per-post metabox for restrict, donation form, minimum amount, and access expiry.
-    - Blocks: `dtac/restricted-content` and `dtac/my-unlocked-content`.
-    - Guest restore via signed email link and `[dtac_my_unlocked_content]` shortcode.
-    - REST, feed, search, and oEmbed leak protection.
-    - Donations-list Unlocked Content column and settings-page unlock counts.
-    - Settings page visual refresh with grouped sections.
-    - Cross-sell for Signals Dispatch for WooCommerce (themediaable) on the settings sidebar.
-* Updated
-    - Requires WordPress 6.0+, PHP 8.1+, GiveWP 4.16.x (tested up to WordPress 7.1).
-    - WordPress coding standards (WPCS) cleanup.
-    - Composer and npm toolchains (PHPUnit 9.6, WPCS 3.x, Dart Sass, Babel 7).
-* Fixed
-    - Access-grant spoofing via content-ID whitelist.
-    - Cache headers on restricted URLs.
-    - Uninstall now removes plugin settings and related donation/donor meta.
-    - Updating on PHP older than 8.1 deactivates with an admin notice instead of a parse fatal.
+
+= 3.0.0: September 3, 2026 =
+* Added: GiveWP 3.x / 4.x visual-builder grant path alongside legacy v2 forms.
+* Added: Per-post metabox for restrict, donation form, minimum amount, and access expiry.
+* Added: Blocks dtac/restricted-content and dtac/my-unlocked-content.
+* Added: Guest restore via signed email link and [dtac_my_unlocked_content] shortcode.
+* Added: REST, feed, search, and oEmbed leak protection.
+* Added: Donations-list Unlocked Content column and settings-page unlock counts.
+* Added: Settings page visual refresh with grouped sections.
+* Added: Local Select2 4.0.13 assets (no CDN) for WordPress.org guideline compliance.
+* Updated: Requires WordPress 6.0+, PHP 8.1+, GiveWP 4.16.x (tested up to WordPress 7.1).
+* Updated: Ships a plugin autoloader so Composer vendor is not required in the zip.
+* Fixed: Access-grant spoofing via content-ID whitelist.
+* Fixed: Cache headers on restricted URLs.
+* Fixed: Uninstall now removes plugin settings and related donation/donor meta.
+* Fixed: Updating on PHP older than 8.1 deactivates with an admin notice instead of a parse fatal.
+
+See changelog.txt for earlier versions.
 
 = 2.1.0: July 30, 2022 =
-* Added
-    - Function `dtac_get_give_forms` to get Give Forms and display inside a select box under Admin Settings.
-    - Function `input_default_select` to fetch default values from Settings array inside the select box.
-* Updated
-    - NPM Packages.
-    - Code Improvements.
+* Added: Function dtac_get_give_forms to list Give forms in Admin Settings.
+* Added: Function input_default_select for default values in the select box.
+* Updated: NPM packages and code improvements.
 
-= 2.0.0: Aug 10, 2020 =
-* Updated
-    - Optimized PHP code.
-    - Compatible with Give 2.7.5
-    - Removed the option to restrict the entire website. Not working in Sync with Give iFrame form.
-* Fixed
-    - Typos in plugin name and descriptions.
-    - Not recognizing donors after payment success.
-* Added
-    - Admin page to manage plugin settings.
-    - Introduced advance PHP Oops functionality like Interfaces, Abstract Classes and Traits.
-    - Composer support.
-    - Scripts & Styles compilation with Babel
+== Upgrade Notice ==
 
-= 1.0.2: July 1, 2020 =
-* Tested: WordPress 5.4.x.
-
-= 1.0.1: December 20, 2017 =
-* Fixed: Fatal Error - Class not found.
-
-= 1.0: November 8, 2017 =
-* Initial Release. JMJK!!
+= 3.0.0 =
+Requires PHP 8.1 and an active GiveWP install. Existing restriction lists and the [cip_donate_to_access_content] shortcode still work. Upgrade PHP before updating if the site is on 8.0 or older.
